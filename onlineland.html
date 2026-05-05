@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OnlineLand – తెలంగాణ వ్యవసాయ భూములు</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#1E4D2B;--green2:#2E7D42;--green3:#4CAF65;
+  --gold:#C8922A;--gold2:#E8B84B;--gold3:#FDD87A;
+  --earth:#F5EDD6;--earth2:#EDE0BC;--earth3:#D4C49A;
+  --dark:#0F2318;--text:#1A3322;--muted:#5A7A63;
+  --white:#FDFAF4;--red:#C0392B;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(253,250,244,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,146,42,.2);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
+.logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--green);text-decoration:none}
+.logo span{color:var(--gold)}
+.nav-right{display:flex;gap:1rem;align-items:center}
+.nav-link{font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--green)}
+.btn-admin{background:var(--green);color:#fff;padding:.45rem 1.1rem;border-radius:6px;font-size:.82rem;font-weight:700;border:none;cursor:pointer;transition:background .2s}
+.btn-admin:hover{background:var(--green2)}
+
+/* HERO */
+.hero{min-height:100vh;display:grid;place-items:center;padding:7rem 2rem 6rem;background:linear-gradient(150deg,var(--dark) 0%,var(--green) 60%,#3D7A4A 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 85%,rgba(200,146,42,.18) 0%,transparent 50%),radial-gradient(ellipse at 85% 15%,rgba(76,175,101,.1) 0%,transparent 45%)}
+.hero-dots{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle,rgba(200,146,42,1) 1px,transparent 1px);background-size:32px 32px}
+.hero-content{position:relative;text-align:center;max-width:760px}
+.hero-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.35);color:var(--gold3);border-radius:100px;padding:.4rem 1.2rem;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.8rem;animation:fadeUp .6s .1s both}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5.5vw,4.5rem);font-weight:900;line-height:1.1;color:#fff;margin-bottom:1.2rem;animation:fadeUp .6s .25s both}
+.hero h1 em{color:var(--gold2);font-style:normal}
+.hero p{font-size:1.05rem;color:rgba(245,237,214,.7);line-height:1.8;max-width:500px;margin:0 auto 2.5rem;font-weight:300;animation:fadeUp .6s .4s both}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s .55s both}
+.btn-gold{background:var(--gold);color:var(--dark);padding:.85rem 2rem;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(200,146,42,.4);transition:all .25s}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,146,42,.5)}
+.btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:.85rem 2rem;border-radius:8px;font-weight:500;font-size:.95rem;text-decoration:none;cursor:pointer;transition:all .25s}
+.btn-ghost:hover{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.08);transform:translateY(-2px)}
+.hero-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(15,35,24,.4);backdrop-filter:blur(8px);border-top:1px solid rgba(200,146,42,.15);animation:fadeUp .6s .7s both}
+.hstat{flex:1;max-width:180px;padding:1.3rem .8rem;text-align:center;border-right:1px solid rgba(200,146,42,.12)}
+.hstat:last-child{border-right:none}
+.hstat-n{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--gold2)}
+.hstat-l{font-size:.7rem;color:rgba(245,237,214,.5);letter-spacing:.8px;text-transform:uppercase;margin-top:.15rem}
+
+/* SEARCH */
+.search-wrap{background:var(--white);padding:3rem 2rem;border-bottom:1px solid var(--earth2)}
+.search-box{max-width:900px;margin:0 auto;background:#fff;border:1.5px solid var(--earth3);border-radius:16px;padding:1.8rem;box-shadow:0 6px 40px rgba(30,77,43,.07)}
+.search-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:1.2rem;text-align:center}
+.search-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;align-items:end}
+.sf label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.35rem}
+.sf select,.sf input{width:100%;padding:.65rem 1rem;border:1.5px solid var(--earth3);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);background:var(--earth);outline:none;transition:border-color .2s}
+.sf select:focus,.sf input:focus{border-color:var(--green3)}
+.btn-search{background:var(--green);color:#fff;border:none;border-radius:8px;padding:.7rem 1.5rem;font-weight:700;font-size:.9rem;cursor:pointer;white-space:nowrap;transition:background .2s,transform .2s}
+.btn-search:hover{background:var(--green2);transform:translateY(-1px)}
+
+/* LISTINGS */
+.listings{padding:4.5rem 2rem;background:var(--earth)}
+.sec-hd{text-align:center;margin-bottom:2.8rem}
+.sec-tag{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.sec-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.5rem);font-weight:700;color:var(--green);line-height:1.2}
+.sec-sub{color:var(--muted);font-size:.92rem;margin-top:.6rem;line-height:1.7}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;max-width:1200px;margin:0 auto}
+
+/* CARDS */
+.card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--earth2);transition:transform .3s,box-shadow .3s;cursor:pointer}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(30,77,43,.12)}
+.card-img{height:200px;position:relative;overflow:hidden;background:var(--green)}
+.card-photo{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.card:hover .card-photo{transform:scale(1.06)}
+.card-no-photo{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--green),var(--green2));color:rgba(255,255,255,.4);font-size:.8rem;gap:.5rem}
+.card-no-photo span{font-size:2.5rem}
+.card-badge{position:absolute;top:.8rem;left:.8rem;background:var(--gold);color:var(--dark);font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.28rem .7rem;border-radius:100px}
+.card-sold{background:var(--red)!important;color:#fff!important}
+.card-body{padding:1.2rem}
+.card-loc{font-size:.75rem;color:var(--muted);margin-bottom:.4rem}
+.card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--green);margin-bottom:.5rem;line-height:1.3}
+.card-det{font-size:.78rem;color:var(--muted);margin-bottom:.25rem}
+.card-det strong{color:var(--text)}
+.card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:.9rem;border-top:1px solid var(--earth);margin-top:.5rem}
+.card-price{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--green)}
+.card-price small{font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:400;color:var(--muted);display:block}
+.card-contacts{display:flex;gap:.4rem}
+.btn-wp{background:#25D366;color:#fff;border:none;padding:.4rem .85rem;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:opacity .2s}
+.btn-wp:hover{opacity:.85}
+.btn-ph{background:var(--green);color:#fff;border:none;padding:.4rem .85rem;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;transition:opacity .2s}
+.btn-ph:hover{opacity:.85}
+.empty-state{grid-column:1/-1;text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-state .es-icon{font-size:3rem;margin-bottom:1rem}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,35,24,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-imgs{height:260px;overflow:hidden;border-radius:20px 20px 0 0;background:var(--green)}
+.modal-imgs img{width:100%;height:100%;object-fit:cover}
+.no-photo-lg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;color:rgba(255,255,255,.4);font-size:.85rem}
+.no-photo-lg span{font-size:4rem}
+.modal-body{padding:1.8rem}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--green);margin-bottom:.3rem}
+.modal-loc{font-size:.85rem;color:var(--muted);margin-bottom:1rem}
+.modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.2rem}
+.mdet{background:var(--earth);border-radius:8px;padding:.7rem 1rem}
+.mdet-l{font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.2rem}
+.mdet-v{font-size:.95rem;font-weight:600;color:var(--text)}
+.modal-price{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;color:var(--green);margin-bottom:1.2rem}
+.modal-btns{display:flex;gap:.8rem;flex-wrap:wrap}
+.modal-btns a{flex:1;min-width:120px;padding:.75rem;border-radius:8px;font-weight:700;font-size:.9rem;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:opacity .2s}
+.modal-btns a:hover{opacity:.85}
+.modal-close{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font-size:1.1rem;display:grid;place-items:center;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+
+/* ADMIN LOGIN */
+.admin-login{display:none;position:fixed;inset:0;z-index:400;background:rgba(15,35,24,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.admin-login.open{display:flex}
+.login-box{background:#fff;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;text-align:center}
+.login-box h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--green);margin-bottom:.4rem}
+.login-box p{font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.login-field{margin-bottom:1rem;text-align:left}
+.login-field label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.3rem}
+.login-field input{width:100%;padding:.7rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;outline:none;transition:border-color .2s}
+.login-field input:focus{border-color:var(--green3)}
+.login-err{color:var(--red);font-size:.8rem;margin-bottom:.8rem;display:none}
+.btn-login{width:100%;background:var(--green);color:#fff;border:none;padding:.8rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;transition:background .2s}
+.btn-login:hover{background:var(--green2)}
+.btn-cancel-login{width:100%;background:transparent;color:var(--muted);border:1.5px solid var(--earth2);padding:.7rem;border-radius:8px;font-weight:500;font-size:.88rem;cursor:pointer;margin-top:.6rem;transition:border-color .2s}
+.btn-cancel-login:hover{border-color:var(--muted)}
+
+/* ADMIN PANEL */
+.admin-panel{display:none;position:fixed;inset:0;z-index:300;background:var(--white);overflow-y:auto}
+.admin-panel.open{display:block}
+.admin-nav{background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;position:sticky;top:0;z-index:10}
+.admin-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold2)}
+.admin-logo span{font-size:.7rem;font-weight:400;color:rgba(255,255,255,.4);margin-left:.5rem}
+.btn-close-admin{background:rgba(255,255,255,.1);color:#fff;border:none;padding:.4rem 1rem;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:600;transition:background .2s}
+.btn-close-admin:hover{background:rgba(255,255,255,.2)}
+.admin-body{max-width:1100px;margin:0 auto;padding:2rem}
+.admin-tabs{display:flex;gap:.5rem;margin-bottom:2rem;border-bottom:2px solid var(--earth2)}
+.atab{padding:.6rem 1.4rem;font-weight:700;font-size:.88rem;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.atab.active{color:var(--green);border-bottom-color:var(--green)}
+
+/* FORM */
+.add-form{background:#fff;border-radius:16px;border:1px solid var(--earth2);padding:2rem}
+.add-form h3{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--green);margin-bottom:1.5rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.form-grid.one{grid-template-columns:1fr}
+.ff{display:flex;flex-direction:column;gap:.35rem}
+.ff label{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.ff.req label::after{content:' *';color:var(--red)}
+.ff input,.ff select,.ff textarea{padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--earth);outline:none;transition:border-color .2s}
+.ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--green3);background:#fff}
+.ff textarea{resize:vertical;min-height:80px}
+
+/* photo upload */
+.photo-upload{border:2px dashed var(--earth3);border-radius:12px;padding:1.8rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
+.photo-upload:hover{border-color:var(--green3);background:rgba(76,175,101,.03)}
+.photo-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.photo-upload .pu-icon{font-size:2rem;margin-bottom:.5rem}
+.photo-upload p{font-size:.85rem;color:var(--muted)}
+.photo-upload small{font-size:.72rem;color:var(--earth3)}
+.photo-previews{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem}
+.photo-preview{width:80px;height:60px;border-radius:6px;overflow:hidden;position:relative;border:1px solid var(--earth2)}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.del-photo{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(192,57,43,.9);color:#fff;border:none;cursor:pointer;font-size:.65rem;display:grid;place-items:center}
+
+/* patta */
+.patta-opts{display:flex;flex-wrap:wrap;gap:.5rem}
+.patta-opt{padding:.35rem .9rem;border-radius:100px;font-size:.78rem;font-weight:600;border:1.5px solid var(--earth2);color:var(--muted);cursor:pointer;transition:all .2s;background:transparent}
+.patta-opt.selected{background:var(--green);color:#fff;border-color:var(--green)}
+
+.form-actions{display:flex;gap:.8rem;margin-top:1.5rem}
+.btn-save{background:var(--green);color:#fff;border:none;padding:.75rem 2rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;transition:background .2s}
+.btn-save:hover{background:var(--green2)}
+.btn-reset-f{background:transparent;color:var(--muted);border:1.5px solid var(--earth2);padding:.75rem 1.5rem;border-radius:8px;font-weight:500;font-size:.9rem;cursor:pointer;transition:border-color .2s}
+.btn-reset-f:hover{border-color:var(--muted)}
+.form-msg{padding:.6rem 1rem;border-radius:8px;font-size:.85rem;font-weight:600;display:none;margin-top:.8rem}
+.form-msg.success{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.form-msg.error{background:#fde8e8;color:var(--red);border:1px solid #f5b7b1}
+
+/* manage table */
+.manage-table{background:#fff;border-radius:16px;border:1px solid var(--earth2);overflow:hidden}
+.manage-table table{width:100%;border-collapse:collapse}
+.manage-table th{background:var(--dark);color:rgba(255,255,255,.8);font-size:.72rem;font-weight:700;letter-spacing:.7px;text-transform:uppercase;padding:.9rem 1rem;text-align:left}
+.manage-table td{padding:.85rem 1rem;border-bottom:1px solid var(--earth);font-size:.85rem;vertical-align:middle}
+.manage-table tr:last-child td{border-bottom:none}
+.manage-table tr:hover td{background:var(--earth)}
+.td-title{font-weight:600;color:var(--text)}
+.td-loc{color:var(--muted);font-size:.78rem;margin-top:.1rem}
+.td-price{font-weight:700;color:var(--green);white-space:nowrap}
+.status-active{background:#e8f5e9;color:#2e7d32;font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:100px}
+.status-sold{background:#fde8e8;color:var(--red);font-size:.68rem;font-weight:700;padding:.2rem .6rem;border-radius:100px}
+.td-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.act-btn{padding:.3rem .65rem;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;border:none;transition:opacity .2s}
+.act-btn:hover{opacity:.8}
+.act-edit{background:var(--gold);color:var(--dark)}
+.act-sold{background:var(--muted);color:#fff}
+.act-del{background:var(--red);color:#fff}
+.manage-card{background:#fff;border-radius:12px;border:1px solid var(--earth2);padding:1rem;margin-bottom:.8rem}
+.manage-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem}
+.manage-card-title{font-weight:700;color:var(--text);font-size:.95rem}
+.manage-card-loc{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+.manage-card-info{display:flex;gap:.8rem;margin-bottom:.8rem;flex-wrap:wrap}
+.manage-card-price{font-weight:700;color:var(--green);font-size:1rem}
+.manage-card-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.manage-card-actions button{flex:1;min-width:70px;padding:.5rem;border-radius:8px;font-size:.82rem;font-weight:700;cursor:pointer;border:none;transition:opacity .2s}
+.manage-card-actions button:hover{opacity:.85}
+.empty-table{text-align:center;padding:3rem;color:var(--muted);font-size:.9rem}
+
+/* FOOTER */
+footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5rem}
+.footer-in{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:2rem}
+.fl .logo{color:var(--gold2);font-size:1.3rem;margin-bottom:.8rem;display:block;text-decoration:none}
+.fl p{font-size:.85rem;line-height:1.7;max-width:260px}
+.fc h4{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(245,237,214,.7);margin-bottom:.8rem}
+.fc ul{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.fc a{font-size:.83rem;color:rgba(245,237,214,.45);text-decoration:none;transition:color .2s}
+.fc a:hover{color:var(--gold2)}
+.footer-bot{border-top:1px solid rgba(245,237,214,.08);padding-top:1.2rem;display:flex;justify-content:space-between;align-items:center;font-size:.78rem;flex-wrap:wrap;gap:.5rem}
+.footer-bot span{color:var(--gold)}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:999;background:var(--dark);color:#fff;padding:.8rem 1.4rem;border-radius:10px;font-size:.85rem;font-weight:600;transform:translateY(100px);opacity:0;transition:all .3s;border-left:4px solid var(--gold);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s,transform .55s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:800px){
+  nav{padding:.9rem 1.2rem}
+  .search-grid{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+  .modal-grid{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .hero-stats{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="logo">Online<span>Land</span></a>
+  <div class="nav-right">
+    <a href="#listings" class="nav-link">భూములు</a>
+    <a href="#contact" class="nav-link">సంప్రదించండి</a>
+    <button class="btn-admin" onclick="openAdminLogin()">🔐 Admin</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-content">
+    <div class="hero-pill">🌾 తెలంగాణ వ్యవసాయ భూముల పోర్టల్</div>
+    <h1>తెలంగాణ లో<br/><em>వ్యవసాయ భూమి</em><br/>కొనుగోలు చేయండి</h1>
+    <p>32 జిల్లాల్లో ధృవీకరించిన వ్యవసాయ భూములు — నేరుగా యజమాని నుండి, మధ్యవర్తి లేకుండా.</p>
+    <div class="hero-btns">
+      <a href="#listings" class="btn-gold">🔍 భూములు చూడండి</a>
+      <a href="#search" class="btn-ghost">📋 జిల్లా వారీగా వెతకండి</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-n" id="st-total">0</div><div class="hstat-l">మొత్తం భూములు</div></div>
+    <div class="hstat"><div class="hstat-n">32</div><div class="hstat-l">జిల్లాలు</div></div>
+    <div class="hstat"><div class="hstat-n" id="st-available">0</div><div class="hstat-l">అందుబాటులో</div></div>
+    <div class="hstat"><div class="hstat-n">100%</div><div class="hstat-l">ధృవీకరించినవి</div></div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<div class="search-wrap" id="search">
+  <div class="search-box">
+    <div class="search-title">🔍 భూమి వెతకండి</div>
+    <div class="search-grid">
+      <div class="sf">
+        <label>జిల్లా</label>
+        <select id="filterDistrict" onchange="onFilterDistrictChange()">
+          <option value="">అన్ని జిల్లాలు</option>
+        </select>
+      </div>
+      <div class="sf">
+        <label>మండలం</label>
+        <select id="filterMandal" onchange="populateFilterVillages()">
+          <option value="">అన్ని మండలాలు</option>
+        </select>
+      </div>
+      <div class="sf">
+        <label>గ్రామం</label>
+        <select id="filterVillageSelect" style="display:none" onchange="filterListings()"><option value="">అన్ని గ్రామాలు</option></select>
+        <input type="text" id="filterVillage" placeholder="గ్రామం పేరు టైప్ చేయండి" oninput="filterListings()"/>
+      </div>
+      <div class="sf">
+        <label>బడ్జెట్ (లక్షల్లో)</label>
+        <select id="filterBudget">
+          <option value="">అన్ని ధరలు</option>
+          <option value="0-25">₹25 లక్షల వరకు</option>
+          <option value="25-50">₹25L – ₹50L</option>
+          <option value="50-100">₹50L – ₹1 కోటి</option>
+          <option value="100-9999">₹1 కోటి పైన</option>
+        </select>
+      </div>
+      <button class="btn-search" onclick="filterListings()" style="grid-column:1/-1">వెతకండి</button>
+    </div>
+  </div>
+</div>
+
+<!-- LISTINGS -->
+<section class="listings" id="listings">
+  <div class="sec-hd reveal">
+    <div class="sec-tag">🌾 అందుబాటులో ఉన్న భూములు</div>
+    <h2 class="sec-title">వ్యవసాయ భూముల జాబితా</h2>
+    <p class="sec-sub">తెలంగాణ లోని 32 జిల్లాల్లో ధృవీకరించిన భూముల వివరాలు</p>
+  </div>
+  <div class="grid" id="listingsGrid">
+    <div class="empty-state">
+      <div class="es-icon">🌱</div>
+      <p>ఇంకా ఏ భూమి నమోదు కాలేదు.<br/>Admin భూమి వివరాలు upload చేసిన తర్వాత ఇక్కడ కనిపిస్తాయి.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section id="contact" style="padding:4rem 2rem;background:var(--earth)">
+  <div style="max-width:680px;margin:0 auto">
+    <div class="sec-hd reveal">
+      <div class="sec-tag">📞 సంప్రదించండి</div>
+      <h2 class="sec-title">మాతో మాట్లాడండి</h2>
+      <p class="sec-sub">భూమి కొనుగోలు, అమ్మకం లేదా ఏదైనా సందేహాలు ఉంటే మాకు పంపండి</p>
+    </div>
+
+    <div style="background:#fff;border-radius:16px;border:1px solid var(--earth2);padding:2rem;box-shadow:0 6px 30px rgba(30,77,43,.07)" class="reveal">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div class="ff">
+          <label style="display:block;font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.35rem">మీ పేరు *</label>
+          <input type="text" id="cName" placeholder="పేరు రాయండి" style="width:100%;padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--earth);outline:none"/>
+        </div>
+        <div class="ff">
+          <label style="display:block;font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.35rem">Phone నంబర్ *</label>
+          <input type="tel" id="cPhone" placeholder="9XXXXXXXXX" style="width:100%;padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--earth);outline:none"/>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.35rem">విషయం *</label>
+        <select id="cSubject" style="width:100%;padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--earth);outline:none">
+          <option value="">ఎంచుకోండి</option>
+          <option>భూమి కొనుగోలు సహాయం</option>
+          <option>భూమి అమ్మకం నమోదు</option>
+          <option>ధర సమాచారం</option>
+          <option>పట్టా వెరిఫికేషన్</option>
+          <option>ఇతర విషయాలు</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:1.5rem">
+        <label style="display:block;font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.35rem">మీ సందేశం *</label>
+        <textarea id="cMessage" placeholder="మీ సందేహాలు లేదా వివరాలు రాయండి..." rows="4" style="width:100%;padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--earth);outline:none;resize:vertical"></textarea>
+      </div>
+
+      <div style="display:flex;gap:.8rem;flex-wrap:wrap">
+        <button onclick="sendWhatsApp()" style="flex:1;min-width:140px;background:#25D366;color:#fff;border:none;padding:.85rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          💬 WhatsApp పంపండి
+        </button>
+        <button onclick="sendEmail()" style="flex:1;min-width:140px;background:var(--green);color:#fff;border:none;padding:.85rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+          📧 Email పంపండి
+        </button>
+      </div>
+
+      <div id="contactMsg" style="display:none;margin-top:1rem;padding:.7rem 1rem;border-radius:8px;font-size:.85rem;font-weight:600"></div>
+    </div>
+
+    <!-- Direct contact -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem" class="reveal">
+      <a href="https://wa.me/919959731120" target="_blank" style="background:#25D366;color:#fff;padding:1rem;border-radius:12px;text-decoration:none;text-align:center;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
+        💬 నేరుగా WhatsApp చేయండి
+      </a>
+      <a href="tel:9959731120" style="background:var(--green);color:#fff;padding:1rem;border-radius:12px;text-decoration:none;text-align:center;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
+        📞 Phone Call చేయండి
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-in">
+    <div class="footer-top">
+      <div class="fl">
+        <a href="#" class="logo">Online<span>Land</span></a>
+        <p>తెలంగాణ రైతులు మరియు భూమి కొనేవారి కోసం నమ్మకమైన డిజిటల్ వేదిక. 32 జిల్లాల్లో వ్యవసాయ భూముల కొనుగోలు సులభంగా.</p>
+      </div>
+      <div class="fc">
+        <h4>జిల్లాలు</h4>
+        <ul>
+          <li><a href="#">రంగారెడ్డి</a></li>
+          <li><a href="#">మహబూబ్‌నగర్</a></li>
+          <li><a href="#">నాగర్‌కర్నూల్</a></li>
+          <li><a href="#">నారాయణపేట</a></li>
+          <li><a href="#">జోగులాంబ గద్వాల్</a></li>
+        </ul>
+      </div>
+      <div class="fc">
+        <h4>సహాయం</h4>
+        <ul>
+          <li><a href="#contact">మాతో సంప్రదించండి</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+          <li><a href="#" onclick="openAdminLogin();return false">Admin Login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <p>© 2025 <strong>OnlineLand Infra Private Limited</strong>. అన్ని హక్కులు రిజర్వ్ చేయబడ్డాయి.</p>
+      <p>తెలంగాణ రైతుల కోసం <span>❤️</span> తో తయారు చేయబడింది</p>
+    </div>
+  </div>
+</footer>
+
+<!-- PROPERTY MODAL -->
+<div class="modal-overlay" id="propModal" onclick="if(event.target===this)closePropModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closePropModal()">✕</button>
+    <div class="modal-imgs" id="modalImg"></div>
+    <div class="modal-body">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-loc" id="modalLoc"></div>
+      <div class="modal-grid" id="modalGrid"></div>
+      <div class="modal-price" id="modalPrice"></div>
+      <div class="modal-btns" id="modalBtns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="admin-login" id="adminLogin">
+  <div class="login-box">
+    <div style="font-size:2rem;margin-bottom:.5rem">🔐</div>
+    <h2>Admin Login</h2>
+    <p>OnlineLand నిర్వాహక ప్రవేశం</p>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="username"/>
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <div class="login-err" id="loginErr">❌ Username లేదా Password తప్పు</div>
+    <button class="btn-login" onclick="doLogin()">లాగిన్ చేయండి</button>
+    <button class="btn-cancel-login" onclick="closeAdminLogin()">రద్దు చేయండి</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-nav">
+    <div class="admin-logo">OnlineLand Admin <span>నిర్వాహక వేదిక</span></div>
+    <div style="display:flex;gap:.8rem;align-items:center">
+      <span style="font-size:.78rem;color:rgba(255,255,255,.4)" id="adminWelcome"></span>
+      <button class="btn-close-admin" onclick="logoutAdmin()">🚪 Logout</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="admin-tabs">
+      <button class="atab active" id="tab-btn-add" onclick="switchTab('add',this)">➕ భూమి జోడించండి</button>
+      <button class="atab" id="tab-btn-manage" onclick="switchTab('manage',this)">📋 జాబితా నిర్వహణ</button>
+    </div>
+
+    <!-- ADD TAB -->
+    <div id="tab-add">
+      <div class="add-form">
+        <h3 id="formHeading">🌾 భూమి వివరాలు నమోదు చేయండి</h3>
+
+        <!-- Row 1: జిల్లా + మండలం -->
+        <div class="form-grid">
+          <div class="ff req">
+            <label>జిల్లా</label>
+            <select id="fDistrict" onchange="populateMandals()">
+              <option value="">జిల్లా ఎంచుకోండి</option>
+            </select>
+          </div>
+          <div class="ff req">
+            <label>మండలం</label>
+            <select id="fMandal" onchange="populateAdminVillages()">
+              <option value="">ముందు జిల్లా ఎంచుకోండి</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: గ్రామం + సర్వే నంబర్ -->
+        <div class="form-grid">
+          <div class="ff req">
+            <label>గ్రామం</label>
+            <select id="fVillageSelect" style="display:none"><option value="">గ్రామం ఎంచుకోండి</option></select>
+            <input type="text" id="fVillage" placeholder="గ్రామం పేరు రాయండి"/>
+          </div>
+          <div class="ff req">
+            <label>సర్వే నంబర్</label>
+            <input type="text" id="fSurvey" placeholder="ఉదా: 123/A"/>
+          </div>
+        </div>
+
+        <!-- Row 2.5: Property Type -->
+        <div class="form-grid one">
+          <div class="ff req">
+            <label>Property రకం</label>
+            <select id="fPropertyType" onchange="togglePropertyFields()">
+              <option value="">ఎంచుకోండి</option>
+              <option value="agri">🌾 వ్యవసాయ భూమి</option>
+              <option value="plot">🏘️ Open Plot</option>
+              <option value="commercial">🏢 Commercial Land</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2.6: Open Plot Fields (hidden by default) -->
+        <div id="plotFields" style="display:none">
+          <div class="form-grid">
+            <div class="ff">
+              <label>Plot Size (Square Yards)</label>
+              <input type="number" id="fPlotSize" placeholder="ఉదా: 200"/>
+            </div>
+            <div class="ff">
+              <label>Layout పేరు</label>
+              <input type="text" id="fLayoutName" placeholder="ఉదా: Sri Sai Nagar"/>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="ff">
+              <label>Approval</label>
+              <select id="fApproval">
+                <option value="">ఎంచుకోండి</option>
+                <option>DTCP Approved</option>
+                <option>HMDA Approved</option>
+                <option>Gram Panchayat</option>
+                <option>Approved కాదు</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>Facing</label>
+              <select id="fFacing">
+                <option value="">ఎంచుకోండి</option>
+                <option>East Facing</option>
+                <option>West Facing</option>
+                <option>North Facing</option>
+                <option>South Facing</option>
+                <option>North-East Facing</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="ff">
+              <label>Corner Plot</label>
+              <select id="fCornerPlot">
+                <option value="">ఎంచుకోండి</option>
+                <option>Corner Plot ✅</option>
+                <option>Corner Plot కాదు</option>
+              </select>
+            </div>
+            <div class="ff">
+              <label>Plot Number</label>
+              <input type="text" id="fPlotNumber" placeholder="ఉదా: Plot No. 12"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="ff req">
+            <label>ఎకరాలు</label>
+            <input type="number" id="fAcres" placeholder="ఉదా: 3.50" step="0.01" min="0"/>
+          </div>
+          <div class="ff req">
+            <label>మొత్తం ధర (లక్షల్లో ₹)</label>
+            <input type="number" id="fPrice" placeholder="ఉదా: 45.5" step="0.1" min="0"/>
+          </div>
+        </div>
+
+        <!-- Row 4: భూమి రకం + రోడ్డు -->
+        <div class="form-grid">
+          <div class="ff">
+            <label>భూమి రకం</label>
+            <select id="fLandType">
+              <option value="">ఎంచుకోండి</option>
+              <option>నల్ల రేగడి</option>
+              <option>ఎర్ర నేల</option>
+              <option>సారవంతమైన నేల</option>
+              <option>మెట్ట భూమి</option>
+              <option>తరి భూమి</option>
+              <option>గుట్ట భూమి</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>రోడ్డు సౌకర్యం</label>
+            <select id="fRoad">
+              <option value="">ఎంచుకోండి</option>
+              <option>ప్రధాన రోడ్డు పక్కన</option>
+              <option>CC రోడ్డు ఉంది</option>
+              <option>కచ్చా రోడ్డు ఉంది</option>
+              <option>రోడ్డు లేదు</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 5: నీటి సౌకర్యం + Bore -->
+        <div class="form-grid">
+          <div class="ff">
+            <label>నీటి సౌకర్యం</label>
+            <select id="fWater">
+              <option value="">ఎంచుకోండి</option>
+              <option>బోర్ వెల్ ఉంది</option>
+              <option>కాలువ నీరు</option>
+              <option>చెరువు సమీపం</option>
+              <option>బావి ఉంది</option>
+              <option>నీటి సౌకర్యం లేదు</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>విద్యుత్ సౌకర్యం</label>
+            <select id="fElectricity">
+              <option value="">ఎంచుకోండి</option>
+              <option>కరెంట్ కనెక్షన్ ఉంది</option>
+              <option>కరెంట్ లేదు</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 6: పట్టా రకం + సీమ -->
+        <div class="form-grid">
+          <div class="ff">
+            <label>పట్టా రకం</label>
+            <select id="fPattaType">
+              <option value="">ఎంచుకోండి</option>
+              <option>రైతు బంధు పట్టా</option>
+              <option>అసైన్డ్ పట్టా</option>
+              <option>ఇనాం పట్టా</option>
+              <option>ప్రభుత్వ పట్టా</option>
+              <option>ప్రైవేట్ పట్టా</option>
+              <option>పట్టా లేదు</option>
+            </select>
+          </div>
+          <div class="ff">
+            <label>చెట్లు / తోట</label>
+            <select id="fTrees">
+              <option value="">ఎంచుకోండి</option>
+              <option>మామిడి చెట్లు ఉన్నాయి</option>
+              <option>టేకు చెట్లు ఉన్నాయి</option>
+              <option>కొబ్బరి చెట్లు ఉన్నాయి</option>
+              <option>అరటి తోట ఉంది</option>
+              <option>చెట్లు లేవు</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 7: Seller details -->
+        <div class="form-grid">
+          <div class="ff req">
+            <label>Seller పేరు</label>
+            <input type="text" id="fSellerName" placeholder="భూమి యజమాని పేరు"/>
+          </div>
+          <div class="ff req">
+            <label>WhatsApp నంబర్</label>
+            <input type="tel" id="fWhatsApp" placeholder="91XXXXXXXXXX"/>
+          </div>
+        </div>
+
+        <!-- Row 8: Phone + అదనపు వివరాలు -->
+        <div class="form-grid">
+          <div class="ff">
+            <label>Phone నంబర్</label>
+            <input type="tel" id="fPhone" placeholder="9XXXXXXXXX"/>
+          </div>
+          <div class="ff">
+            <label>అదనపు వివరాలు</label>
+            <input type="text" id="fDesc" placeholder="ఏదైనా ముఖ్యమైన విషయం..."/>
+          </div>
+        </div>
+
+        <!-- Row 9: Photos -->
+        <div class="form-grid one" style="margin-top:.8rem">
+          <div class="ff">
+            <label>భూమి ఫోటో</label>
+            <div class="photo-upload" onclick="document.getElementById('fPhotos').click()">
+              <input type="file" id="fPhotos" accept="image/*" multiple onchange="handlePhotos(event)" style="display:none"/>
+              <div class="pu-icon">📷</div>
+              <p>ఇక్కడ నొక్కి ఫోటో తీసుకోండి</p>
+              <small>JPG, PNG మద్దతు ఉంది • గరిష్టంగా 5 ఫోటోలు</small>
+            </div>
+            <button type="button" onclick="document.getElementById('fPhotos').click()" style="width:100%;margin-top:.5rem;padding:.75rem;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:.95rem;font-weight:700;cursor:pointer;">
+              📷 ఫోటో తీసుకోండి / Gallery నుండి ఎంచుకోండి
+            </button>
+            <div class="photo-previews" id="photoPreviews"></div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn-save" onclick="saveListing()">✅ సేవ్ చేయండి</button>
+          <button class="btn-reset-f" onclick="resetForm()">🔄 క్లియర్</button>
+        </div>
+        <div class="form-msg" id="formMsg"></div>
+      </div>
+    </div>
+
+    <!-- MANAGE TAB -->
+    <div id="tab-manage" style="display:none">
+      <div id="manageCards"></div>
+      <div class="empty-table" id="manageEmpty">ఇంకా ఏ భూమి నమోదు కాలేదు</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══ DATA ═══
+const DISTRICTS = {
+  "అదిలాబాద్":["అదిలాబాద్","బాజేపల్లి","భైంసా","బోత్","చెన్నూర్","గుడిహత్నూర్","ఇచ్చోడ","జైనూర్","కౌలాస్","నేరడిగొండ","సిర్పూర్-యు","తామ్సి","ఉట్నూర్"],
+  "కొమురంభీం ఆసిఫాబాద్":["ఆసిఫాబాద్","బేజ్జూర్","దహేగావ్","జైనూర్","కాగజ్‌నగర్","కేరమేరి","లక్సెట్టిపేట","తిర్యాని","వాంకిడి"],
+  "మంచిర్యాల":["మంచిర్యాల","బెల్లంపల్లి","చెన్నూర్","దండేపల్లి","హాజీపూర్","జన్నారం","కాసిపేట","మందమర్రి","నాసపూర్","శ్రీరాంపూర్","వేమనపల్లి"],
+  "నిర్మల్":["నిర్మల్","ఆర్మూర్","భీంపూర్","దిలావర్‌పూర్","కడెం","ఖానాపూర్","లోకేశ్వర్","మామడ","ముధోల్","నాగిపూర్","సారంగపూర్"],
+  "నిజామాబాద్":["నిజామాబాద్ అర్బన్","నిజామాబాద్ రూరల్","బోధన్","ఎల్లారెడ్డి","జక్రాన్‌పల్లి","కోటగిరి","మోర్తాడ్","నందిపేట","నిజాంసాగర్","ఉప్పల్","వర్ని","యెడపల్లి"],
+  "జగిత్యాల":["జగిత్యాల","ధర్మపురి","గోవిందరావుపేట","కాటారం","కొడిమ్యాల","మల్లాపూర్","మేతుపల్లి","రాయికల్","కోరుట్ల"],
+  "కరీంనగర్":["కరీంనగర్","చొప్పదండి","గంభీరావుపేట","హుజురాబాద్","జంగావ్","కొత్తపల్లి","మంథని","మానకొండూర్","రామడుగు","సుల్తానాబాద్","వేముల వాడ"],
+  "పెద్దపల్లి":["పెద్దపల్లి","ఎలిగేడు","కదంబంపూర్","మంథని","రామగుండం","సుల్తానాబాద్"],
+  "జయశంకర్ భూపాలపల్లి":["భూపాలపల్లి","ఎట్టూర్నాగారం","కాటారం","మహదేవపూర్","మంగపేట","మొల్లగూడెం","పాలిమేల","రేఘన్","వర్ధన్నపేట"],
+  "రాజన్న సిరిసిల్ల":["సిరిసిల్ల","ఎలిగేడు","గంభీరావుపేట","ఇల్లంతకుంట","కమలాపూర్","మేడారం","వేముల వాడ"],
+  "వరంగల్ అర్బన్":["వరంగల్","హసన్‌పర్తి","కమలాపూర్","నర్సంపేట","పర్కల్","రాయపర్తి","శయంపేట","వర్ధన్నపేట"],
+  "వరంగల్ రూరల్":["మహ్మదాబాద్","నర్సంపేట","పర్కల్","రాయపర్తి","శయంపేట","వర్ధన్నపేట"],
+  "హనుమకొండ":["హనుమకొండ","జనగాం","కొడకందల","పర్కల్","రఘునాథపల్లి","శయంపేట"],
+  "జనగాం":["జనగాం","చేర్యాల","కొడకందల","నర్సంపేట","పాలకుర్తి","రఘునాథపల్లి","స్టేషన్ ఘనపూర్","తర్సపల్లి"],
+  "సంగారెడ్డి":["సంగారెడ్డి","అందోల్","కందుకూర్","మాకల్","మనూర్","నర్సాపూర్","పాతన్‌చెరు","జహీరాబాద్"],
+  "మేడక్":["మేడక్","అందోల్","చేగుంట","దౌల్తాబాద్","కౌడిపల్లి","మనూర్","నర్సాపూర్","రఘునాథపల్లి","రామాయంపేట","శివ్వంపేట","తూప్రాన్"],
+  "సిద్దిపేట":["సిద్దిపేట","చేర్యాల","దుబ్బాక","ఎర్రవెల్లి","గజ్వేల్","హుస్నాబాద్","కొండపాక","మర్రిగూడ","తొగుట","వేల్పూర్"],
+  "యాదాద్రి భువనగిరి":["భువనగిరి","అతియాల్‌గూడ","చందూర్","చౌటుప్పల్","హాలియా","మొత్కూర్","నడిగూడెం","రాజాపేట","తుంగతుర్తి"],
+  "మేడ్చల్ మల్కాజ్‌గిరి":["మేడ్చల్","ఘట్‌కేసర్","కేసముద్రం","మల్కాజ్‌గిరి","శామీర్‌పేట","తుర్కయంజాల్"],
+  "రంగారెడ్డి":["చేవెళ్ళ","మోయినాబాద్","శంకర్‌పల్లి","గాంధీపేట","నందిగామ","ఇబ్రహీంపట్నం","హయత్‌నగర్","అబ్దుల్లాపూర్‌మెట్","యాచారం","మంచాల్","మహేశ్వరం","రాజేంద్రనగర్","సారూర్‌నగర్","బాలాపూర్","శంషాబాద్","సేరిలింగంపల్లి","మద్గుల్","కందుకూర్","కొండూర్","కేశంపేట్","కొత్తూర్","జిల్లెడ్ చౌడర్‌గూడెం","కడ్తాల్","శాబాద్","ఫారూఖ్‌నగర్","అమంగల్","తలకొండపల్లి"],
+  "వికారాబాద్":["వికారాబాద్","బషీరాబాద్","చేవెళ్ళ","దౌల్తాబాద్","ధారూర్","కొడంగల్","మర్‌కల్","మోమినిపేట్","నర్వ","పడ్కల్","పూడూర్","తాండూర్","యాలాల"],
+  "నల్గొండ":["నల్గొండ","అలేరు","భువనగిరి","చండూర్","దేవరకొండ","నాగార్జున సాగర్","నిడమనూర్","పిల్లలమర్రి","రాజాపేట","తిరుమలగిరి"],
+  "సూర్యాపేట":["సూర్యాపేట","అలేరు","చందూర్","దమ్మపేట","హాలియా","నాగార్జున సాగర్","నిడమనూర్","తుంగతుర్తి"],
+  "ఖమ్మం":["ఖమ్మం","అషియాల","బయ్యారం","ఎర్రుపాలెం","గర్ల","ఇల్లెందు","కొత్తగూడెం","మధిర","పాల్వంచ","సత్తుపల్లి","వెలేరుపాడు","వైరా"],
+  "భద్రాద్రి కొత్తగూడెం":["కొత్తగూడెం","అశ్వాపురం","బయ్యారం","చర్ల","దమ్మపేట","ఇల్లెందు","కూనవరం","మణుగూరు","పాల్వంచ","తల్లాడ","వెంకటాపూర్"],
+  "మహబూబాబాద్":["మహబూబాబాద్","కేసముద్రం","మహ్మదాబాద్","మారుపాక","నర్సంపేట","పాలకుర్తి","తోర్రూర్","వేముల వాడ"],
+  "మహబూబ్‌నగర్":["మహబూబ్‌నగర్ అర్బన్","మహబూబ్‌నగర్ రూరల్","అద్దాకల్","బాలానగర్","భూత్పూర్","చిన్నచింతకుంట","దేవర్కద్ర","గాన్‌దీద్","హన్వాడ","జడ్చర్ల","కోయిల్‌కొండ","మిద్జిల్","మూసాపేట్","నవాబ్‌పేట్","రాజాపూర్","కౌకుంట్ల"],
+  "నాగర్‌కర్నూల్":["నాగర్‌కర్నూల్","బిజినపల్లి","తాడూర్","థిమ్మాజిపేట","తెల్కాపల్లి","కొల్లాపూర్","పెంట్లవెల్లి","కొడైర్","పదర","పెద్దకొత్తపల్లి","అచంపేట్","అమ్రాబాద్","లింగాల","బాల్మూర్","ఉప్పునుంతల","కల్వకుర్తి","వేల్దండ","వంగూర్","చరకొండ","ఉర్కొండ"],
+  "వనపర్తి":["వనపర్తి","పెద్దమందడి","పంగల్","పెబ్బెయిర్","వీపనగండ్ల","కొత్తకోట","గోపాల్‌పేట","ఘన్‌పూర్","అత్మకూర్","అమర్‌చింత","మదనాపూర్","రేవెల్లి","చిన్నంభావి","శ్రీరంగాపూర్","రాజాపూర్"],
+  "జోగులాంబ గద్వాల్":["అలంపూర్","ధారూర్","గద్వాల్","ఘట్టు","ఈజా","ఇటిక్యాల","కలూర్ తిమ్మనదొడ్డి","మల్దకల్","మానోపాడ్","రాజోలి","ఉండవెల్లి","వద్దేపల్లి"],
+  "నారాయణపేట":["నారాయణపేట","దమర్గిద్ద","ధన్వాడ","కోస్గి","కృష్ణ","మద్దూర్","మాగనూర్","మక్తల్","మారికల్","నార్వ","ఉట్కూర్","గుండుమాల్","కొత్తపల్లె"],
+  "సిద్దిపేట (వికారాబాద్)":["ఆమ్నాపూర్","కొల్లాపూర్","మర్‌కల్","మోమినిపేట్","నర్వ","పడ్కల్"]
+};
+
+// ═══ VILLAGES DATA ═══
+const VILLAGES = {
+  "ఉట్కూర్":["ఉట్కూర్","అమీన్‌పూర్","ఔస్లోనిపల్లె","బిజ్వార్","చిన్నపోర్ల","ఎదివెల్లి","కొల్లూర్","మాగ్దంపూర్","మల్లెపల్లె","నిడుగుర్తి","ఓబులాపూర్","పగిడిమర్రి","పాతపల్లె","పెద్దజాతరం","పెద్దపోర్ల","పుల్మామిడి","సమిస్తాపూర్","థిప్రాసపల్లె","వల్లంపల్లె"],
+  "మక్తల్":["మక్తల్","అంకెన్‌పల్లి","అనుగొండ","భగవాన్‌పల్లి","భూత్పూర్","చిన్నగోపాల్‌పూర్","చిత్యాల్","దాదన్‌పల్లి","దసర్‌దొడ్డి","గాదంపల్లి","గొల్లపల్లి","గుడిగండ్ల","గుర్లపల్లి","జాక్లైర్","జౌలాపూర్","కచ్వార్","కర్ని","కత్రేవ్‌పల్లె","ఖానాపూర్","కొండదొడ్డి","మదన్‌పల్లి","మద్వార్","మంతంగోడ్","మూసలైపల్లె","ముస్తిపల్లె","నర్సిరెడ్డిపల్లి","పంచదేవుపాడ్","పంచలింగాల","పారేవుల","పాస్పుల్","రుద్రసముద్రం","సమన్‌పల్లి","సంగంబండ","సత్యవార్","సోమేశ్వర్‌బండ","తెకులపల్లి","ఉప్పర్‌పల్లి","వనైకుంట","యేర్సన్‌పల్లి"],
+  "కృష్ణ":["కృష్ణ","ఐనాపూర్","అలంపల్లె","చెగుంట","గుదెబల్లూర్","గురుజాల్","హిందూపూర్","ఖాన్‌దొడ్డి","కున్సి","కుసుమూర్తి","ముద్మల్","మురహర్‌దొడ్డి","తంగడిగి"],
+  "మాగనూర్":["మాగనూర్","అమ్మాపల్లి","భైరంపల్లి","గురురాలింగంపల్లి","కొల్పూర్","కొత్తపల్లె","మండిపల్లి","నెరడ్‌గామ్","ఉజ్జెల్లి","వడ్వాట్","వార్కూర్"],
+  "దమర్గిద్ద":["అన్నసాగర్","అశన్‌పల్లె","అయ్యవారిపల్లె","బాపన్‌పల్లె","చకలవారిపల్లె","దామరగిద్ద","దేశాయిపల్లె","గడిముంకన్‌పల్లె","గడ్ప","కంసానిపల్లె","కందన్‌పల్లె","కనుకుర్తి","క్యాతన్‌పల్లె","లక్ష్మీపూర్","లింగారెడ్డిపల్లె","లోకుర్తి","మాల్‌రెడ్డిపల్లె","మొగలమడ్క","నర్సాపూర్","పిద్దంపల్లె","సజ్నాపూర్","సుద్దవంద","ఉద్మాల్‌గిద్ద","ఉల్లిగుండం","వతుగుండ్ల","విత్తలాపూర్","యెల్సన్‌పల్లె"],
+  "నారాయణపేట":["నారాయణపేట","నారాయణపేట్ NP","భైరంకొండ","పెరాపల్ల","ఏక్లాస్‌పూర్","కొత్తపల్లె","సింగార్","జాజాపూర్","జలాల్‌పూర్","అప్పకాపల్లె","సెరన్‌పల్లె","చిన్నజాతరం","అమ్మిరెడ్డిపల్లె","అప్పిరెడ్డిపల్లె","బోయిన్‌పల్లె","అంత్వార్","అయ్యవారిపల్లె","కొల్లంపల్లె","కొతకొండ","నరసప్పాపల్లె","అభంగాపూర్","లింగంపల్లె","తిరుమలాపూర్"],
+  "నార్వ":["నర్వ","బెక్కరాపల్లె","జక్కన్నపల్లె","జంగంరెడ్డిపల్లె","కల్వాల్","కొత్తపల్లి","కుమారలింగంపల్లె","లక్కర్‌దొడ్డి","లంకల్","నాగిరెడ్డిపల్లి","పాతర్‌చేడ్","పెద్దకడ్మూర్","రాయికోడె","రాజుపల్లి","రాంపూర్","సీపూర్","ఉండెకోడె","యంకి","యెల్లంపల్లి"],
+  "ధన్వాడ":["ధన్వాడ","బుద్దమర్రి తండా","చీకర్లగడ్డ తండా","చెర్లపల్లి","దుదుగు తండా","గోతూర్","గున్‌ముక్ల","హన్మన్‌పల్లె","కంసన్‌పల్లె","కిస్తాపూర్","కొండాపూర్","కొండ్రోనిపల్లి","మాదిగెలముల తండా","మండిపల్లె","మంత్రోనిపల్లి","పాత తండా","పాతపల్లె","రామకిస్తయ్యపల్లె","తొల్లగుట్ట తండా","యెమ్నోనిపల్లి"],
+  "మారికల్":["మరికల్","అప్పంపల్లి","బుద్దేగని తండా","చిత్తానూర్","ఏక్లాస్‌పూర్","ఇబ్రహీంపట్నం","జిన్నారం","కన్మనూర్","మద్వార్","పల్లెగడ్డ","పాస్పుల","పెద్దచింతకుంట","పూసల్‌పాడ్","రాకొండ","తీలైర్","వెంకటాపూర్","యెలిగండ్ల"],
+  "కోస్గి":["కోస్గి","బల్వన్‌పల్లి","బిజ్జారం","చంద్రవంచ","చెన్నారం","కదంపల్లె","కొత్తపల్లె","మీర్జాపూర్","ముక్తిపాడ్","ముంగిమల్ల","ముష్రీఫా","నాచారం","PC తండా","సర్జఖాన్‌పేట్","తోగాపూర్"],
+  "మద్దూర్":["మద్దూర్","అచమ్మపల్లి","అప్పిరెడ్డిపల్లె","చాన్వర్","చెంద్ర్య నాయక్ తండా","చెన్నారెడ్డిపల్లి","చింతల్‌దిన్నె","దామగాన్‌పురం","దమ్ల తండా","దొరెపల్లె","హన్మ్య నాయక్ తండా","జాదవరావు పల్లి తండా","జాదవరావుపల్లి","కాజీపురం","కిసాన్‌నగర్","లక్కాయిపల్లి","మేదికుంట తండా","మొమినాపూర్","నాగిరెడ్డిపల్లి","నందిపాడ్","పల్లెగడ్డ తండా","పల్లెర్ల","పర్సాపూర్","పెద్రిపహాడ్","పొర్ల కుంట తండా","సీత్య నాయక్ తండా"],
+  "చేవెళ్ళ":["చేవెళ్ళ","అల్లవాడ","అలూర్","అంతారం","బాస్తేపూర్","చాన్‌వెల్లి","దేవరంపల్లి","ఎర్లపల్లి","గొల్లగుడ","గొల్లపల్లి","గుండల్","హస్తేపూర్","కమ్మెట","ఖానాపూర్","కౌకుంట్ల","కుమ్మెర","మిర్జాగుడ","ముడిమియాల్","నాంచెరు","న్యాలత","రావులపల్లి ఖుర్ద్","రెగడిఘనాపూర్","సింగప్పగుడ","తల్లారం","తంగడ్‌పల్లి","యెంకేపల్లి"],
+  "మోయినాబాద్":["మొయినాబాద్","అమదాపూర్","అప్పారెడ్డిగుడ","బాకారం జాగీర్","చందానగర్","చిన్న మంగళారం","ఎల్కాగుడ","కనకమామిడి","కాషీంభౌలి","కేత్రెడ్డిపల్లె","మేడిపల్లి","మొతుకుపల్లి","నాగిరెడ్డిగుడ","నక్కలపల్లె","కుతుబుద్దీన్‌గుడ","రెడ్డిపల్లి","శ్రీరామ్‌నగర్","తొల్కట్ట","వెంకటాపూర్","యేత్బర్‌పల్లి"],
+  "శంకర్‌పల్లి":["శంకరపల్లి","నర్సింగి","అలంఖాన్‌గుడ","అంతప్పగుడ","చందిప్ప","ధోబీపేట","దొంతన్‌పల్లి","గజులగుడ","గొపోలారం","ఇర్రికుంట తండా","కొండకల్","కొత్తపల్లె","లక్ష్మారెడ్డిగుడ","మహారాజ్‌పేట","మసానిగుడ","మొకిల","మొకిల తండా","పర్వేద","పిల్లిగుండ్ల","ప్రొద్దటూర్","రావులపల్లె కలాన్","సంకేపల్లి కల్సా","సేరిగుడ","తంగటూర్","యెల్వార్తి","యెర్వగుడ"],
+  "గాంధీపేట":["గాంధీపేట","వట్టినాగులపల్లె","ఖానాపూర్","బైరాగిగుడ","గందంగుడ","హైదర్‌శకోటి","పీరంచేరు","నార్సింగి","కోకాపేట","మంచిరేవుల","మాక్తా కౌసరాలి","బంద్లగూడ జాగీర్","జానిబేగం","హిమాయత్‌సాగర్","సికందర్‌గుడ"],
+  "నందిగామ":["నందిగామ","ఎడులపల్లె","మమిడిపల్లె","చేగూర్","వీర్లపల్లె","మోహినుద్దీన్‌గుడ","కుమ్మరిగుడ","అంతిరెడ్డిగుడ","తిమ్మాపూర్","మాధాపూర్","రాంపూర్","పాపిరెడ్డిగుడ"],
+  "ఇబ్రహీంపట్నం":["ఇబ్రహీంపట్నం","పోచారం","యెలిమినేడు","తడ్లకల్వ","యెర్రకుంట","తుర్కగుడ","కప్పాపహాడ్","తూలేకలాన్","కొంగర కలాన్","అదిబట్ల","బొంగ్లూర్","చింతపల్లెగుడ","రాందాస్‌పల్లె","ఇబ్రహీంపట్నం ఖల్సా","ఇబ్రహీంపట్నం బాగత్","మంగళపల్లె","ఫిరోజ్‌గుడ","రాఘవాపూర్","సాతమారి","మహాంఖలి నగర్"],
+  "హయత్‌నగర్":["హయత్‌నగర్","అన్మగల్","బాగ్ హయత్‌నగర్","ఖల్సా హయత్‌నగర్","సాహెబ్‌నగర్ కలాన్","సాహెబ్‌నగర్ ఖుర్ద్","కల్వంచ","డైర","బందరావిర్యాల","అక్బర్జా","బాల్జగుడ","పోచంపల్లె వాడ","ఓమర్‌ఖాన్‌డైర","సుర్మాయిగుడ","లస్కర్‌గుడ","ఇనాంగుడ","అబ్దుల్లాపూర్","కవాడిపల్లె","బతాసింగారం","పిగిలిపూర్","మాజిద్‌పూర్","సాగర్‌పంప","గుంటపల్లె","అనజ్‌పూర్","హతిగుడ","తట్టిఅన్నారం","తట్టిఖానా","మరిపల్లె"],
+  "అబ్దుల్లాపూర్‌మెట్":["అబ్దుల్లాపూర్","అక్బర్జా","అనజ్‌పూర్","బచారం","బాలిజగుడ","బందరావిర్యాల","బతాసింగారం","పిగిలిపూర్","డైర","గుంటపల్లె","ఇనాంగుడ","కవాడిపల్లె","లస్కర్‌గుడ","మాజిద్‌పూర్","ఓమర్‌ఖాన్‌డైర","కోహేడ","కుంట్లూర్","హతిగుడ","పసుమామల","పెద్దా అంబర్‌పేట","పోచంపల్లె వాడ","తట్టిఅన్నారం","తట్టిఖానా","మరిపల్లె","గవ్రేల్లి","మన్నేగుడ","ముంగనూర్","తుర్కాయంజాల్"],
+  "యాచారం":["యాచారం","చావర్","ఖాన్‌పూర్","తుంకీ ఖల్సా","తుంకీ మక్తా","బాతుల్‌పూర్","ఇస్లాంపూర్","ఉప్పల్","నాగిరెడ్డిగుడ","బుచ్చిరెడ్డిగుడ","యాచారం ఖల్సా","మంగలి","నడిమిపల్లె","హిందూపూర్","మహేశ్వరం"],
+  "మంచాల్":["మంచాల్","హర్సింగాపూర్","నాగార్జున సాగర్","తెలంగ్‌పల్లి","దేవానాపల్లె","కాల్వాకుర్తి","మోగుళ్ళపల్లె","నందిగామ","బొంగ్లూర్","పెద్ద అంబర్‌పేట","కర్కాల్","కోత్గూడెం"],
+  "మహేశ్వరం":["మహేశ్వరం","తిమ్మాపూర్","గడ్డంపేట","కొండాపూర్","ఉప్పల్","రాంపూర్","నాగిరెడ్డిపల్లె","తుక్కుగుడ","గుండ్లపోచంపల్లి","పోచంపల్లి","దేవర్యంజాల్"],
+  "రాజేంద్రనగర్":["రాజేంద్రనగర్","గంగూర్తి","ఖానాపూర్","వట్టినాగులపల్లె","కోకాపేట","గాంధీపేట","నార్సింగి","పుప్పల్‌గుడ","మాక్తా కౌసరాలి","మానికొండ ఖల్సా","మానికొండ జాగీర్","నల్లగండ్ల","రాయ్‌దుర్గ్"],
+  "సారూర్‌నగర్":["సారూర్‌నగర్","బాలాపూర్","మీర్‌పేట","జల్పల్లి","బాదంపేట","పెద్దా అంబర్‌పేట","బంద్లగూడ జాగీర్","తుక్కుగుడ","తుర్కాయంజాల్"],
+  "బాలాపూర్":["బాలాపూర్","చిప్పల్‌పల్లె","ముర్లీనగర్","ధన్నారం","పులుమామిడి","కుఫర్‌చంద్‌గుడ","జైత్వారం ఖల్సా","జైత్వారం మక్తా","గఫూర్‌నగర్","హాజీపల్లె","మురహరిపల్లె","కందుకూర్","పోచంపల్లి"],
+  "శంషాబాద్":["శంషాబాద్","ఘట్కేసర్","కొర్రెముల్","బాడే సాహెబ్‌గుడ","ఎడులాబాద్","మాధారం","తుకర్‌జమాల్","తుర్కాయంజాల్","కమ్మాగుడ","రాంపూర్","ముచ్చెర్ల","మంగళ్‌పూర్"],
+  "సేరిలింగంపల్లి":["సేరిలింగంపల్లి","నానక్రాంగుడ","రాయ్‌దుర్గ్ ఖల్సా","రాయ్‌దుర్గ్ నవ్‌ఖల్సా","హఫీజ్‌పేట","మియాపూర్","నాలగండ్ల","కొండాపూర్","మాధాపూర్","గచ్చిబౌలి","గోపన్‌పల్లె","ఇజ్జత్‌నగర్","కొత్తగుడ"],
+  "మద్గుల్":["మద్గుల్","అమంగల్","చిత్తాపూర్","నాగిరెడ్డిపల్లె","కందుకూర్","మహేశ్వరం","పోచంపల్లి","నందిగామ","గవ్రేల్లి","తలకొండపల్లి"],
+  "కందుకూర్":["కందుకూర్","చిప్పల్‌పల్లె","ముర్లీనగర్","ధన్నారం","పులుమామిడి","కుఫర్‌చంద్‌గుడ","జైత్వారం ఖల్సా","జైత్వారం మక్తా","గఫూర్‌నగర్","హాజీపల్లె","నెడ్నూర్","గుడూర్","పుల్మామిడి","మంఖల్","రాయల్‌సీమ","కోత్గూడ","బోడుపాల్","కర్మంఘాట్","రంగారెడ్డి","శేరిలింగంపల్లి","జల్పల్లి","మీర్‌పేట","బాదంపేట"],
+  "కొండూర్":["కొండూర్","బంజారా హిల్స్","మైలారం","నారాయణగుడ","పట్టాన్‌చెరు","ఇస్నాపూర్","గజ్వేల్","ఎడులాపాయ","కురులూర్","కాగజ్‌నగర్","నడిమిపల్లె","ముత్తాయంపేట","కొత్తపల్లె","చేవెళ్ళ","తోగటపల్లె"],
+  "కేశంపేట్":["కేశంపేట్","అమాన్‌గల్","బలపనూర్","బోడన్‌పల్లె","చింతపేట","దుద్డేడ","ఎర్రగడ్డ","గర్లదిన్నె","హర్నీనగర్","ఇంటర్‌నేషనల్ ఎయిర్‌పోర్ట్","జల్పల్లి","కర్కనపల్లె","కేశంపేట్ ఖల్సా","కేశంపేట్ మక్తా","కోకాపేట్","మండల్","పెద్దపల్లె","పోచంపల్లె","రాచకొండ","సంగారెడ్డి","తెల్లాపూర్","తుంబల్","ఉప్పల్"],
+  "కొత్తూర్":["కొత్తూర్","కుమ్మరిగుడ","ముచ్చెర్ల","నందిగామ","తిమ్మాపూర్","బోదుపాల్","చేగూర్","ఎడులపల్లె","మామిడిపల్లె","వీర్లపల్లె"],
+  "జిల్లెడ్ చౌడర్‌గూడెం":["జిల్లెడ్ చౌడర్‌గూడెం","బంజారాపల్లె","చక్రాల","దర్మాపూర్","ఎల్లారెడ్డిగూడ","ఫరూఖ్‌నగర్","గోవిందాపూర్","హసన్‌పర్తి","జడ్చర్ల","కాళేశ్వరం","కొండాపూర్","మక్తల్","పెద్దవూర","రాయపల్లె","తేల్లపూర్"],
+  "కడ్తాల్":["కడ్తాల్","అమంగల్","బాలాపూర్","చేగూర్","చిత్తాపూర్","దేవరకొండ","ఎర్రగడ్డ","గండిపేట","హసన్‌పర్తి","ఇబ్రహీంనగర్"],
+  "శాబాద్":["శాబాద్","అల్మాస్‌గూడ","అమంగల్","చండ్రాయిపల్లె","దాసరిపల్లె","దేవర్కొండ","ఘన్‌పూర్","హసన్‌పల్లె","జగ్గారెడ్డిగూడ","కడ్తాల్","కమ్ముర్తి","మద్గల్","మార్పల్లె","నారాయణగూడ","పెద్దవూర","రాజారెడ్డిగూడ","శాబాద్ ఖల్సా","శాబాద్ మక్తా","తలకొండపల్లి","వట్టినాగులపల్లె"],
+  "ఫారూఖ్‌నగర్":["ఫారూఖ్‌నగర్","బుచ్చిగూడ","చేతన్‌పల్లె","దూస్కల్","గోవిందాపూర్","హాజీపల్లె","జడ్చర్ల","కొడ్డన్నగూడ","కోత్గూడ","కుమారిగూడ","మర్కపూర్","నల్లచెరువు","రాయపల్లె","సూర్యారావుగూడ","తేల్లపూర్","వేలిగేర్ల"],
+  "అమంగల్":["అమంగల్","చింతలపేట","దాసరిపల్లె","ఎర్రగడ్డ","గల్వేల్","ఘన్‌పూర్","జగ్గారెడ్డిగూడ","కడ్తాల్","కమ్ముర్తి","మర్కపూర్","నల్లచెరువు","నారాయణగూడ","పెద్దవూర","రాజారెడ్డిగూడ","సల్కర్","తలకొండపల్లి"],
+  "తలకొండపల్లి":["తలకొండపల్లి","అమంగల్","చింతలపేట","దాసరిపల్లె","దేవర్కొండ","ఎర్రగడ్డ","గల్వేల్","హసన్‌పల్లె","జగ్గారెడ్డిగూడ","కడ్తాల్","కమ్ముర్తి","మద్గల్","నల్లచెరువు","నారాయణగూడ","పెద్దవూర","రాజారెడ్డిగూడ","శాబాద్","సల్కర్","తలకొండపల్లి ఖల్సా","తలకొండపల్లి మక్తా","వట్టినాగులపల్లె","వేలిగేర్ల","జిల్లెడ్‌పల్లె","గోవిందాపూర్","బంజారాపల్లె","చక్రాల","దర్మాపూర్","ఎల్లారెడ్డిగూడ"],
+  "అద్దాకల్":["అద్దాకల్","బాలేదుపల్లె","చిన్నముంగలచేడు","గుడిబండ","కందూర్","కన్మనూర్","కటావరం","ముత్యాలంపల్లె","పెద్దముంగలచేడు","పొన్నకల్","రాచల","శఖాపూర్","థిమ్మాయిపల్లె","వర్ణె","కొమిరెడ్డిపల్లి"],
+  "బాలానగర్":["అప్పాజిపల్లె","బాలానగర్","బొడగుట్ట తండా","బొడజనంపేట","బిల్డింగ్ తండా","చెన్నంగుల గడ్డ తండా","చిన్నరెవల్లి","చింతకుంట తండా","ఈదమ్మ గడ్డ తండా","గంగాధర్‌పల్లి","గౌతాపూర్","గుండెడ్","హేమాజీపూర్","జాలుగడ్డ తండా","జీడిగుట్ట తండా","కేతిరెడ్డిపల్లి","మాచారం","మన్యాగూడెం తండా","మేడిగడ్డ తండా","మొదంపల్లి","మొత్తిఘనాపూర్","నమ్య తండా","నందారం","నెలబండ తండా","నెరెల్లపల్లి","పాలుగుమీడి తండా","పెద్దబాయి తండా","పెద్దాయిపల్లి","పెద్దరెవల్లి","పోచమ్మగడ్డ తండా","సురారం","తిరుమలగిరి","ఉదిత్యాల్ A","వైల్‌కుంట తండా","వెరన్నపల్లి","వుటకుంట తండా","యేదుగుట్టల తండా"],
+  "జడ్చర్ల":["జడ్చర్ల","అలూర్","అల్వాన్‌పల్లి","బందమీడిపల్లి","బురుగుపల్లి","చెర్లపల్లి","చిన్న అదిరాల","చిన్నపల్లి","చిత్తెబొయినపల్లి","దేవునిగుట్ట తండా","ఎర్లపల్లి","ఎక్వైపల్లి","గంగాపూర్","గొల్లపల్లి","గొపులాపూర్","ఖానాపూర్","కిష్టంపల్లి","కిష్టారం","కొడగల్","కొల్లోని","మర్ల తండా","కొండెడ్","కొత తండా","కుర్వగడ్డపల్లి","కుర్వపల్లి","లక్ష్మీనాయక్ తండా","లింగంపేట్","మచారం","మల్లెబొయినపల్లి","మర్రిచెట్టు తండా","మాతుబంద తండా","నర్సురుల్లాబాద్","నస్రుల్లాబాద్ తండా","నెక్కొండ","నెలబంద తండా","పెద్ద అదిర్యాల","పెద్ద తండా","పెద్దపల్లి","పోచమ్మ గడ్డ తండా","పోలేపల్లి","రామస్వామి గుట్ట తండా","శంకరయ్యపల్లి తండా","శికార్గానిపల్లి","తంగెల్లపల్లి","తుపుడగడ్డ తండా","ఉదందాపూర్","వల్లూర్"],
+  "భూత్పూర్":["భూత్పూర్","హస్నాపూర్","అమిస్తాపూర్","తాడ్పార్తి","కొత్తూర్","కర్వేన","కొతమొల్గర","గోపాలపూర్ ఖుర్ద్","పొతులమడుగు","అన్నసాగర్","తాడికొండ","రావల్పల్లె","కప్పెట","పాతమొల్గర","మద్దిగట్ల","యెల్కిచర్ల"],
+  "చిన్నచింతకుంట":["చిన్నచింతకుంట","అల్లీపూర్","అమ్మాపూర్","బంద్రేపల్లె","దమగ్నాపూర్","ఎదులాపూర్","ఫరీద్‌పూర్","గుదూర్","కురుమూర్తి","లక్ష్మీదేవిపూర్","లాల్‌కోట","మద్దూర్","నెల్లికొండి","పల్లమర్రి","సీతారాంపేట","ఉండ్యాల","వడ్డెమాను"],
+  "దేవర్కద్ర":["దేవరకద్ర","అజీలాపూర్","బస్వైపల్లె","బస్వాపూర్","బొల్లారం","చిన్నరాజమూర్","డొకూర్","గడ్డెగుడెం","గోపన్‌పల్లె","గుడిబండ","గురకొండ","హాజీలాపూర్","జీనుగురాల","లక్ష్మీపల్లె","నాగారం","నర్లోనికుంట","పెద్దరాజమూర్","వీరనాయక్ తండా","వెంకటైపల్లె"],
+  "గాన్‌దీద్":["గండీడ్","కాప్లాపూర్","వెన్నచెడ్","జిన్నారం","చెల్మిల్ల","సలార్‌నగర్","పెద్దవర్వల్","చిన్నవర్వల్","రుసంపల్లె","బైస్‌పల్లె","రెడ్డిపల్లె","సల్కెర్‌పేట్","గోవిందపల్లె","పాగ్డియాల్","బల్సుల్‌గొండ","కొండాపూర్","మన్సూర్‌పల్లె","కొమ్‌రెడ్డిపల్లె","నాంచెర్ల","గడ్రియల్","చౌడర్‌పల్లె","మంగంపేట్","ముఖర్లాబాద్","జులాపల్లె","అన్నారెడ్డిపల్లె","లింగైపల్లె","మొహమ్మదాబాద్","సంగైపల్లె","వరహగిరిపల్లి"],
+  "హన్వాడ":["హన్వాడ","వేపూర్","గుండియాల్","అయోధ్యానగర్","షైక్‌పల్లె","ముని మొకేషం","యారెన్‌పల్లె","మాధారం","అమ్మాపూర్","నాగినోనిపల్లె","పెద్దధర్పల్లె","చిన్నధర్పల్లె","కొత్తపేట","తంకర","బుధారం","ఇబ్రహీంబాద్","గుడ్డిమల్కాపూర్","దాచెక్‌పల్లె","చీకర్లపల్లి","దొరసముద్రం"],
+  "కోయిల్‌కొండ":["కోయిల్‌కొండ","అభంగాపట్నం","అచార్యాపూర్","అక్కైపల్లె","అనంతాపూర్","అంకిల్ల","అయ్యవారిపల్లి","బోడోనిగుట్ట తండా","బురుగుపల్లి","చందాపూర్","చంద్రస్పల్లె","చన్మన్‌పల్లె","చింతల్ తండా","దమ్మైపల్లి","గంగ్యా నాయక్ తండా","గార్లపాడ్","హన్మన్‌గడ్డ తండా","ఇబ్రహీంనగర్","జమాల్‌పూర్","కనైపల్లి","కనుగుబంద తండా","కేశవాపూర్","ఖాజీపూర్","కొత్లాబాద్","కుష్‌మొహ్మద్‌పల్లె","లింగల్‌చేడ్","లింగుపల్లె","మల్కాపూర్","మల్లాపూర్","మంగళి తండా","మోడీపూర్","నక్కవానికుంట తండా","నల్లవెల్లి","పాలుగు తండా","పార్పల్లె","పెరికివీడు","రాజు నాయక్ తండా","రామన్నపల్లి తండా","రాంపూర్","సంగినోనిపల్లె","సేరివెంకటాపూర్","సోమ్ల నాయక్ తండా","సురారం","తిరుముళంపల్లె","ఉబ్బడి తండా","వీరంపల్లి","వింజమూర్","యెల్లారెడ్డిపల్లె"],
+  "మహబూబ్‌నగర్ రూరల్":["వెంకటాపూర్","జైనాలీపూర్","ఫాతేపూర్","రామచంద్రాపూర్","మచన్‌పల్లె","కొటకదిర","ఓబ్లైపల్లె","అప్పైపల్లె","కదూర్","జామిస్తాపూర్","ధర్మాపూర్","అల్లీపూర్","మానికొండ","ఇప్పల్పల్లె","గాజులపేట","జన్నప్పల్లి"],
+  "మహబూబ్‌నగర్ అర్బన్":["మహబూబ్‌నగర్","యేదిర","బోయపల్లె","యేనుగొండ","యెర్రవల్లి","పాలకొండ","బందమీడిపల్లి","క్రిస్టియన్‌పల్లి"],
+  "మిద్జిల్":["మిద్జిల్","భైరంపల్లె","బొయినపల్లె","చేదుఘట్టు","చిలువేరు","దొనూర్","కంచన్‌పల్లె","కొత్తపల్లె","కొత్తూర్","మసిగుండ్లపల్లె","మున్నానూర్","సింగందొడ్డి","వాస్పుల","వెలుగొమ్ముల","వేముల"],
+  "మూసాపేట్":["మూసాపేట్","నందిపేట్","దసారిపల్లె","థుంకినిపూర్","వేముల","నిజాలాపూర్","జనంపేట","కొమిరెడ్డిపల్లె","శక్రాపూర్","కంకాపూర్","పోల్కంపల్లె","థిమ్మాపూర్","శంకలమడ్డి","మొహమ్మద్ హుస్సేన్‌పల్లె","మూసాపేట్ తండా"],
+  "నవాబ్‌పేట్":["నవాబ్‌పేట్","గురుకుంట","యెమ్మనగండ్ల","దార్పల్లె","హాజీలాపూర్","కామారం","లోకిరేవ్","రుద్రారం","కొండాపూర్","అమ్మాపూర్","లింగంపల్లె","హన్మసానిపల్లె","వీర్సెట్టిపల్లె","ఇప్పటూర్","కాకర్లపహాడ్","పోమల్","కార్కొండ","రెకులచౌదాపూర్","కొల్లూర్","సిద్దోతం","తీగలపల్లె","కుచూర్","కారూర్","కాకర్జాల","చౌడూర్","దేపల్లె","కొత్తపల్లె","మల్కాపూర్"],
+  "రాజాపూర్":["రాజాపూర్","తిరుమలాపూర్","కుచ్చెర్కల్","చెన్నవల్లి","మల్లేపల్లె","ఎడ్గన్‌పల్లె","దొండ్లపల్లె","రంగారెడ్డిగుడ","అగ్రహారం పొట్లపల్లె","కల్లేపల్లె","రైపల్లె","ఖానాపూర్","గుండ్లపొట్లపల్లె","బిబినగర్","రాఘవాపూర్","కుత్నేపల్లె"]
+};
+
+const ADMIN_CREDS = {user:'admin', pass:'onlineland2025'};
+const STORE_KEY = 'onlineland_v2';
+
+let listings = [];
+let editingId = null;
+let photoDataURLs = [];
+let selectedPatta = '';
+
+// ═══ INIT ═══
+function init(){
+  loadData();
+  buildDistrictSelects();
+  updateStats();
+  renderListings(listings);
+  document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+  window.addEventListener('scroll', ()=> document.getElementById('navbar').classList.toggle('scrolled', scrollY>40));
+  setupReveal();
+}
+
+function loadData(){
+  try{ listings = JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }
+  catch(e){ listings=[]; }
+}
+function saveData(){ localStorage.setItem(STORE_KEY, JSON.stringify(listings)); }
+
+function updateStats(){
+  const avail = listings.filter(l=>l.status==='active').length;
+  countUp('st-total', listings.length);
+  countUp('st-available', avail);
+}
+function countUp(id, target){
+  const el=document.getElementById(id); if(!el) return;
+  let c=0; const s=Math.max(1,Math.ceil(target/30));
+  const t=setInterval(()=>{ c=Math.min(c+s,target); el.textContent=c; if(c>=target) clearInterval(t); },40);
+}
+
+// ═══ DISTRICT SELECTS ═══
+function buildDistrictSelects(){
+  const keys = Object.keys(DISTRICTS);
+  const sorted = [...keys].sort((a,b)=>a.localeCompare(b,'te'));
+  const adminSel = document.getElementById('fDistrict');
+  const filterSel = document.getElementById('filterDistrict');
+  sorted.forEach(d=>{
+    adminSel.innerHTML += `<option value="${d}">${d}</option>`;
+    filterSel.innerHTML += `<option value="${d}">${d}</option>`;
+  });
+}
+
+function populateMandals(){
+  const d = document.getElementById('fDistrict').value;
+  const sel = document.getElementById('fMandal');
+  sel.innerHTML = '<option value="">మండలం ఎంచుకోండి</option>';
+  if(d && DISTRICTS[d]){
+    DISTRICTS[d].forEach(m=> sel.innerHTML+=`<option value="${m}">${m}</option>`);
+  }
+  populateAdminVillages();
+}
+
+function populateAdminVillages(){
+  const m = document.getElementById('fMandal').value;
+  const villageInput = document.getElementById('fVillage');
+  const villageSelect = document.getElementById('fVillageSelect');
+  if(VILLAGES[m]){
+    villageSelect.style.display='block';
+    villageInput.style.display='none';
+    villageSelect.innerHTML='<option value="">గ్రామం ఎంచుకోండి</option>';
+    VILLAGES[m].forEach(v=> villageSelect.innerHTML+=`<option>${v}</option>`);
+  } else {
+    villageSelect.style.display='none';
+    villageInput.style.display='block';
+    villageInput.value='';
+  }
+}
+
+function getAdminVillage(){
+  const sel = document.getElementById('fVillageSelect');
+  const inp = document.getElementById('fVillage');
+  return sel.style.display!=='none' ? sel.value : inp.value.trim();
+}
+
+function onFilterDistrictChange(){
+  const d = document.getElementById('filterDistrict').value;
+  const mandalSel = document.getElementById('filterMandal');
+  mandalSel.innerHTML = '<option value="">అన్ని మండలాలు</option>';
+  if(d && DISTRICTS[d]){
+    DISTRICTS[d].forEach(m=> mandalSel.innerHTML+=`<option value="${m}">${m}</option>`);
+  }
+  populateFilterVillages();
+  filterListings();
+}
+
+function populateFilterVillages(){
+  const m = document.getElementById('filterMandal').value;
+  const villageInput = document.getElementById('filterVillage');
+  const villageSelect = document.getElementById('filterVillageSelect');
+  if(VILLAGES[m]){
+    villageSelect.style.display='block';
+    villageInput.style.display='none';
+    villageSelect.innerHTML='<option value="">అన్ని గ్రామాలు</option>';
+    VILLAGES[m].forEach(v=> villageSelect.innerHTML+=`<option>${v}</option>`);
+  } else {
+    villageSelect.style.display='none';
+    villageInput.style.display='block';
+  }
+  filterListings();
+}
+
+// ═══ PHOTOS ═══
+function handlePhotos(e){
+  const files = Array.from(e.target.files).slice(0,5);
+  photoDataURLs = [];
+  document.getElementById('photoPreviews').innerHTML = '';
+  files.forEach(f=>{
+    const r=new FileReader();
+    r.onload = ev=>{
+      photoDataURLs.push(ev.target.result);
+      addPreview(ev.target.result, photoDataURLs.length-1);
+    };
+    r.readAsDataURL(f);
+  });
+}
+function addPreview(src, idx){
+  const prev = document.getElementById('photoPreviews');
+  const div = document.createElement('div'); div.className='photo-preview'; div.id='prev-'+idx;
+  div.innerHTML = `<img src="${src}"/><button class="del-photo" onclick="removePhoto(${idx})">✕</button>`;
+  prev.appendChild(div);
+}
+function removePhoto(idx){
+  photoDataURLs.splice(idx,1);
+  const prev = document.getElementById('photoPreviews'); prev.innerHTML='';
+  photoDataURLs.forEach((d,i)=> addPreview(d,i));
+}
+
+// ═══ PATTA ═══
+function selectPatta(el){
+  document.querySelectorAll('.patta-opt').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPatta = el.textContent;
+}
+
+// ═══ SAVE ═══
+async function saveListing(){
+  const g = id => { const el=document.getElementById(id); return el ? el.value.trim() : ''; };
+  const district=g('fDistrict'), mandal=g('fMandal');
+  const village = getAdminVillage();
+  const survey=g('fSurvey'), acres=parseFloat(g('fAcres'))||0, price=parseFloat(g('fPrice'))||0;
+  const seller=g('fSellerName'), whatsapp=g('fWhatsApp'), phone=g('fPhone');
+  const water=g('fWater'), desc=g('fDesc');
+  const landType=g('fLandType'), road=g('fRoad');
+  const electricity=g('fElectricity'), trees=g('fTrees'), pattaType=g('fPattaType');
+  const propertyType=g('fPropertyType')||'agri';
+  const plotSize=g('fPlotSize'), layoutName=g('fLayoutName');
+  const approval=g('fApproval'), facing=g('fFacing');
+  const cornerPlot=g('fCornerPlot'), plotNumber=g('fPlotNumber');
+
+  if(!district||!mandal||!village||!survey||!price){
+    showFormMsg('error','⚠️ జిల్లా, మండలం, గ్రామం, సర్వే నంబర్, ధర తప్పనిసరిగా పెట్టండి'); return;
+  }
+
+  const listing = {
+    id: editingId||Date.now(),
+    district, mandal, village, survey, acres, price,
+    seller, whatsapp, phone, water, desc,
+    landType, road, electricity, trees,
+    patta: pattaType || selectedPatta,
+    propertyType, plotSize, layoutName, approval, facing, cornerPlot, plotNumber,
+    photos:[...photoDataURLs],
+    status: editingId ? (listings.find(l=>l.id===editingId)||{status:'active'}).status : 'active',
+    createdAt: editingId ? (listings.find(l=>l.id===editingId)||{}).createdAt : new Date().toLocaleDateString('te-IN')
+  };
+
+  if(editingId){
+    // Update in Firestore
+    if(window.updateStatusInCloud){
+      await window.updateStatusInCloud(editingId, listing.status);
+    }
+    const idx=listings.findIndex(l=>l.id===editingId);
+    if(idx>-1) listings[idx]=listing;
+    showFormMsg('success','✅ భూమి వివరాలు అప్‌డేట్ అయ్యాయి!');
+    editingId=null;
+    document.getElementById('formHeading').textContent='🌾 కొత్త వ్యవసాయ భూమి నమోదు';
+  } else {
+    // Save to Firestore
+    if(window.saveListingToCloud){
+      listing.createdAt = new Date().toLocaleDateString('te-IN');
+      const newId = await window.saveListingToCloud(listing);
+      if(newId) listing.id = newId;
+    }
+    listings.unshift(listing);
+    showFormMsg('success','✅ భూమి విజయవంతంగా నమోదు అయింది!');
+  }
+  saveData(); updateStats(); renderListings(listings);
+  resetForm(); showToast('భూమి సేవ్ అయింది! 🌾');
+}
+
+function resetForm(){
+  ['fDistrict','fMandal','fVillage','fSurvey','fPrice','fAcres','fSellerName','fWhatsApp','fPhone','fWater','fDesc','fLandType','fRoad','fElectricity','fTrees','fPattaType','fPropertyType','fPlotSize','fLayoutName','fApproval','fFacing','fCornerPlot','fPlotNumber'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  const plotFields = document.getElementById('plotFields');
+  if(plotFields) plotFields.style.display='none';
+  document.getElementById('fMandal').innerHTML='<option value="">ముందు జిల్లా ఎంచుకోండి</option>';
+  document.getElementById('fVillageSelect').innerHTML='<option value="">గ్రామం ఎంచుకోండి</option>';
+  document.getElementById('fVillageSelect').style.display='none';
+  document.getElementById('fVillage').style.display='block';
+  document.querySelectorAll('.patta-opt').forEach(b=>b.classList.remove('selected'));
+  photoDataURLs=[]; selectedPatta=''; editingId=null;
+  document.getElementById('photoPreviews').innerHTML='';
+  document.getElementById('fPhotos').value='';
+  document.getElementById('formHeading').textContent='🌾 కొత్త వ్యవసాయ భూమి నమోదు';
+  document.getElementById('formMsg').style.display='none';
+}
+
+function showFormMsg(type,txt){
+  const el=document.getElementById('formMsg');
+  el.textContent=txt; el.className='form-msg '+type; el.style.display='block';
+  setTimeout(()=>el.style.display='none',5000);
+}
+
+// ═══ RENDER PUBLIC ═══
+function renderListings(data){
+  const grid=document.getElementById('listingsGrid');
+  if(!data.length){
+    grid.innerHTML=`<div class="empty-state"><div class="es-icon">🌱</div><p>ఫిల్టర్‌కు సరిపోయే భూమి కనుగొనబడలేదు.<br/>వేరే జిల్లా లేదా ధర ప్రయత్నించండి.</p></div>`;
+    return;
+  }
+  grid.innerHTML=data.map(l=>{
+    const img = l.photos&&l.photos.length
+      ? `<img class="card-photo" src="${l.photos[0]}" alt="భూమి"/>`
+      : `<div class="card-no-photo"><span>🌾</span>ఫోటో లేదు</div>`;
+    const perAcre = (l.acres && l.acres>0) ? (l.price/l.acres).toFixed(1) : '';
+    const acresDisplay = (l.acres && l.acres>0) ? `| ${l.acres} ఎకరాలు` : '';
+    const isSold = l.status==='sold';
+    return `
+    <div class="card reveal" onclick="openProp(${l.id})">
+      <div class="card-img">
+        ${img}
+        <div class="card-badge${isSold?' card-sold':''}">${isSold?'అమ్ముడయింది':'అందుబాటులో'}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-loc">📍 ${l.district} › ${l.mandal} › ${l.village}</div>
+        <div class="card-title">సర్వే నం: ${l.survey} ${acresDisplay}${l.plotSize?' | '+l.plotSize+' Sq.Yds':''}</div>
+        ${l.propertyType==='plot'?`<div class="card-det">🏘️ <strong>Open Plot</strong>${l.layoutName?' | '+l.layoutName:''}${l.facing?' | '+l.facing:''}</div>`:''}
+        ${l.approval?`<div class="card-det">📋 <strong>${l.approval}</strong></div>`:''}
+        ${l.patta?`<div class="card-det">📋 పట్టా: <strong>${l.patta}</strong></div>`:''}
+        ${l.water?`<div class="card-det">💧 <strong>${l.water}</strong></div>`:''}
+        <div class="card-foot">
+          <div class="card-price">
+            ₹${l.price} లక్షలు
+            <small>${perAcre?'₹'+perAcre+'L/ఎకరం':''}</small>
+          </div>
+          <div class="card-contacts" onclick="event.stopPropagation()">
+            <a class="btn-wp" href="https://wa.me/${l.whatsapp||''}" target="_blank">💬 WA</a>
+            <a class="btn-ph" href="tel:${l.phone||l.whatsapp||''}">📞</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  setupReveal();
+}
+
+// ═══ FILTER ═══
+function filterListings(){
+  const d=document.getElementById('filterDistrict').value;
+  const m=document.getElementById('filterMandal').value;
+  const vSel=document.getElementById('filterVillageSelect');
+  const vInp=document.getElementById('filterVillage');
+  const v = (vSel.style.display!=='none' ? vSel.value : vInp.value).trim().toLowerCase();
+  const b=document.getElementById('filterBudget').value;
+  const filtered=listings.filter(l=>{
+    if(d && l.district!==d) return false;
+    if(m && l.mandal!==m) return false;
+    if(v && !l.village.toLowerCase().includes(v)) return false;
+    if(b){ const [mn,mx]=b.split('-').map(Number); if(l.price<mn||l.price>mx) return false; }
+    return true;
+  });
+  renderListings(filtered);
+  // Search తర్వాత automatically listings కి scroll అవుతుంది!
+  setTimeout(()=>{
+    const listingsSection = document.getElementById('listings');
+    if(listingsSection){
+      listingsSection.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 300);
+}
+
+// ═══ PROP MODAL ═══
+function openProp(id){
+  const l=listings.find(x=>x.id===id); if(!l) return;
+  document.getElementById('modalImg').innerHTML = l.photos&&l.photos.length
+    ? `<img src="${l.photos[0]}" style="width:100%;height:100%;object-fit:cover"/>`
+    : `<div class="no-photo-lg"><span>🌾</span>ఫోటో అందుబాటులో లేదు</div>`;
+  const acresText = (l.acres&&l.acres>0) ? `| ${l.acres} ఎకరాలు` : '';
+  document.getElementById('modalTitle').textContent=`సర్వే నం: ${l.survey} ${acresText}`;
+  document.getElementById('modalLoc').textContent=`📍 ${l.district} › ${l.mandal} › ${l.village}`;
+  const pa=(l.acres&&l.acres>0)?(l.price/l.acres).toFixed(1):'';
+  document.getElementById('modalGrid').innerHTML=`
+    <div class="mdet"><div class="mdet-l">జిల్లా</div><div class="mdet-v">${l.district}</div></div>
+    <div class="mdet"><div class="mdet-l">మండలం</div><div class="mdet-v">${l.mandal}</div></div>
+    <div class="mdet"><div class="mdet-l">గ్రామం</div><div class="mdet-v">${l.village}</div></div>
+    <div class="mdet"><div class="mdet-l">సర్వే నంబర్</div><div class="mdet-v">${l.survey}</div></div>
+    ${(l.acres&&l.acres>0)?`<div class="mdet"><div class="mdet-l">ఎకరాలు</div><div class="mdet-v">${l.acres} ఎకరాలు</div></div>`:''}
+    ${pa?`<div class="mdet"><div class="mdet-l">ఎకరానికి ధర</div><div class="mdet-v">₹${pa} లక్షలు</div></div>`:''}
+    ${l.plotSize?`<div class="mdet"><div class="mdet-l">Plot Size</div><div class="mdet-v">📐 ${l.plotSize} Sq.Yards</div></div>`:''}
+    ${l.layoutName?`<div class="mdet"><div class="mdet-l">Layout పేరు</div><div class="mdet-v">🏘️ ${l.layoutName}</div></div>`:''}
+    ${l.approval?`<div class="mdet"><div class="mdet-l">Approval</div><div class="mdet-v">📋 ${l.approval}</div></div>`:''}
+    ${l.facing?`<div class="mdet"><div class="mdet-l">Facing</div><div class="mdet-v">🧭 ${l.facing}</div></div>`:''}
+    ${l.cornerPlot?`<div class="mdet"><div class="mdet-l">Corner Plot</div><div class="mdet-v">${l.cornerPlot}</div></div>`:''}
+    ${l.plotNumber?`<div class="mdet"><div class="mdet-l">Plot Number</div><div class="mdet-v">${l.plotNumber}</div></div>`:''}
+    ${l.landType?`<div class="mdet"><div class="mdet-l">భూమి రకం</div><div class="mdet-v">🌱 ${l.landType}</div></div>`:''}
+    ${l.road?`<div class="mdet"><div class="mdet-l">రోడ్డు సౌకర్యం</div><div class="mdet-v">🛣️ ${l.road}</div></div>`:''}
+    ${l.water?`<div class="mdet"><div class="mdet-l">నీటి సౌకర్యం</div><div class="mdet-v">💧 ${l.water}</div></div>`:''}
+    ${l.electricity?`<div class="mdet"><div class="mdet-l">విద్యుత్</div><div class="mdet-v">⚡ ${l.electricity}</div></div>`:''}
+    ${l.trees?`<div class="mdet"><div class="mdet-l">చెట్లు/తోట</div><div class="mdet-v">🌳 ${l.trees}</div></div>`:''}
+    ${l.patta?`<div class="mdet"><div class="mdet-l">పట్టా రకం</div><div class="mdet-v">📋 ${l.patta}</div></div>`:''}
+    ${l.seller?`<div class="mdet"><div class="mdet-l">యజమాని</div><div class="mdet-v">👤 ${l.seller}</div></div>`:''}
+    <div class="mdet"><div class="mdet-l">నమోదు తేదీ</div><div class="mdet-v">${l.createdAt||'-'}</div></div>
+    ${l.desc?`<div class="mdet" style="grid-column:1/-1"><div class="mdet-l">అదనపు వివరాలు</div><div class="mdet-v">${l.desc}</div></div>`:''}
+  `;
+  document.getElementById('modalPrice').textContent=`₹${l.price} లక్షలు`;
+  document.getElementById('modalBtns').innerHTML=`
+    <a href="https://wa.me/${l.whatsapp||''}" target="_blank" style="background:#25D366;color:#fff">💬 WhatsApp</a>
+    <a href="tel:${l.phone||l.whatsapp||''}" style="background:var(--green);color:#fff">📞 Phone Call</a>
+  `;
+  document.getElementById('propModal').classList.add('open');
+}
+function closePropModal(){ document.getElementById('propModal').classList.remove('open'); }
+
+// ═══ ADMIN AUTH ═══
+function openAdminLogin(){ document.getElementById('adminLogin').classList.add('open'); document.getElementById('loginErr').style.display='none'; }
+function closeAdminLogin(){ document.getElementById('adminLogin').classList.remove('open'); }
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  if(u===ADMIN_CREDS.user && p===ADMIN_CREDS.pass){
+    closeAdminLogin();
+    document.getElementById('adminPanel').classList.add('open');
+    document.getElementById('adminWelcome').textContent='స్వాగతం, Admin';
+    renderManageTable();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+  }
+}
+function logoutAdmin(){
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('loginUser').value='';
+  document.getElementById('loginPass').value='';
+}
+
+// ═══ ADMIN TABS ═══
+function switchTab(tab, btn){
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-add').style.display=tab==='add'?'block':'none';
+  document.getElementById('tab-manage').style.display=tab==='manage'?'block':'none';
+  if(tab==='manage'){
+    renderManageTable();
+    // Firebase నుండి latest data తీసుకో
+    showToast('జాబితా refresh అవుతోంది... 🔄');
+  }
+}
+
+// ═══ MANAGE TABLE ═══
+function renderManageTable(){
+  const container=document.getElementById('manageCards');
+  const empty=document.getElementById('manageEmpty');
+  if(!listings.length){ container.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  container.innerHTML=listings.map(l=>{
+    const acres = (l.acres&&l.acres>0) ? l.acres+' ఎకరాలు' : '';
+    const isSold = l.status==='sold';
+    return `
+    <div class="manage-card">
+      <div class="manage-card-top">
+        <div>
+          <div class="manage-card-title">సర్వే: ${l.survey} ${acres}</div>
+          <div class="manage-card-loc">📍 ${l.district} › ${l.mandal} › ${l.village}</div>
+        </div>
+        <span class="${isSold?'status-sold':'status-active'}">${isSold?'అమ్ముడు':'అందుబాటు'}</span>
+      </div>
+      <div class="manage-card-info">
+        <span class="manage-card-price">₹${l.price} లక్షలు</span>
+        <span style="font-size:.75rem;color:var(--muted)">${l.createdAt||''}</span>
+      </div>
+      <div class="manage-card-actions">
+        <button style="background:var(--gold);color:var(--dark)" onclick="editListing(${l.id})">✏️ Edit</button>
+        <button style="background:var(--muted);color:#fff" onclick="toggleSold(${l.id})">${isSold?'🔄 తిరిగి':'✅ అమ్ముడు'}</button>
+        <button style="background:var(--red);color:#fff" onclick="deleteListing(${l.id})">🗑️ Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSold(id){
+  const l=listings.find(x=>x.id===id); if(!l) return;
+  l.status=l.status==='active'?'sold':'active';
+  saveData(); updateStats(); renderManageTable(); renderListings(listings);
+  showToast(l.status==='sold'?'అమ్ముడయింది గా మార్చారు ✓':'తిరిగి అందుబాటులో పెట్టారు ✓');
+}
+async function deleteListing(id){
+  // ముందు UI లో instant గా తొలగించు
+  listings = listings.filter(x=>x.id!==id);
+  updateStats(); renderManageTable(); renderListings(listings);
+  showToast('తొలగిస్తున్నాము... 🗑️');
+  // Firebase లో delete చేయి — await తో!
+  if(window.deleteListingFromCloud){
+    const success = await window.deleteListingFromCloud(id);
+    if(success){
+      showToast('భూమి తొలగించబడింది ✅');
+    } else {
+      showToast('Error: మళ్ళీ try చేయండి ❌');
+    }
+  }
+}
+function editListing(id){
+  const l=listings.find(x=>x.id===id); if(!l) return;
+  editingId=id;
+  switchTab('add', document.getElementById('tab-btn-add'));
+  document.getElementById('formHeading').textContent='✏️ భూమి వివరాలు మార్చండి';
+  document.getElementById('fDistrict').value=l.district; populateMandals();
+  setTimeout(()=>{
+    document.getElementById('fMandal').value=l.mandal;
+    populateAdminVillages();
+    setTimeout(()=>{
+      const vSel=document.getElementById('fVillageSelect');
+      const vInp=document.getElementById('fVillage');
+      if(vSel.style.display!=='none') vSel.value=l.village;
+      else vInp.value=l.village;
+    },60);
+  },60);
+  document.getElementById('fVillage').value=l.village;
+  document.getElementById('fSurvey').value=l.survey;
+  document.getElementById('fAcres').value=l.acres;
+  document.getElementById('fPrice').value=l.price;
+  document.getElementById('fSellerName').value=l.seller;
+  document.getElementById('fWhatsApp').value=l.whatsapp;
+  document.getElementById('fPhone').value=l.phone||'';
+  document.getElementById('fWater').value=l.water||'';
+  document.getElementById('fDesc').value=l.desc||'';
+  selectedPatta=l.patta||'';
+  document.querySelectorAll('.patta-opt').forEach(b=>b.classList.toggle('selected',b.textContent===selectedPatta));
+  photoDataURLs=[...(l.photos||[])];
+  const prev=document.getElementById('photoPreviews'); prev.innerHTML='';
+  photoDataURLs.forEach((d,i)=>addPreview(d,i));
+  document.getElementById('adminBody')&&document.getElementById('adminBody').scrollTo(0,0);
+  document.querySelector('.admin-body').scrollTo(0,0);
+}
+
+// ═══ PROPERTY TYPE TOGGLE ═══
+function togglePropertyFields(){
+  const type = document.getElementById('fPropertyType').value;
+  const plotFields = document.getElementById('plotFields');
+  const acresLabel = document.querySelector('label[for="fAcres"]') || document.querySelector('#fAcres').previousElementSibling;
+
+  if(type === 'plot'){
+    plotFields.style.display = 'block';
+    document.getElementById('fAcres').placeholder = 'ఎకరాలు (optional)';
+  } else {
+    plotFields.style.display = 'none';
+    document.getElementById('fAcres').placeholder = 'ఉదా: 3.50';
+  }
+}
+function getContactData(){
+  const name = document.getElementById('cName').value.trim();
+  const phone = document.getElementById('cPhone').value.trim();
+  const subject = document.getElementById('cSubject').value;
+  const message = document.getElementById('cMessage').value.trim();
+  return {name, phone, subject, message};
+}
+
+function validateContact(){
+  const {name, phone, subject, message} = getContactData();
+  if(!name||!phone||!subject||!message){
+    const el = document.getElementById('contactMsg');
+    el.textContent='⚠️ అన్ని fields తప్పనిసరిగా పూర్తి చేయండి';
+    el.style.display='block';
+    el.style.background='#fde8e8';
+    el.style.color='var(--red)';
+    el.style.border='1px solid #f5b7b1';
+    setTimeout(()=>el.style.display='none',3000);
+    return false;
+  }
+  return true;
+}
+
+function sendWhatsApp(){
+  if(!validateContact()) return;
+  const {name, phone, subject, message} = getContactData();
+  const text = `నమస్తే OnlineLand! 🌾\n\nపేరు: ${name}\nPhone: ${phone}\nవిషయం: ${subject}\n\nసందేశం: ${message}`;
+  window.open(`https://wa.me/919959731120?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+function sendEmail(){
+  if(!validateContact()) return;
+  const {name, phone, subject, message} = getContactData();
+  const body = `పేరు: ${name}\nPhone: ${phone}\nవిషయం: ${subject}\n\nసందేశం: ${message}`;
+  window.open(`mailto:Info@onlineland.co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+  const el = document.getElementById('contactMsg');
+  el.textContent='✅ Email app తెరుచుకుంటోంది...';
+  el.style.display='block';
+  el.style.background='#e8f5e9';
+  el.style.color='#2e7d32';
+  el.style.border='1px solid #a5d6a7';
+  setTimeout(()=>el.style.display='none',3000);
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ═══ REVEAL ═══
+function setupReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{ if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*80); obs.unobserve(e.target); } });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>obs.observe(el));
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCun2PIE3gP6jZqTQB6phtqlTzJxau-M4k",
+  authDomain: "onlineland-28234.firebaseapp.com",
+  projectId: "onlineland-28234",
+  storageBucket: "onlineland-28234.firebasestorage.app",
+  messagingSenderId: "181994843440",
+  appId: "1:181994843440:web:c009d8c40702dc920aacf5",
+  measurementId: "G-FS8G5F66CB"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Real-time listener — అన్ని phones లో update అవుతుంది!
+const q = query(collection(db, "listings"), orderBy("createdAt", "desc"));
+onSnapshot(q, (snapshot) => {
+  listings = [];
+  snapshot.forEach((d) => {
+    listings.push({ id: d.id, ...d.data() });
+  });
+  updateStats();
+  renderListings(listings);
+  // Admin panel open అయి manage tab active గా ఉంటే refresh చేయి
+  const adminPanel = document.getElementById('adminPanel');
+  const manageTab = document.getElementById('tab-manage');
+  if(adminPanel && adminPanel.classList.contains('open') && manageTab && manageTab.style.display !== 'none'){
+    renderManageTable();
+  }
+  console.log('Firebase sync:', listings.length, 'listings');
+});
+
+// Save to Firestore
+window.saveToFirestore = async function(listing) {
+  try {
+    const docRef = await addDoc(collection(db, "listings"), listing);
+    return docRef.id;
+  } catch(e) {
+    console.error("Error saving:", e);
+    return null;
+  }
+};
+
+// Delete from Firestore
+window.deleteFromFirestore = async function(id) {
+  try {
+    await deleteDoc(doc(db, "listings", id));
+    return true;
+  } catch(e) {
+    console.error("Error deleting:", e);
+    return false;
+  }
+};
+
+// Update status in Firestore
+window.updateStatusFirestore = async function(id, status) {
+  try {
+    await updateDoc(doc(db, "listings", id), { status });
+    return true;
+  } catch(e) {
+    console.error("Error updating:", e);
+    return false;
+  }
+};
+
+// Override saveListing to use Firestore
+window.saveListingToCloud = saveToFirestore;
+window.deleteListingFromCloud = deleteFromFirestore;
+window.updateStatusInCloud = updateStatusFirestore;
+
+console.log("✅ Firebase connected! Data will sync across all devices.");
+</script>
+</body>
+</html>
