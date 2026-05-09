@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>బ్లాగ్ – OnlineLand | తెలంగాణ వ్యవసాయ భూముల సమాచారం</title>
+<meta name="description" content="తెలంగాణలో వ్యవసాయ భూమి కొనేముందు తెలుసుకోవాల్సిన విషయాలు. భూమి కొనుగోలు tips, legal సమాచారం మరియు market updates."/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#1E4D2B;--green2:#2E7D42;--green3:#4CAF65;
+  --gold:#C8922A;--gold2:#E8B84B;--gold3:#FDD87A;
+  --earth:#F5EDD6;--earth2:#EDE0BC;--earth3:#D4C49A;
+  --dark:#0F2318;--text:#1A3322;--muted:#5A7A63;
+  --white:#FDFAF4;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(253,250,244,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,146,42,.2)}
+.logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--green);text-decoration:none}
+.logo span{color:var(--gold)}
+.nav-right{display:flex;gap:1rem;align-items:center}
+.nav-link{font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-link:hover{color:var(--green)}
+.btn-home{background:var(--green);color:#fff;padding:.45rem 1.1rem;border-radius:6px;font-size:.82rem;font-weight:700;text-decoration:none;transition:background .2s}
+.btn-home:hover{background:var(--green2)}
+
+/* HERO */
+.blog-hero{background:linear-gradient(150deg,var(--dark) 0%,var(--green) 100%);padding:8rem 2rem 4rem;text-align:center}
+.blog-hero .tag{display:inline-block;background:rgba(200,146,42,.2);border:1px solid rgba(200,146,42,.4);color:var(--gold3);border-radius:100px;padding:.4rem 1.2rem;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.2rem}
+.blog-hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.5rem);color:#fff;margin-bottom:.8rem}
+.blog-hero p{font-size:1rem;color:rgba(245,237,214,.65);max-width:500px;margin:0 auto}
+
+/* BLOG LIST */
+.blog-list{max-width:900px;margin:0 auto;padding:4rem 2rem}
+.blog-list-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--green);margin-bottom:2rem;padding-bottom:.8rem;border-bottom:2px solid var(--earth2)}
+
+/* BLOG CARD */
+.blog-item{background:#fff;border-radius:16px;border:1px solid var(--earth2);margin-bottom:1.5rem;overflow:hidden;display:flex;gap:0;transition:transform .3s,box-shadow .3s;cursor:pointer;text-decoration:none;color:inherit}
+.blog-item:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(30,77,43,.1)}
+.blog-item-img{width:200px;min-height:160px;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;font-size:3.5rem;flex-shrink:0}
+.blog-item-body{padding:1.5rem;flex:1}
+.blog-item-meta{display:flex;gap:.8rem;align-items:center;margin-bottom:.6rem}
+.blog-item-tag{background:rgba(30,77,43,.1);color:var(--green);font-size:.7rem;font-weight:700;padding:.2rem .8rem;border-radius:100px;text-transform:uppercase;letter-spacing:.5px}
+.blog-item-date{font-size:.75rem;color:var(--muted)}
+.blog-item-title{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--green);margin-bottom:.6rem;line-height:1.4}
+.blog-item-excerpt{font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:1rem}
+.blog-item-read{font-size:.82rem;font-weight:700;color:var(--gold)}
+
+/* BLOG POST PAGE */
+.blog-post{display:none;max-width:760px;margin:0 auto;padding:4rem 2rem}
+.blog-post.active{display:block}
+.back-btn{display:inline-flex;align-items:center;gap:.5rem;color:var(--green);font-weight:700;font-size:.88rem;cursor:pointer;margin-bottom:2rem;background:none;border:none;padding:0}
+.back-btn:hover{color:var(--gold)}
+.post-tag{display:inline-block;background:rgba(30,77,43,.1);color:var(--green);font-size:.72rem;font-weight:700;padding:.25rem .8rem;border-radius:100px;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.5px}
+.post-title{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.2rem);color:var(--green);margin-bottom:.5rem;line-height:1.3}
+.post-date{font-size:.8rem;color:var(--muted);margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--earth2)}
+.post-body h3{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--green);margin:1.8rem 0 .7rem}
+.post-body p{font-size:.92rem;color:var(--text);line-height:1.85;margin-bottom:.8rem}
+.post-body .highlight{background:var(--earth);border-left:4px solid var(--gold);padding:.9rem 1.2rem;border-radius:0 10px 10px 0;font-size:.88rem;color:var(--text);margin:1.2rem 0;line-height:1.7}
+.post-body .highlight strong{color:var(--green)}
+.share-section{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--earth2);text-align:center}
+.share-section h4{font-size:.9rem;color:var(--muted);margin-bottom:1rem}
+.share-btns{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.share-btn{padding:.6rem 1.4rem;border-radius:8px;font-size:.85rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;transition:opacity .2s}
+.share-btn:hover{opacity:.85}
+.btn-wa{background:#25D366;color:#fff}
+.btn-copy{background:var(--green);color:#fff}
+
+/* FOOTER */
+footer{background:var(--dark);color:rgba(245,237,214,.5);padding:2rem;text-align:center;font-size:.82rem}
+footer a{color:var(--gold2);text-decoration:none}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  nav{padding:.9rem 1.2rem}
+  .blog-item{flex-direction:column}
+  .blog-item-img{width:100%;min-height:140px}
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:fadeUp .5s ease both}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Online<span>Land</span></a>
+  <div class="nav-right">
+    <a href="index.html#listings" class="nav-link">భూములు చూడండి</a>
+    <a href="index.html" class="btn-home">🏠 Home</a>
+  </div>
+</nav>
+
+<!-- BLOG LIST VIEW -->
+<div id="blogListView">
+
+  <!-- HERO -->
+  <div class="blog-hero">
+    <div class="tag">📝 బ్లాగ్</div>
+    <h1>భూమి కొనేముందు తెలుసుకోండి</h1>
+    <p>వ్యవసాయ భూమి కొనేటప్పుడు ఉపయోగపడే సమాచారం మరియు tips</p>
+  </div>
+
+  <!-- BLOG LIST -->
+  <div class="blog-list">
+    <div class="blog-list-title">📚 అన్ని బ్లాగ్ పోస్ట్‌లు</div>
+
+    <a class="blog-item fade" onclick="openPost(0)" href="javascript:void(0)">
+      <div class="blog-item-img">🌾</div>
+      <div class="blog-item-body">
+        <div class="blog-item-meta">
+          <span class="blog-item-tag">భూమి కొనుగోలు</span>
+          <span class="blog-item-date">📅 మే 2026</span>
+        </div>
+        <div class="blog-item-title">వ్యవసాయ భూమి కొనేముందు తెలుసుకోవాల్సిన 5 ముఖ్యమైన విషయాలు 🌾</div>
+        <div class="blog-item-excerpt">తెలంగాణలో భూమి కొనాలనుకుంటున్నారా? పట్టా చెక్, రోడ్డు సౌకర్యం, నీటి సౌకర్యం, possession మరియు market ధర — ఈ 5 విషయాలు తెలుసుకుంటే మోసపోరు!</div>
+        <div class="blog-item-read">పూర్తిగా చదవండి →</div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- BLOG POST VIEW -->
+<div id="blogPostView" style="display:none"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <a href="index.html">OnlineLand</a> — తెలంగాణ రైతుల కోసం ❤️ తో తయారు చేయబడింది</p>
+</footer>
+
+<script type="module">
+
+// Simple Markdown Parser
+function parseMarkdown(text){
+  if(!text) return '';
+  let html = text
+    // Headings
+    .replace(/^### (.+)$/gm, '<h4 style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--green);margin:1.5rem 0 .5rem">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--green);margin:1.8rem 0 .7rem">$1</h3>')
+    .replace(/^# (.+)$/gm, '<h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--green);margin:2rem 0 .8rem">$1</h2>')
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--green)">$1</strong>')
+    // Italic
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Highlight box (> text)
+    .replace(/^> (.+)$/gm, '<div class="highlight">👉 $1</div>')
+    // Bullet points
+    .replace(/^• (.+)$/gm, '<li style="margin:.3rem 0;font-size:.9rem">$1</li>')
+    .replace(/^- (.+)$/gm, '<li style="margin:.3rem 0;font-size:.9rem">$1</li>')
+    // Wrap consecutive li items in ul
+    .replace(/(<li[^>]*>.*<\/li>
+?)+/g, '<ul style="padding-left:1.5rem;margin:.8rem 0">$&</ul>')
+    // Line breaks to paragraphs
+    .split(/
+
++/)
+    .map(para => {
+      para = para.trim();
+      if(!para) return '';
+      if(para.startsWith('<h') || para.startsWith('<div') || para.startsWith('<ul')) return para;
+      return `<p style="font-size:.92rem;color:var(--text);line-height:1.85;margin-bottom:.8rem">${para.replace(/
+/g, '<br/>')}</p>`;
+    })
+    .join('\n');
+  return html;
+}
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyExample",
+  authDomain: "onlineland-28234.firebaseapp.com",
+  projectId: "onlineland-28234",
+  storageBucket: "onlineland-28234.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef"
+};
+
+// Get config from parent index.html firebase config
+// Load blog posts from Firebase
+let allPosts = [];
+
+async function loadPosts(){
+  try {
+    // Get firebase config from index.html
+    const resp = await fetch('index.html');
+    const text = await resp.text();
+    const configMatch = text.match(/const firebaseConfig = ({[\s\S]*?});/);
+    if(!configMatch) { loadStaticPost(); return; }
+    
+    const config = eval('(' + configMatch[1] + ')');
+    const app = initializeApp(config, 'blog-app');
+    const db = getFirestore(app);
+    
+    const q = query(collection(db, "blogs"), orderBy("timestamp", "desc"));
+    const snap = await getDocs(q);
+    
+    snap.forEach(d => allPosts.push({id: d.id, ...d.data()}));
+    
+    if(allPosts.length > 0){
+      renderBlogList();
+    } else {
+      loadStaticPost();
+    }
+  } catch(e) {
+    console.error(e);
+    loadStaticPost();
+  }
+}
+
+function loadStaticPost(){
+  // Default static post
+  allPosts = [{
+    id: 'static1',
+    title: 'వ్యవసాయ భూమి కొనేముందు తెలుసుకోవాల్సిన 5 ముఖ్యమైన విషయాలు 🌾',
+    category: 'భూమి కొనుగోలు',
+    createdAt: 'మే 2026',
+    content: `ఈ రోజుల్లో చాలా మంది వ్యవసాయ భూమి కొనాలని ఆసక్తి చూపుతున్నారు. కొందరు farming కోసం, మరికొందరు future investment కోసం భూములు కొనుగోలు చేస్తున్నారు. కానీ సరైన సమాచారం లేకుండా భూమి కొనేస్తే తర్వాత లీగల్ సమస్యలు, డబ్బు నష్టం, లేదా మోసాలు జరిగే అవకాశాలు ఉంటాయి.
+
+అందుకే వ్యవసాయ భూమి కొనేముందు ఈ 5 విషయాలు తప్పకుండా తెలుసుకోవాలి.
+
+1. పట్టా చెక్ చేయండి 📄
+భూమి కొనేముందు పట్టా మరియు documents పూర్తిగా clear గా ఉన్నాయో లేదో చెక్ చేయాలి.
+చూడాల్సిన ముఖ్యమైన పత్రాలు:
+• Pattadar Passbook
+• Title Deed  
+• EC (Encumbrance Certificate)
+• 1B & Pahani
+• Survey Number Details
+
+bhubharati.telangana.gov.in లో జిల్లా, మండలం, గ్రామం మరియు survey number enter చేస్తే భూమి వివరాలు కనిపిస్తాయి.
+👉 Documents clear లేకపోతే భవిష్యత్తులో పెద్ద సమస్యలు రావచ్చు.
+
+2. భూమికి రోడ్డు సౌకర్యం ఉందా? 🛣️
+• Main road దగ్గరలో ఉందా?
+• Tractor లేదా Car వెళ్లగలదా?
+• CC road ఉందా?
+👉 మంచి road ఉన్న భూమికి demand మరియు resale value ఎక్కువగా ఉంటుంది.
+
+3. నీటి సౌకర్యం ఉందా? 💧
+• Borewell ఉందా?
+• Canal water వస్తుందా?
+• Ground water level ఎలా ఉంది?
+👉 నీటి సౌకర్యం బాగుంటే farming కూడా బాగా చేయవచ్చు.
+
+4. Physical Possession ఎవరి దగ్గర ఉంది? 👨‍🌾
+• Actual possession ఎవరి దగ్గర ఉందో తెలుసుకోవాలి
+• Site visit తప్పనిసరిగా చేయాలి
+👉 "Documents clear" మాత్రమే కాదు, "Possession clear" కూడా చాలా ముఖ్యం.
+
+5. Market ధర తెలుసుకోండి 💰
+• పక్క ప్రాంతాల్లో ఎకరా ధర ఎంత?
+• Recent registrations ఎంతకు జరిగాయి?
+👉 onlineland.in లో జిల్లా వారీగా listings చూస్తే market price గురించి మంచి idea వస్తుంది.
+
+ముగింపు ✅
+వ్యవసాయ భూమి కొనడం ఒక పెద్ద నిర్ణయం. Documents, Road Access, Water Facility, Possession, Market Price — ఈ అన్ని విషయాలు పూర్తిగా చెక్ చేసి భూమి కొనాలి.
+🌾 సరైన భూమి ఎంపిక మీ భవిష్యత్తుకు మంచి ఆస్తిగా మారుతుంది.`
+  }];
+  renderBlogList();
+}
+
+function renderBlogList(){
+  const container = document.getElementById('dynamicBlogList');
+  container.innerHTML = allPosts.map((p, i) => `
+    <a class="blog-item fade" onclick="openPost(${i})" href="javascript:void(0)">
+      <div class="blog-item-img">🌾</div>
+      <div class="blog-item-body">
+        <div class="blog-item-meta">
+          <span class="blog-item-tag">${p.category}</span>
+          <span class="blog-item-date">📅 ${p.createdAt}</span>
+        </div>
+        <div class="blog-item-title">${p.title}</div>
+        <div class="blog-item-excerpt">${p.content.substring(0, 120)}...</div>
+        <div class="blog-item-read">పూర్తిగా చదవండి →</div>
+      </div>
+    </a>
+  `).join('');
+}
+
+window.openPost = function(index){
+  const p = allPosts[index];
+  document.getElementById('blogListView').style.display = 'none';
+  const postView = document.getElementById('blogPostView');
+  postView.style.display = 'block';
+  postView.innerHTML = `
+    <div style="padding-top:5rem;max-width:760px;margin:0 auto;padding:5rem 2rem 4rem">
+      <button class="back-btn" onclick="closePost()">← అన్ని పోస్ట్‌లు</button>
+      <div class="post-tag">${p.category}</div>
+      <h1 class="post-title">${p.title}</h1>
+      <div class="post-date">📅 ${p.createdAt} • OnlineLand బ్లాగ్</div>
+      <div class="post-body">
+        ${parseMarkdown(p.content)}
+        <div class="share-section">
+          <h4>ఈ బ్లాగ్ పోస్ట్ మీకు ఉపయోగపడిందా? మీ friends కి share చేయండి!</h4>
+          <div class="share-btns">
+            <a class="share-btn btn-wa" href="https://wa.me/?text=${encodeURIComponent(p.title + ' చదవండి: https://onlineland.in/blog.html')}" target="_blank">💬 WhatsApp లో Share చేయండి</a>
+            <button class="share-btn btn-copy" onclick="copyLink()">🔗 Link Copy చేయండి</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  window.scrollTo(0,0);
+}
+
+window.closePost = function(){
+  document.getElementById('blogListView').style.display = 'block';
+  document.getElementById('blogPostView').style.display = 'none';
+  window.scrollTo(0,0);
+}
+
+window.copyLink = function(){
+  navigator.clipboard.writeText('https://onlineland.in/blog.html');
+  alert('Link copy అయింది! WhatsApp లో paste చేయండి.');
+}
+
+// Load on start
+loadPosts();
+</script>
+</body>
+</html>
