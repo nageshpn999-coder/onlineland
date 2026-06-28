@@ -1,1 +1,436 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>సిరి స్టడీ హాల్ — మఖ్తల్</title>
+
+<!-- ── WhatsApp / సోషల్ preview (OG tags) ── -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="సిరి స్టడీ హాల్ — విద్యార్థుల రీడింగ్ హాల్" />
+<meta property="og:description" content="మఖ్తల్‌లో విద్యార్థులకు ప్రశాంత రీడింగ్ హాల్ • ఉ.6 – రా.10. కాల్ / WhatsApp ఒక్క tap." />
+<meta property="og:image" content="https://onlineland.in/c/siri/preview.jpg" />
+<meta property="og:url" content="https://onlineland.in/c/siri/" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  ONLINELAND — డిజిటల్ విజిటింగ్ కార్డ్  (Digital Visiting Card) ║
+     ║  ప్రతి customer కి ఒకటే పని: కింద ఉన్న CARD object మార్చండి.       ║
+     ║  ఖాళీ ('') పెడితే ఆ button/section దానంతట అదే మాయమవుతుంది.        ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<script>
+const CARD = {
+  // ── స్టడీ హాల్ వివరాలు ──
+  nameTe:     "సిరి స్టడీ హాల్",
+  nameEn:     "Siri Study Hall",
+  role:       "ఓనర్: G. శ్రీకాంత్",
+  tagline:    "విద్యార్థులకు ప్రశాంత రీడింగ్ హాల్ • మఖ్తల్",
+  photo:      "",          // ← హాల్ ఫోటో URL పెడితే బాగుంటుంది
+
+  // ── రోజూ వాడే actions ──
+  phone:      "916301796085",          // కాల్
+  whatsapp:   "916301796085",          // ← ఈ నంబర్ WhatsApp లో ఉందో confirm చేయండి
+  waText:     "నమస్తే, సిరి స్టడీ హాల్ సీటు వివరాలు కావాలి",
+  upi:        "6301796085@ybl",         // ఫీజు కోసం — 'పే' button
+  upiName:    "Siri Study Hall",
+
+  // ── చిరునామా / దారి ──
+  address:    "SBI ప్రక్కన, సంగంబండ రోడ్, మక్తల్",
+  maps:       "https://maps.app.goo.gl/Gk1w67oXA5XyXD8V7",   // exact location
+  hours:      "ఉ. 6:00 – రా. 10:00",
+
+  // ── సౌకర్యాలు (← మీ నిజమైనవి పెట్టండి/మార్చండి) ──
+  services:   ["ప్రశాంత రీడింగ్ హాల్", "WiFi", "మంచి వెలుతురు", "తాగునీరు", "విద్యుత్ బ్యాకప్"],
+
+  gallery:    [],
+
+  website:    "",
+  instagram:  "",
+  facebook:   "",
+  youtube:    "",
+
+  // ── థీమ్: స్టడీ blue ──
+  theme:      "#3E6DB3",
+};
+
+// ── మీ branding (అన్ని cards కింద కనిపిస్తుంది — ఇదే మీకు free ప్రచారం) ──
+const MAKER = {
+  label: "Powered by OnlineLand",
+  url:   "https://wa.me/919999999999?text=" + encodeURIComponent("నాకూ ఇలాంటి డిజిటల్ కార్డ్ కావాలి"),
+};
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hind+Guntur:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --accent:#C99A4B;
+    --ink:#10302E;          /* deep teal ink */
+    --ink-2:#0A211F;
+    --ivory:#FBF7EF;
+    --ivory-2:#F1EADB;
+    --line:rgba(16,48,46,.10);
+    --muted:#5b6b66;
+    --shadow:0 18px 50px -18px rgba(7,28,26,.55);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:"Poppins","Hind Guntur",sans-serif;
+    background:
+      radial-gradient(120% 90% at 50% -10%, #17433f 0%, var(--ink) 42%, var(--ink-2) 100%);
+    color:#10302E;
+    min-height:100dvh;
+    display:flex; justify-content:center; align-items:flex-start;
+    padding:22px 14px 120px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .te{font-family:"Hind Guntur","Poppins",sans-serif}
+
+  /* ── card surface ── */
+  .card{
+    width:100%; max-width:430px;
+    background:var(--ivory);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+    opacity:0; transform:translateY(14px);
+    animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards;
+  }
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  /* ── cover band ── */
+  .cover{
+    height:118px;
+    background:
+      linear-gradient(135deg, var(--ink) 0%, #1c4f49 70%, #23615a 100%);
+    position:relative;
+  }
+  .cover::after{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 18% 30%, rgba(201,154,75,.28), transparent 42%),
+      radial-gradient(circle at 88% 75%, rgba(201,154,75,.14), transparent 40%);
+  }
+  .crest{
+    position:absolute; top:14px; right:16px; z-index:2;
+    font-family:"Fraunces",serif; font-size:13px; letter-spacing:.14em;
+    color:rgba(251,247,239,.7); text-transform:uppercase;
+  }
+
+  /* ── identity ── */
+  .id{padding:0 24px 8px; margin-top:-52px; position:relative; text-align:center}
+  .avatar{
+    width:104px; height:104px; border-radius:50%;
+    margin:0 auto 14px;
+    background:linear-gradient(145deg,#1c4f49,#10302E);
+    border:4px solid var(--ivory);
+    box-shadow:0 0 0 2px var(--accent), 0 10px 22px -8px rgba(7,28,26,.5);
+    object-fit:cover;
+    display:flex; align-items:center; justify-content:center;
+    font-family:"Fraunces",serif; font-size:40px; color:var(--accent);
+    overflow:hidden;
+  }
+  .name-te{font-family:"Hind Guntur"; font-weight:700; font-size:25px; line-height:1.2; color:var(--ink)}
+  .name-en{font-family:"Fraunces",serif; font-weight:600; font-size:17px; color:var(--accent); margin-top:2px; letter-spacing:.01em}
+  .role{font-weight:500; font-size:14.5px; color:#2c4742; margin-top:7px}
+  .tagline{font-size:12.8px; color:var(--muted); margin-top:5px; line-height:1.5; max-width:300px; margin-left:auto; margin-right:auto}
+
+  .rule{height:1px; background:var(--line); margin:20px 24px 0}
+
+  /* ── primary action strip ── */
+  .actions{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:9px;
+    padding:18px 18px 4px;
+  }
+  .act{
+    appearance:none; border:none; cursor:pointer;
+    background:var(--ivory-2);
+    border-radius:15px; padding:13px 6px 11px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    text-decoration:none; color:var(--ink);
+    transition:transform .12s ease, background .2s ease;
+  }
+  .act:active{transform:scale(.94)}
+  .act .ic{width:24px; height:24px; stroke:var(--ink); stroke-width:1.9; fill:none}
+  .act .lbl{font-family:"Hind Guntur"; font-size:12px; font-weight:600}
+  .act.primary{background:var(--ink); color:var(--ivory)}
+  .act.primary .ic{stroke:var(--accent)}
+  .act.wa{background:#10302E}
+  .act.wa .ic{stroke:#5dd47e; fill:none}
+  .act:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+  /* ── info rows ── */
+  .info{padding:14px 24px 4px}
+  .row{display:flex; gap:12px; align-items:flex-start; padding:10px 0; text-decoration:none; color:var(--ink)}
+  .row + .row{border-top:1px solid var(--line)}
+  .row .ic{width:19px; height:19px; stroke:var(--accent); stroke-width:1.8; fill:none; flex:none; margin-top:2px}
+  .row .v{font-size:14px; line-height:1.5}
+  .row small{display:block; color:var(--muted); font-size:11.5px; font-weight:500; margin-bottom:1px}
+
+  /* ── services chips ── */
+  .block{padding:16px 24px 4px}
+  .block h3{font-family:"Hind Guntur"; font-size:12px; font-weight:700; letter-spacing:.05em; color:var(--muted); text-transform:uppercase; margin-bottom:11px}
+  .chips{display:flex; flex-wrap:wrap; gap:8px}
+  .chip{font-family:"Hind Guntur"; font-size:13px; font-weight:500; padding:7px 13px; border-radius:999px; background:var(--ivory-2); color:#2c4742; border:1px solid var(--line)}
+
+  /* ── gallery ── */
+  .gal{display:grid; grid-template-columns:repeat(3,1fr); gap:7px}
+  .gal img{width:100%; aspect-ratio:1; object-fit:cover; border-radius:11px}
+
+  /* ── social ── */
+  .social{display:flex; justify-content:center; gap:12px; padding:18px 24px 6px}
+  .social a{
+    width:44px; height:44px; border-radius:12px; background:var(--ivory-2);
+    display:flex; align-items:center; justify-content:center; border:1px solid var(--line);
+    transition:transform .12s ease;
+  }
+  .social a:active{transform:scale(.92)}
+  .social svg{width:21px; height:21px; fill:var(--ink)}
+
+  .made{text-align:center; padding:16px 24px 22px}
+  .made a{font-size:11.5px; color:var(--muted); text-decoration:none; letter-spacing:.02em}
+  .made a b{color:var(--accent); font-weight:600}
+
+  /* ── sticky bottom bar ── */
+  .bar{
+    position:fixed; bottom:0; left:0; right:0; z-index:20;
+    background:rgba(10,33,31,.92);
+    backdrop-filter:blur(10px);
+    border-top:1px solid rgba(201,154,75,.25);
+    display:flex; gap:8px; padding:11px 14px calc(11px + env(safe-area-inset-bottom));
+    justify-content:center;
+  }
+  .bar button{
+    appearance:none; cursor:pointer; border:1px solid rgba(201,154,75,.4);
+    background:transparent; color:var(--ivory);
+    font-family:"Hind Guntur"; font-weight:600; font-size:13.5px;
+    border-radius:13px; padding:11px 10px; flex:1; max-width:160px;
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    transition:background .2s ease, transform .12s ease;
+  }
+  .bar button:active{transform:scale(.95)}
+  .bar button.save{background:var(--accent); border-color:var(--accent); color:#1a1303}
+  .bar button .ic{width:17px; height:17px; stroke:currentColor; stroke-width:2; fill:none}
+  .bar button:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+
+  /* ── QR modal ── */
+  .modal{
+    position:fixed; inset:0; z-index:40; display:none;
+    align-items:center; justify-content:center; padding:24px;
+    background:rgba(8,24,22,.72); backdrop-filter:blur(4px);
+  }
+  .modal.open{display:flex}
+  .qr-card{
+    background:var(--ivory); border-radius:22px; padding:26px 26px 22px; text-align:center;
+    max-width:300px; width:100%; box-shadow:var(--shadow);
+    animation:rise .35s ease forwards;
+  }
+  .qr-card h4{font-family:"Hind Guntur"; font-size:16px; color:var(--ink); margin-bottom:4px}
+  .qr-card p{font-size:12px; color:var(--muted); margin-bottom:16px}
+  #qr{display:flex; justify-content:center; padding:14px; background:#fff; border-radius:14px; border:1px solid var(--line)}
+  #qr img,#qr canvas{display:block}
+  .qr-close{margin-top:18px; width:100%; appearance:none; border:none; cursor:pointer;
+    background:var(--ink); color:var(--ivory); font-family:"Hind Guntur"; font-weight:600;
+    font-size:14px; padding:12px; border-radius:12px}
+
+  .toast{
+    position:fixed; bottom:84px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:var(--ivory); font-family:"Hind Guntur"; font-size:13px;
+    padding:11px 18px; border-radius:999px; z-index:50; opacity:0; pointer-events:none;
+    transition:opacity .25s, transform .25s; box-shadow:var(--shadow);
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important; transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<main class="card" id="card">
+  <div class="cover"><span class="crest te" id="crest"></span></div>
+
+  <section class="id">
+    <div class="avatar" id="avatar"></div>
+    <h1 class="name-te te" id="nameTe"></h1>
+    <div class="name-en" id="nameEn"></div>
+    <div class="role te" id="role"></div>
+    <p class="tagline te" id="tagline"></p>
+  </section>
+
+  <div class="rule"></div>
+
+  <nav class="actions" id="actions"></nav>
+
+  <section class="info" id="info"></section>
+
+  <section class="block" id="servicesBlock" style="display:none">
+    <h3 class="te">సర్వీసులు</h3>
+    <div class="chips" id="services"></div>
+  </section>
+
+  <section class="block" id="galleryBlock" style="display:none">
+    <h3 class="te">గ్యాలరీ</h3>
+    <div class="gal" id="gallery"></div>
+  </section>
+
+  <nav class="social" id="social"></nav>
+
+  <div class="made"><a id="made" href="#" target="_blank" rel="noopener"></a></div>
+</main>
+
+<div class="bar">
+  <button class="save" onclick="saveContact()">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    కాంటాక్ట్ సేవ్
+  </button>
+  <button onclick="shareCard()">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7"/><path d="M16 6l-4-4-4 4"/><path d="M12 2v14"/></svg>
+    షేర్
+  </button>
+  <button onclick="openQR()">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg>
+    QR
+  </button>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeQR()">
+  <div class="qr-card">
+    <h4 class="te">కార్డ్ స్కాన్ చేయండి</h4>
+    <p class="te">ఫోన్ కెమెరా చూపి సేవ్ చేసుకోండి</p>
+    <div id="qr"></div>
+    <button class="qr-close te" onclick="closeQR()">మూసివేయి</button>
+  </div>
+</div>
+
+<div class="toast te" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => (s||"").replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+
+// theme
+document.documentElement.style.setProperty('--accent', CARD.theme || '#C99A4B');
+
+// crest = business english name, short
+$('crest').textContent = CARD.nameEn || "";
+
+// avatar
+const av = $('avatar');
+if (CARD.photo){ av.innerHTML = '<img src="'+CARD.photo+'" alt="" style="width:100%;height:100%;object-fit:cover">'; }
+else { av.textContent = (CARD.nameTe||CARD.nameEn||"•").trim().charAt(0); }
+
+// identity
+$('nameTe').textContent = CARD.nameTe || "";
+$('nameEn').textContent = CARD.nameEn || "";
+$('role').textContent = CARD.role || "";
+$('tagline').textContent = CARD.tagline || "";
+
+// ── action strip (only what's filled) ──
+const ICON = {
+  call:'<path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3 19.5 19.5 0 01-6-6 19.8 19.8 0 01-3-8.6A2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.6a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.5-1.2a2 2 0 012.1-.5c.8.3 1.7.6 2.6.7a2 2 0 011.7 2z"/>',
+  wa:'<path d="M21 11.5a8.4 8.4 0 01-12.6 7.3L3 21l2.3-5.3A8.5 8.5 0 1121 11.5z"/>',
+  pay:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+  dir:'<path d="M12 21s-7-6.7-7-11a7 7 0 0114 0c0 4.3-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/>',
+};
+const acts = [];
+if (CARD.phone)    acts.push(`<a class="act primary" href="tel:+${CARD.phone}"><svg class="ic" viewBox="0 0 24 24">${ICON.call}</svg><span class="lbl te">కాల్</span></a>`);
+if (CARD.whatsapp) acts.push(`<a class="act wa" href="https://wa.me/${CARD.whatsapp}?text=${encodeURIComponent(CARD.waText||'')}" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24">${ICON.wa}</svg><span class="lbl te">WhatsApp</span></a>`);
+if (CARD.upi)      acts.push(`<a class="act" href="upi://pay?pa=${CARD.upi}&pn=${encodeURIComponent(CARD.upiName||CARD.nameEn||'')}&cu=INR"><svg class="ic" viewBox="0 0 24 24">${ICON.pay}</svg><span class="lbl te">పే</span></a>`);
+if (CARD.maps)     acts.push(`<a class="act" href="${CARD.maps}" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24">${ICON.dir}</svg><span class="lbl te">దారి</span></a>`);
+const actEl = $('actions');
+actEl.style.gridTemplateColumns = `repeat(${Math.max(acts.length,1)},1fr)`;
+actEl.innerHTML = acts.join('');
+
+// ── info rows ──
+const rows = [];
+if (CARD.phone)   rows.push(`<a class="row" href="tel:+${CARD.phone}"><svg class="ic" viewBox="0 0 24 24">${ICON.call}</svg><div class="v"><small class="te">ఫోన్</small>+${CARD.phone}</div></a>`);
+if (CARD.address) rows.push(`<a class="row" href="${CARD.maps||'#'}" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24">${ICON.dir}</svg><div class="v te"><small>చిరునామా</small>${esc(CARD.address)}</div></a>`);
+if (CARD.hours)   rows.push(`<div class="row"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div class="v te"><small>పని వేళలు</small>${esc(CARD.hours)}</div></div>`);
+$('info').innerHTML = rows.join('');
+
+// ── services ──
+if (CARD.services && CARD.services.length){
+  $('servicesBlock').style.display = '';
+  $('services').innerHTML = CARD.services.map(s=>`<span class="chip te">${esc(s)}</span>`).join('');
+}
+
+// ── gallery ──
+if (CARD.gallery && CARD.gallery.length){
+  $('galleryBlock').style.display = '';
+  $('gallery').innerHTML = CARD.gallery.map(u=>`<img src="${u}" alt="" loading="lazy">`).join('');
+}
+
+// ── social ──
+const SOC = {
+  website:  ['వెబ్‌సైట్','<path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 0c2.5 2.5 2.5 17.5 0 20M2 12h20"/>',true],
+  instagram:['Instagram','<path d="M2 7.5A5.5 5.5 0 017.5 2h9A5.5 5.5 0 0122 7.5v9a5.5 5.5 0 01-5.5 5.5h-9A5.5 5.5 0 012 16.5z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.4"/>',false],
+  facebook: ['Facebook','<path d="M14 9V7c0-1 .3-1.5 1.6-1.5H17V2.2C16.6 2.1 15.4 2 14.3 2 11.6 2 10 3.6 10 6.4V9H7v3.5h3V22h4v-9.5h2.8L17 9z"/>',false],
+  youtube:  ['YouTube','<path d="M22 8.2a3 3 0 00-2-2C18 5.7 12 5.7 12 5.7s-6 0-8 .5a3 3 0 00-2 2C1.6 9.9 1.6 12 1.6 12s0 2.1.4 3.8a3 3 0 002 2c2 .5 8 .5 8 .5s6 0 8-.5a3 3 0 002-2c.4-1.7.4-3.8.4-3.8s0-2.1-.4-3.8zM10 15.2V8.8l5.2 3.2z"/>',false],
+};
+const soc = [];
+for (const k in SOC){
+  if (CARD[k]){ const [t,svg] = SOC[k];
+    soc.push(`<a href="${CARD[k]}" target="_blank" rel="noopener" aria-label="${t}"><svg viewBox="0 0 24 24">${svg}</svg></a>`);
+  }
+}
+$('social').innerHTML = soc.join('');
+
+// maker footer
+$('made').href = MAKER.url;
+$('made').innerHTML = `<b>●</b> ${esc(MAKER.label)}`;
+
+// ── save contact (vCard) ──
+function saveContact(){
+  const v = [
+    "BEGIN:VCARD","VERSION:3.0",
+    `N:;${CARD.nameTe||CARD.nameEn};;;`,
+    `FN:${CARD.nameTe||CARD.nameEn}`,
+    CARD.nameEn?`ORG:${CARD.nameEn}`:"",
+    CARD.role?`TITLE:${CARD.role}`:"",
+    CARD.phone?`TEL;TYPE=CELL:+${CARD.phone}`:"",
+    CARD.address?`ADR;TYPE=WORK:;;${CARD.address};;;;`:"",
+    CARD.website?`URL:${CARD.website}`:"",
+    "END:VCARD"
+  ].filter(Boolean).join("\r\n");
+  const blob = new Blob([v],{type:"text/vcard"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = (CARD.nameEn||"contact").replace(/\s+/g,"_")+".vcf";
+  a.click();
+  toast("కాంటాక్ట్ సేవ్ అవుతోంది ✓");
+}
+
+// ── share ──
+async function shareCard(){
+  const url = location.href;
+  const txt = `${CARD.nameTe} — ${CARD.nameEn}`;
+  if (navigator.share){ try{ await navigator.share({title:txt, url}); return; }catch(e){} }
+  try{ await navigator.clipboard.writeText(url); toast("లింక్ కాపీ అయింది ✓"); }
+  catch(e){ toast("లింక్: "+url); }
+}
+
+// ── QR ──
+let qrDone=false;
+function openQR(){
+  $('modal').classList.add('open');
+  if(!qrDone && window.QRCode){
+    new QRCode($('qr'),{text:location.href,width:180,height:180,colorDark:"#10302E",colorLight:"#ffffff"});
+    qrDone=true;
+  } else if(!window.QRCode){ $('qr').innerHTML='<p style="font-size:12px;color:#5b6b66">QR కోసం ఇంటర్నెట్ అవసరం</p>'; }
+}
+function closeQR(){ $('modal').classList.remove('open'); }
+
+// ── toast ──
+let tT;
+function toast(m){ const t=$('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(tT); tT=setTimeout(()=>t.classList.remove('show'),2200); }
+</script>
+</body>
+  </html>
 
