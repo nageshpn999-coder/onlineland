@@ -1,1 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- ==========================================================
+       PREMIUM DENTAL TEMPLATE — OnlineLand Digital Services
+       Per client, change only:
+       1. CONFIG in script.js  (clinic name, phone, email, address)
+       2. Logo text / logo image in header
+       3. Doctor details in About section
+       4. Photos: replace .ph-img placeholder blocks with <img>
+       5. Google Map iframe src (Contact section)
+       6. After payment: remove class="demo" from <body>
+       ========================================================== -->
+
+  <title>Smile Care Dental Clinic | Best Dentist in Miyapur, Hyderabad</title>
+  <meta name="description" content="Smile Care Dental Clinic, Miyapur — advanced painless dental treatments: implants, root canal, braces, teeth whitening & kids dentistry. Book your appointment today.">
+  <meta property="og:title" content="Smile Care Dental Clinic — Healthy Smile, Happy Life">
+  <meta property="og:description" content="Advanced, painless dental care in Miyapur, Hyderabad. Implants, RCT, braces, whitening & more. Book an appointment on WhatsApp.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://example.com/">
+  <meta property="og:image" content="https://example.com/og-image.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<!-- After payment: remove class="demo" to hide the DEMO ribbon -->
+<body class="demo">
+
+<!-- ================= HEADER ================= -->
+<header class="header" id="header">
+  <div class="container nav-wrap">
+    <a href="#home" class="logo" aria-label="Smile Care Dental Clinic — home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5c-1.5-2-4.5-2.5-6.5-1C3 6.3 3 9.5 4 12c1 2.6 1.6 5.5 2.5 7.5.4.9 1.7.8 2-.2.4-1.6.7-3.8 1.5-3.8h4c.8 0 1.1 2.2 1.5 3.8.3 1 1.6 1.1 2 .2.9-2 1.5-4.9 2.5-7.5 1-2.5 1-5.7-1.5-7.5-2-1.5-5-1-6.5 1z"/></svg>
+      </span>
+      <span class="logo-text">Smile<b>Care</b><small>Dental Clinic</small></span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Main navigation">
+      <a href="#home" class="nav-link active">Home</a>
+      <a href="#about" class="nav-link">Doctor</a>
+      <a href="#services" class="nav-link">Services</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#reviews" class="nav-link">Reviews</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+
+    <div class="head-actions">
+      <a href="#" class="btn btn-ghost js-call" aria-label="Call the clinic">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>
+        Call Now
+      </a>
+      <a href="#" class="btn btn-primary js-wa">WhatsApp</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <span class="eyebrow">🦷 Advanced Dental Care · Miyapur, Hyderabad</span>
+      <h1>Healthy Smile,<br><em>Happy Life</em></h1>
+      <p>Painless, modern dental treatments by experienced specialists — from routine cleaning to implants and smile makeovers, all under one roof.</p>
+      <div class="hero-cta">
+        <a href="#appointment" class="btn btn-primary btn-lg">Book Appointment</a>
+        <a href="#" class="btn btn-outline btn-lg js-call">Call Now</a>
+      </div>
+      <div class="hero-stats glass">
+        <div><b>10+</b><span>Years Experience</span></div>
+        <div><b>5,000+</b><span>Happy Patients</span></div>
+        <div><b>4.8 ★</b><span>Google Rating</span></div>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal delay-1">
+      <!-- PHOTO: replace this placeholder with
+           <img src="images/clinic-hero.jpg" alt="Smile Care clinic interior" loading="lazy"> -->
+      <div class="ph-img hero-img" role="img" aria-label="Dental clinic photo placeholder">
+        <svg viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5.5c-1.5-2-4.5-2.5-6.5-1C3 6.3 3 9.5 4 12c1 2.6 1.6 5.5 2.5 7.5.4.9 1.7.8 2-.2.4-1.6.7-3.8 1.5-3.8h4c.8 0 1.1 2.2 1.5 3.8.3 1 1.6 1.1 2 .2.9-2 1.5-4.9 2.5-7.5 1-2.5 1-5.7-1.5-7.5-2-1.5-5-1-6.5 1z"/></svg>
+        <span>Clinic Photo</span>
+      </div>
+      <div class="float-card glass">
+        <span class="dot" aria-hidden="true"></span>
+        <div><b>Open Today</b><small>10 AM – 9 PM · Walk-ins welcome</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT DOCTOR ================= -->
+<section class="section" id="about">
+  <div class="container about-grid">
+    <div class="about-photo reveal">
+      <!-- PHOTO: replace with <img src="images/doctor.jpg" alt="Dr. Ramesh Kumar"> -->
+      <div class="ph-img doc-img" role="img" aria-label="Doctor photo placeholder">
+        <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+        <span>Doctor Photo</span>
+      </div>
+      <div class="exp-badge">10+ <small>Years of<br>Experience</small></div>
+    </div>
+    <div class="about-copy reveal delay-1">
+      <span class="eyebrow">Meet Your Doctor</span>
+      <h2>Dr. Ramesh Kumar</h2>
+      <p class="qual">BDS, MDS — Orthodontics &amp; Dentofacial Orthopaedics</p>
+      <p>Dr. Ramesh has treated over 5,000 patients across Hyderabad with a simple philosophy — every treatment should be painless, transparent, and built around the patient's comfort. He specialises in braces, aligners and full-mouth rehabilitation.</p>
+      <ul class="ticks">
+        <li>Member, Indian Dental Association</li>
+        <li>Certified in advanced implantology</li>
+        <li>Gentle, kid-friendly approach</li>
+      </ul>
+      <a href="#appointment" class="btn btn-primary">Consult Dr. Ramesh</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section class="section section-tint" id="services">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Our Services</span>
+      <h2>Complete Dental Care Under One Roof</h2>
+    </div>
+    <div class="svc-grid">
+      <article class="svc-card reveal"><div class="svc-icon">🔩</div><h3>Dental Implants</h3><p>Permanent, natural-looking replacement for missing teeth.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">🩹</div><h3>Root Canal Treatment</h3><p>Single-visit, painless RCT with modern rotary technology.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">⚪</div><h3>Teeth Whitening</h3><p>Safe, instant brightening for a confident smile.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">😁</div><h3>Braces &amp; Aligners</h3><p>Metal, ceramic and invisible aligners — EMI available.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">✨</div><h3>Smile Makeover</h3><p>Veneers and cosmetic corrections designed for your face.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">🧒</div><h3>Kids Dentistry</h3><p>Friendly, fear-free care for your little ones.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">🦷</div><h3>Tooth Extraction</h3><p>Gentle removal, including wisdom teeth, with quick recovery.</p></article>
+      <article class="svc-card reveal"><div class="svc-icon">🪥</div><h3>Dental Cleaning</h3><p>Scaling &amp; polishing to keep gums healthy — every 6 months.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY CHOOSE US ================= -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Why Choose Us</span>
+      <h2>Care You Can Trust</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-item reveal"><span>🩺</span><b>Experienced Doctors</b><p>Specialists with 10+ years of clinical practice.</p></div>
+      <div class="why-item reveal"><span>⚙️</span><b>Advanced Equipment</b><p>Digital X-ray, rotary endo &amp; laser dentistry.</p></div>
+      <div class="why-item reveal"><span>💰</span><b>Affordable Pricing</b><p>Transparent costs with easy EMI options.</p></div>
+      <div class="why-item reveal"><span>😌</span><b>Painless Treatment</b><p>Modern anaesthesia for a comfortable visit.</p></div>
+      <div class="why-item reveal"><span>🚨</span><b>Emergency Care</b><p>Same-day appointments for dental emergencies.</p></div>
+      <div class="why-item reveal"><span>🤝</span><b>Friendly Staff</b><p>A warm team that puts you at ease.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GALLERY ================= -->
+<section class="section section-tint" id="gallery">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Gallery</span>
+      <h2>Our Clinic &amp; Real Results</h2>
+    </div>
+    <div class="gal-grid">
+      <!-- PHOTOS: replace each placeholder with
+           <img src="images/gallery-1.jpg" alt="Reception area" loading="lazy"> -->
+      <div class="ph-img gal-img reveal" role="img" aria-label="Clinic reception photo placeholder"><span>Reception</span></div>
+      <div class="ph-img gal-img reveal" role="img" aria-label="Treatment room photo placeholder"><span>Treatment Room</span></div>
+      <div class="ph-img gal-img reveal" role="img" aria-label="Equipment photo placeholder"><span>Equipment</span></div>
+      <div class="ph-img gal-img ba reveal" role="img" aria-label="Before and after smile placeholder"><span>Before → After</span></div>
+      <div class="ph-img gal-img ba reveal" role="img" aria-label="Before and after smile placeholder"><span>Before → After</span></div>
+      <div class="ph-img gal-img reveal" role="img" aria-label="Waiting lounge photo placeholder"><span>Waiting Lounge</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="section" id="reviews">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Testimonials</span>
+      <h2>What Our Patients Say</h2>
+    </div>
+    <div class="tst-grid">
+      <figure class="tst-card glass reveal">
+        <div class="stars" aria-label="5 star rating">★★★★★</div>
+        <blockquote>My root canal was completely painless — I was honestly surprised. The doctor explained everything before starting.</blockquote>
+        <figcaption><b>Srinivas R.</b><span>RCT Patient · Miyapur</span></figcaption>
+      </figure>
+      <figure class="tst-card glass reveal delay-1">
+        <div class="stars" aria-label="5 star rating">★★★★★</div>
+        <blockquote>Took my 6-year-old for her first check-up. The team made it so fun that she now asks when we're going back!</blockquote>
+        <figcaption><b>Lakshmi P.</b><span>Kids Dentistry · Chandanagar</span></figcaption>
+      </figure>
+      <figure class="tst-card glass reveal delay-2">
+        <div class="stars" aria-label="5 star rating">★★★★★</div>
+        <blockquote>Got my braces here on EMI. Clean clinic, on-time appointments, and my smile looks amazing now.</blockquote>
+        <figcaption><b>Ayesha K.</b><span>Braces Patient · Kukatpally</span></figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ================= APPOINTMENT FORM ================= -->
+<section class="section section-deep" id="appointment">
+  <div class="container appt-grid">
+    <div class="appt-copy reveal">
+      <span class="eyebrow light">Book Appointment</span>
+      <h2>Reserve Your Visit in 30 Seconds</h2>
+      <p>Fill the form and our team will confirm your slot on WhatsApp within minutes. Same-day emergency slots available.</p>
+      <ul class="ticks light">
+        <li>No advance payment needed</li>
+        <li>Free first consultation this month</li>
+        <li>Reminder sent before your visit</li>
+      </ul>
+    </div>
+
+    <form class="appt-form glass reveal delay-1" id="apptForm" novalidate>
+      <div class="field">
+        <label for="fName">Full Name</label>
+        <input type="text" id="fName" name="name" placeholder="Your name" autocomplete="name" required>
+        <small class="err" aria-live="polite"></small>
+      </div>
+      <div class="field">
+        <label for="fPhone">Mobile Number</label>
+        <input type="tel" id="fPhone" name="phone" placeholder="10-digit mobile number" autocomplete="tel" inputmode="numeric" required>
+        <small class="err" aria-live="polite"></small>
+      </div>
+      <div class="field">
+        <label for="fTreat">Treatment Required</label>
+        <select id="fTreat" name="treatment" required>
+          <option value="">Select treatment</option>
+          <option>General Check-up</option>
+          <option>Dental Cleaning</option>
+          <option>Root Canal Treatment</option>
+          <option>Dental Implants</option>
+          <option>Braces / Aligners</option>
+          <option>Teeth Whitening</option>
+          <option>Kids Dentistry</option>
+          <option>Tooth Extraction</option>
+          <option>Other</option>
+        </select>
+        <small class="err" aria-live="polite"></small>
+      </div>
+      <div class="field">
+        <label for="fDate">Preferred Date</label>
+        <input type="date" id="fDate" name="date" required>
+        <small class="err" aria-live="polite"></small>
+      </div>
+      <div class="field">
+        <label for="fMsg">Message <span class="opt">(optional)</span></label>
+        <textarea id="fMsg" name="message" rows="3" placeholder="Anything we should know?"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Book Appointment</button>
+      <p class="form-note">Submitting opens WhatsApp with your details pre-filled — just press send.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Contact Us</span>
+      <h2>Visit Smile Care</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="c-item"><span>📍</span><div><b>Address</b><p class="js-address">2nd Floor, Sai Complex, Miyapur X Roads, Hyderabad — 500049</p></div></div>
+        <div class="c-item"><span>📞</span><div><b>Phone</b><p><a href="#" class="js-call js-phone-text">+91 99999 99999</a></p></div></div>
+        <div class="c-item"><span>✉️</span><div><b>Email</b><p><a href="#" class="js-email-link js-email-text">care@smilecare.in</a></p></div></div>
+        <div class="c-item"><span>🕒</span><div><b>Clinic Timings</b><p>Mon–Sat: 10 AM – 2 PM, 5 PM – 9 PM<br>Sunday: 10 AM – 1 PM</p></div></div>
+      </div>
+      <div class="map-wrap reveal delay-1">
+        <!-- MAP: Google Maps → Share → Embed a map → paste iframe src below -->
+        <iframe src="https://www.google.com/maps?q=Miyapur,Hyderabad&output=embed" loading="lazy" title="Smile Care Dental Clinic location on Google Maps"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+  <div class="container foot-grid">
+    <div>
+      <a href="#home" class="logo light"><span class="logo-text">Smile<b>Care</b><small>Dental Clinic</small></span></a>
+      <p class="foot-about">Advanced, painless dental care for the whole family in Miyapur, Hyderabad.</p>
+      <div class="socials" aria-label="Social media">
+        <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.6-.1-1.5-.2-2.4-.2-2.4 0-4 1.4-4 4V11H7.5v3H10v7h3.5z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21.6 7.2a2.8 2.8 0 0 0-2-2C17.9 4.8 12 4.8 12 4.8s-5.9 0-7.6.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 2 12a29 29 0 0 0 .4 4.8 2.8 2.8 0 0 0 2 2c1.7.4 7.6.4 7.6.4s5.9 0 7.6-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 22 12a29 29 0 0 0-.4-4.8zM10 15.2V8.8L15.5 12 10 15.2z"/></svg></a>
+      </div>
+    </div>
+    <nav aria-label="Quick links">
+      <b>Quick Links</b>
+      <a href="#home">Home</a>
+      <a href="#about">Doctor</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#appointment">Book Appointment</a>
+    </nav>
+    <nav aria-label="Services">
+      <b>Services</b>
+      <a href="#services">Dental Implants</a>
+      <a href="#services">Root Canal</a>
+      <a href="#services">Braces &amp; Aligners</a>
+      <a href="#services">Teeth Whitening</a>
+    </nav>
+    <div>
+      <b>Contact</b>
+      <p class="foot-contact js-address">2nd Floor, Sai Complex, Miyapur X Roads, Hyderabad</p>
+      <p class="foot-contact js-phone-text">+91 99999 99999</p>
+      <p class="foot-contact js-email-text">care@smilecare.in</p>
+    </div>
+  </div>
+  <div class="foot-bar">
+    <div class="container">
+      © <span id="year"></span> Smile Care Dental Clinic · Website by <a href="https://onlineland.in">OnlineLand Digital Services</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= FLOATING BUTTONS ================= -->
+<div class="floaters">
+  <a href="#" class="fab fab-wa js-wa" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.7 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3.1.8.8-3-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.6-6.1c-.3-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4 0-.5.1-.7l.5-.6c.1-.2.1-.4 0-.5l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.9.9-1.2 2.1-.4 3.7a12 12 0 0 0 4.6 4.6c1.8.9 2.7.9 3.6.7.6-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.7-.3z"/></svg>
+  </a>
+  <a href="#" class="fab fab-call js-call" aria-label="Call the clinic">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.7 2z"/></svg>
+  </a>
+  <button class="fab fab-top" id="toTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
