@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
 <!-- PWA Meta Tags -->
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%20%22OnlineLand%20-%20%E0%B0%A4%E0%B1%86%E0%B0%B2%E0%B0%82%E0%B0%97%E0%B0%BE%E0%B0%A3%20%E0%B0%AD%E0%B1%82%E0%B0%AE%E0%B1%81%E0%B0%B2%E0%B1%81%22%2C%20%22short_name%22%3A%20%22OnlineLand%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%23faf6ed%22%2C%20%22theme_color%22%3A%20%22%231a3c2e%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-192.png%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%2C%20%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-512.png%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D"/>
-<meta name="theme-color" content="#1a3c2e"/>
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%20%22OnlineLand%20-%20%E0%B0%A4%E0%B1%86%E0%B0%B2%E0%B0%82%E0%B0%97%E0%B0%BE%E0%B0%A3%20%E0%B0%AD%E0%B1%82%E0%B0%AE%E0%B1%81%E0%B0%B2%E0%B1%81%22%2C%20%22short_name%22%3A%20%22OnlineLand%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%23faf6ed%22%2C%20%22theme_color%22%3A%20%22%23123A63%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-192.png%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%2C%20%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-512.png%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D"/>
+<meta name="theme-color" content="#123A63"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="OnlineLand"/>
@@ -53,14 +53,13 @@
 </script>
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-<!-- QR Code generator (chellimpu QR కోసం) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
-  --green:#1E4D2B;--green2:#2E7D42;--green3:#4CAF65;
+  /* నీలం (blue) పాలెట్ — వేరియబుల్ పేర్లు పాతవే ఉంచాం, విలువలు మాత్రమే మారాయి */
+  --green:#123A63;--green2:#1B5A96;--green3:#3A8DD8;
   --gold:#C8922A;--gold2:#E8B84B;--gold3:#FDD87A;
   --earth:#F5EDD6;--earth2:#EDE0BC;--earth3:#D4C49A;
-  --dark:#0F2318;--text:#1A3322;--muted:#5A7A63;
+  --dark:#071A2E;--text:#14263D;--muted:#5E7793;
   --white:#FDFAF4;--red:#C0392B;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -69,7 +68,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(253,250,244,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,146,42,.2);transition:box-shadow .3s}
-nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
+nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 .logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--green);text-decoration:none}
 .logo span{color:var(--gold)}
 .nav-right{display:flex;gap:1rem;align-items:center}
@@ -79,8 +78,8 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 .btn-admin:hover{background:var(--green2)}
 
 /* HERO */
-.hero{min-height:100vh;display:grid;place-items:center;padding:7rem 2rem 6rem;background:linear-gradient(150deg,var(--dark) 0%,var(--green) 60%,#3D7A4A 100%);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 85%,rgba(200,146,42,.18) 0%,transparent 50%),radial-gradient(ellipse at 85% 15%,rgba(76,175,101,.1) 0%,transparent 45%)}
+.hero{min-height:100vh;display:grid;place-items:center;padding:7rem 2rem 6rem;background:linear-gradient(150deg,var(--dark) 0%,var(--green) 60%,#2B6CA8 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 85%,rgba(200,146,42,.18) 0%,transparent 50%),radial-gradient(ellipse at 85% 15%,rgba(58,141,216,.1) 0%,transparent 45%)}
 .hero-dots{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle,rgba(200,146,42,1) 1px,transparent 1px);background-size:32px 32px}
 .hero-content{position:relative;text-align:center;max-width:760px}
 .hero-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.35);color:var(--gold3);border-radius:100px;padding:.4rem 1.2rem;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.8rem;animation:fadeUp .6s .1s both}
@@ -92,7 +91,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 .btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,146,42,.5)}
 .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:.85rem 2rem;border-radius:8px;font-weight:500;font-size:.95rem;text-decoration:none;cursor:pointer;transition:all .25s}
 .btn-ghost:hover{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.08);transform:translateY(-2px)}
-.hero-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(15,35,24,.4);backdrop-filter:blur(8px);border-top:1px solid rgba(200,146,42,.15);animation:fadeUp .6s .7s both}
+.hero-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(7,26,46,.4);backdrop-filter:blur(8px);border-top:1px solid rgba(200,146,42,.15);animation:fadeUp .6s .7s both}
 .hstat{flex:1;max-width:180px;padding:1.3rem .8rem;text-align:center;border-right:1px solid rgba(200,146,42,.12)}
 .hstat:last-child{border-right:none}
 .hstat-n{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--gold2)}
@@ -100,7 +99,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 
 /* SEARCH */
 .search-wrap{background:var(--white);padding:3rem 2rem;border-bottom:1px solid var(--earth2)}
-.search-box{max-width:900px;margin:0 auto;background:#fff;border:1.5px solid var(--earth3);border-radius:16px;padding:1.8rem;box-shadow:0 6px 40px rgba(30,77,43,.07)}
+.search-box{max-width:900px;margin:0 auto;background:#fff;border:1.5px solid var(--earth3);border-radius:16px;padding:1.8rem;box-shadow:0 6px 40px rgba(18,58,99,.07)}
 .search-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:1.2rem;text-align:center}
 .search-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;align-items:end}
 .sf label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.35rem}
@@ -119,7 +118,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 
 /* CARDS */
 .card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--earth2);transition:transform .3s,box-shadow .3s;cursor:pointer}
-.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(30,77,43,.12)}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(18,58,99,.12)}
 .card-img{height:200px;position:relative;overflow:hidden;background:var(--green)}
 .card-photo{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .card:hover .card-photo{transform:scale(1.06)}
@@ -144,7 +143,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 .empty-state .es-icon{font-size:3rem;margin-bottom:1rem}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,35,24,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,26,46,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.open{display:flex}
 .modal{background:#fff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
 .modal-imgs{height:260px;overflow:hidden;border-radius:20px 20px 0 0;background:var(--green)}
@@ -165,7 +164,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 .modal-close{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font-size:1.1rem;display:grid;place-items:center;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.15)}
 
 /* ADMIN LOGIN */
-.admin-login{display:none;position:fixed;inset:0;z-index:400;background:rgba(15,35,24,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.admin-login{display:none;position:fixed;inset:0;z-index:400;background:rgba(7,26,46,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
 .admin-login.open{display:flex}
 .login-box{background:#fff;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;text-align:center}
 .login-box h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--green);margin-bottom:.4rem}
@@ -207,7 +206,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(30,77,43,.12)}
 
 /* photo upload */
 .photo-upload{border:2px dashed var(--earth3);border-radius:12px;padding:1.8rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
-.photo-upload:hover{border-color:var(--green3);background:rgba(76,175,101,.03)}
+.photo-upload:hover{border-color:var(--green3);background:rgba(58,141,216,.03)}
 .photo-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .photo-upload .pu-icon{font-size:2rem;margin-bottom:.5rem}
 .photo-upload p{font-size:.85rem;color:var(--muted)}
@@ -298,17 +297,17 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 .blog{padding:4.5rem 2rem;background:var(--white)}
 .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;max-width:1200px;margin:0 auto}
 .blog-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--earth2);transition:transform .3s,box-shadow .3s;cursor:pointer}
-.blog-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(30,77,43,.1)}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(18,58,99,.1)}
 .blog-card-img{height:180px;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative}
 .blog-card-date{position:absolute;bottom:.8rem;right:.8rem;background:rgba(0,0,0,.4);color:#fff;font-size:.7rem;padding:.25rem .7rem;border-radius:100px}
 .blog-card-body{padding:1.2rem}
-.blog-card-tag{display:inline-block;background:rgba(30,77,43,.1);color:var(--green);font-size:.7rem;font-weight:700;padding:.25rem .8rem;border-radius:100px;margin-bottom:.6rem;letter-spacing:.5px;text-transform:uppercase}
+.blog-card-tag{display:inline-block;background:rgba(18,58,99,.1);color:var(--green);font-size:.7rem;font-weight:700;padding:.25rem .8rem;border-radius:100px;margin-bottom:.6rem;letter-spacing:.5px;text-transform:uppercase}
 .blog-card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--green);margin-bottom:.6rem;line-height:1.4}
 .blog-card-excerpt{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:1rem}
 .blog-card-read{font-size:.8rem;font-weight:700;color:var(--gold);text-decoration:none}
 
 /* BLOG MODAL */
-.blog-modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,35,24,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.blog-modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,26,46,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
 .blog-modal-overlay.open{display:flex}
 .blog-modal{background:#fff;border-radius:20px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;position:relative;padding:2.5rem}
 .blog-modal-close{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:var(--earth);border:none;cursor:pointer;font-size:1.1rem;display:grid;place-items:center}
@@ -413,7 +412,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
       <p class="sec-sub">భూమి కొనుగోలు, అమ్మకం లేదా ఏదైనా సందేహాలు ఉంటే మాకు పంపండి</p>
     </div>
 
-    <div style="background:#fff;border-radius:16px;border:1px solid var(--earth2);padding:2rem;box-shadow:0 6px 30px rgba(30,77,43,.07)" class="reveal">
+    <div style="background:#fff;border-radius:16px;border:1px solid var(--earth2);padding:2rem;box-shadow:0 6px 30px rgba(18,58,99,.07)" class="reveal">
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
         <div class="ff">
@@ -445,7 +444,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 
       <div style="display:flex;gap:.8rem;flex-wrap:wrap">
         <button onclick="sendWhatsApp()" style="flex:1;min-width:140px;background:#25D366;color:#fff;border:none;padding:.85rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" style="vertical-align:-3px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.748-.985zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg> WhatsApp పంపండి
+          💬 WhatsApp పంపండి
         </button>
         <button onclick="sendEmail()" style="flex:1;min-width:140px;background:var(--green);color:#fff;border:none;padding:.85rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
           📧 Email పంపండి
@@ -458,7 +457,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
     <!-- Direct contact -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem" class="reveal">
       <a href="https://wa.me/919959731120" target="_blank" style="background:#25D366;color:#fff;padding:1rem;border-radius:12px;text-decoration:none;text-align:center;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" style="vertical-align:-3px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.748-.985zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg> నేరుగా WhatsApp చేయండి
+        💬 నేరుగా WhatsApp చేయండి
       </a>
       <a href="tel:9959731120" style="background:var(--green);color:#fff;padding:1rem;border-radius:12px;text-decoration:none;text-align:center;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
         📞 Phone Call చేయండి
@@ -1151,10 +1150,31 @@ function saveListing(){
     }
   }
 
-  // ఫోటోలు base64 గా (compressed) నేరుగా Firestore లో save చేస్తాం — Firebase Storage అవసరం లేదు.
-  // (public form లాగే; photos ఇప్పటికే compressImage తో compress అయ్యాయి)
+  // ⚠️ IMPORTANT: Photos base64 గా Firestore లో save చేయకూడదు (1MB limit)
+  // Photos ముందు Firebase Storage కి upload చేసి, URLs మాత్రమే Firestore లో save చేస్తాం
   const photosToUpload = listing.photos || [];
-  doSave(photosToUpload);
+  // Edit mode లో already URL గా ఉన్న photos (https://) skip చేసి, కొత్త base64 photos మాత్రమే upload
+  const needsUpload = photosToUpload.some(p => p.startsWith('data:'));
+
+  if(needsUpload && window.uploadPhotos){
+    showFormMsg('success','📤 ఫోటోలు upload అవుతున్నాయి... దయచేసి వేచి ఉండండి');
+    window.uploadPhotos(photosToUpload.filter(p => p.startsWith('data:')))
+      .then(uploadedURLs => {
+        const existingURLs = photosToUpload.filter(p => !p.startsWith('data:'));
+        const allURLs = [...existingURLs, ...uploadedURLs];
+        if(photosToUpload.length > 0 && allURLs.length === 0){
+          showFormMsg('error','❌ ఫోటో upload విఫలమైంది. Firebase Storage rules చెక్ చేయండి.');
+          return;
+        }
+        doSave(allURLs);
+      })
+      .catch(e => {
+        console.error('Photo upload error:', e);
+        showFormMsg('error','❌ ఫోటో upload విఫలమైంది: ' + e.message);
+      });
+  } else {
+    doSave(photosToUpload);
+  }
 }
 
 function resetForm(){
@@ -1214,7 +1234,7 @@ function renderListings(data){
             <small>${perAcre?'₹'+perAcre+'L/ఎకరం':''}</small>
           </div>
           <div class="card-contacts" onclick="event.stopPropagation()">
-            <a class="btn-wp" href="https://wa.me/${l.whatsapp||''}" target="_blank">${WA_SVG} WhatsApp</a>
+            <a class="btn-wp" href="https://wa.me/${l.whatsapp||''}" target="_blank">💬 WA</a>
             <a class="btn-ph" href="tel:${l.phone||l.whatsapp||''}">📞</a>
           </div>
         </div>
@@ -1257,22 +1277,6 @@ function getYoutubeId(url){
   return m ? m[1] : '';
 }
 
-// ═══════ చెల్లింపు సెట్టింగ్ (PAYMENT CONFIG) ═══════
-// PhonePe merchant UPI ID (merchant route — decline అవ్వదు).
-// తర్వాత ఎప్పుడైనా మార్చాలంటే ఈ ఒక్క line మార్చితే చాలు —
-// "Pay" button, QR code, UPI ID text అన్నీ automatic గా update అవుతాయి.
-const MERCHANT_UPI  = 'Q203723761@ybl';   // PhonePe merchant VPA
-const MERCHANT_NAME = 'OnlineLand';
-
-// ═══════ AI ASSISTANT ═══════
-// మీ Cloudflare Worker deploy చేశాక, ఆ URL ఇక్కడ paste చేయండి.
-// ఖాళీగా ఉంటే AI chat button కనిపించదు.
-const AI_WORKER_URL = '';  // ఉదా: 'https://onlineland-ai.xxxx.workers.dev'
-
-// WhatsApp logo (inline SVG) — buttons లో వాడతాం
-const WA_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="vertical-align:-3px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.748-.985zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>';
-
-
 // ═══════ SELLER POST FUNCTIONS ═══════
 let sellPhotos = [];
 let selectedPlanFee = 0;
@@ -1303,41 +1307,6 @@ function sellPopulateMandals(){
   if(d && DISTRICTS[d]){
     DISTRICTS[d].forEach(mn=>{ const o=document.createElement('option'); o.value=mn; o.textContent=mn; m.appendChild(o); });
   }
-  // జిల్లా మారితే village reset చేయి
-  const vs=document.getElementById('sVillageSelect'), vi=document.getElementById('sVillage');
-  if(vs){ vs.style.display='none'; vs.innerHTML='<option value="">గ్రామం ఎంచుకోండి</option>'; }
-  if(vi){ vi.style.display='block'; vi.value=''; }
-}
-function sellPopulateVillages(){
-  const m=document.getElementById('sMandal').value;
-  const villageInput=document.getElementById('sVillage');
-  const villageSelect=document.getElementById('sVillageSelect');
-  if(VILLAGES[m]){
-    villageSelect.style.display='block';
-    villageInput.style.display='none';
-    villageInput.value='';
-    villageSelect.innerHTML='<option value="">గ్రామం ఎంచుకోండి</option>';
-    VILLAGES[m].forEach(v=> villageSelect.innerHTML+=`<option>${v}</option>`);
-    villageSelect.innerHTML+='<option value="__other__">⌨️ నా గ్రామం లిస్ట్‌లో లేదు — టైప్ చేస్తాను</option>';
-    villageSelect.value='';
-  } else {
-    villageSelect.style.display='none';
-    villageInput.style.display='block';
-    villageInput.value='';
-    villageInput.placeholder='గ్రామం పేరు';
-  }
-}
-function sellVillageChanged(){
-  const sel=document.getElementById('sVillageSelect'), inp=document.getElementById('sVillage');
-  if(sel.value==='__other__'){ inp.style.display='block'; inp.value=''; inp.placeholder='మీ గ్రామం పేరు టైప్ చేయండి'; inp.focus(); }
-  else { inp.style.display='none'; }
-}
-function getSellVillage(){
-  const sel=document.getElementById('sVillageSelect'), inp=document.getElementById('sVillage');
-  if(sel.style.display!=='none'){
-    return sel.value==='__other__' ? inp.value.trim() : sel.value.trim();
-  }
-  return inp.value.trim();
 }
 function selectPlan(el){
   document.querySelectorAll('.plan-card').forEach(p=>{ p.style.border='2px solid #ddd'; p.style.background='#fff'; });
@@ -1377,28 +1346,17 @@ function sellCompressImage(file, cb){
 }
 function sellGotoPayment(){
   // Validate required fields
-  const req = {sDistrict:'జిల్లా', sMandal:'మండలం', sSurvey:'సర్వే నంబర్', sAcres:'విస్తీర్ణం', sPrice:'ధర', sSeller:'మీ పేరు', sWhatsApp:'WhatsApp నంబర్'};
+  const req = {sDistrict:'జిల్లా', sMandal:'మండలం', sVillage:'గ్రామం', sSurvey:'సర్వే నంబర్', sAcres:'విస్తీర్ణం', sPrice:'ధర', sSeller:'మీ పేరు', sWhatsApp:'WhatsApp నంబర్'};
   for(const id in req){
     const v=document.getElementById(id).value.trim();
     if(!v){ alert('దయచేసి '+req[id]+' నింపండి'); return; }
   }
-  if(!getSellVillage()){ alert('దయచేసి గ్రామం ఎంచుకోండి/నింపండి'); return; }
   if(!selectedPlanFee){ alert('దయచేసి ఒక ప్లాన్ ఎంచుకోండి'); return; }
   // Show payment step
   document.getElementById('payAmount').textContent='₹'+selectedPlanFee;
+  const upi='9959731120@ybl';
   const note='OnlineLand-'+selectedPlanMonths+'months';
-  const upiUrl=`upi://pay?pa=${MERCHANT_UPI}&pn=${encodeURIComponent(MERCHANT_NAME)}&am=${selectedPlanFee}&cu=INR&tn=${encodeURIComponent(note)}`;
-  document.getElementById('upiPayLink').href=upiUrl;
-  // UPI ID text చూపించు
-  const upiIdEl=document.getElementById('payUpiId');
-  if(upiIdEl) upiIdEl.textContent=MERCHANT_UPI;
-  // QR code generate చేయి (వేరే device/laptop నుండి scan చేయడానికి)
-  const qc=document.getElementById('payQrContainer');
-  if(qc && typeof QRCode!=='undefined'){
-    qc.innerHTML='';
-    try{ new QRCode(qc,{text:upiUrl,width:190,height:190,correctLevel:QRCode.CorrectLevel.M}); }
-    catch(err){ console.log('QR generation failed:',err); }
-  }
+  document.getElementById('upiPayLink').href=`upi://pay?pa=${upi}&pn=OnlineLand&am=${selectedPlanFee}&cu=INR&tn=${note}`;
   document.getElementById('sellStep1').style.display='none';
   document.getElementById('sellStep2').style.display='block';
 }
@@ -1413,7 +1371,7 @@ function sellSubmit(){
   expiryDate.setMonth(expiryDate.getMonth()+selectedPlanMonths);
 
   const listing = {
-    district:g('sDistrict'), mandal:g('sMandal'), village:getSellVillage(),
+    district:g('sDistrict'), mandal:g('sMandal'), village:g('sVillage'),
     survey:g('sSurvey'), acres:parseFloat(g('sAcres'))||0, price:parseFloat(g('sPrice'))||0,
     location:g('sLocation'), seller:g('sSeller'), whatsapp:g('sWhatsApp'), phone:g('sPhone'),
     youtube:g('sYoutube'), desc:g('sDesc'), photos:sellPhotos,
@@ -1473,11 +1431,10 @@ function openProp(id){
     ${l.seller?`<div class="mdet"><div class="mdet-l">యజమాని</div><div class="mdet-v">👤 ${l.seller}</div></div>`:''}
     <div class="mdet"><div class="mdet-l">నమోదు తేదీ</div><div class="mdet-v">${l.createdAt||'-'}</div></div>
     ${l.desc?`<div class="mdet" style="grid-column:1/-1"><div class="mdet-l">అదనపు వివరాలు</div><div class="mdet-v">${l.desc}</div></div>`:''}
-    ${l.location?`<div class="mdet" style="grid-column:1/-1"><div class="mdet-l">📍 ప్రాంతం / Location</div><div class="mdet-v">${l.location.startsWith('http')?`<a href="${l.location}" target="_blank" style="color:#1565c0;font-weight:600;text-decoration:underline;">🗺️ Google Map లో చూడండి</a>`:l.location}</div></div>`:''}
   `;
   document.getElementById('modalPrice').textContent=`₹${l.price} లక్షలు`;
   document.getElementById('modalBtns').innerHTML=`
-    <a href="https://wa.me/${l.whatsapp||''}" target="_blank" style="background:#25D366;color:#fff">${WA_SVG} WhatsApp</a>
+    <a href="https://wa.me/${l.whatsapp||''}" target="_blank" style="background:#25D366;color:#fff">💬 WhatsApp</a>
     <a href="tel:${l.phone||l.whatsapp||''}" style="background:var(--green);color:#fff">📞 Phone Call</a>
   `;
   document.getElementById('propModal').classList.add('open');
@@ -1491,8 +1448,6 @@ function doLogin(){
   const u=document.getElementById('loginUser').value.trim();
   const p=document.getElementById('loginPass').value;
   if(u===ADMIN_CREDS.user && p===ADMIN_CREDS.pass){
-    localStorage.setItem('ol_admin','1');
-    if(typeof refreshAdminDirectBtn==='function') refreshAdminDirectBtn();
     closeAdminLogin();
     document.getElementById('adminPanel').classList.add('open');
     document.getElementById('adminWelcome').textContent='స్వాగతం, Admin';
@@ -1502,32 +1457,9 @@ function doLogin(){
   }
 }
 function logoutAdmin(){
-  localStorage.removeItem('ol_admin');
-  if(typeof refreshAdminDirectBtn==='function') refreshAdminDirectBtn();
   document.getElementById('adminPanel').classList.remove('open');
   document.getElementById('loginUser').value='';
   document.getElementById('loginPass').value='';
-}
-// Admin direct post — main site నుండి నేరుగా Add form తెరుస్తుంది (admin మాత్రమే)
-function adminDirectPost(){
-  if(localStorage.getItem('ol_admin')==='1'){
-    document.getElementById('adminPanel').classList.add('open');
-    document.getElementById('adminWelcome').textContent='స్వాగతం, Admin';
-    // Add tab చూపించు
-    document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
-    const addBtn=document.querySelector('.atab');
-    if(addBtn) addBtn.classList.add('active');
-    document.getElementById('tab-add').style.display='block';
-    document.getElementById('tab-manage').style.display='none';
-    window.scrollTo(0,0);
-  } else {
-    openAdminLogin();
-  }
-}
-// admin login అయితేనే direct-post button చూపించు
-function refreshAdminDirectBtn(){
-  const w=document.getElementById('adminDirectWrap');
-  if(w) w.style.display = (localStorage.getItem('ol_admin')==='1') ? 'block' : 'none';
 }
 
 // ═══ ADMIN TABS ═══
@@ -1707,467 +1639,4 @@ function sendEmail(){
   el.style.background='#e8f5e9';
   el.style.color='#2e7d32';
   el.style.border='1px solid #a5d6a7';
-  setTimeout(()=>el.style.display='none',3000);
-}
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3000);
-}
-
-// ═══ REVEAL ═══
-function setupReveal(){
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach((e,i)=>{ if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*80); obs.unobserve(e.target); } });
-  },{threshold:.1});
-  document.querySelectorAll('.reveal:not(.visible)').forEach(el=>obs.observe(el));
-}
-
-window.addEventListener('DOMContentLoaded', init);
-</script>
-
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
-import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-storage.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCun2PIE3gP6jZqTQB6phtqlTzJxau-M4k",
-  authDomain: "onlineland-28234.firebaseapp.com",
-  projectId: "onlineland-28234",
-  storageBucket: "onlineland-28234.firebasestorage.app",
-  messagingSenderId: "181994843440",
-  appId: "1:181994843440:web:c009d8c40702dc920aacf5",
-  measurementId: "G-FS8G5F66CB"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Global గా expose చేయి — module బయట functions వాడటానికి
-window.db = db;
-window._addDoc = addDoc;
-window._collection = collection;
-window._deleteDoc = deleteDoc;
-window._doc = doc;
-window._updateDoc = updateDoc;
-
-// Firebase Storage initialize
-const storage = getStorage(app);
-window._storage = storage;
-window._ref = ref;
-window._uploadString = uploadString;
-window._getDownloadURL = getDownloadURL;
-
-// Photos upload చేసే function
-window.uploadPhotos = async function(photos) {
-  if(!photos || photos.length === 0) return [];
-  const urls = [];
-  for(let i = 0; i < photos.length; i++){
-    try {
-      const photoRef = ref(storage, 'listings/' + Date.now() + '_' + i + '.jpg');
-      await uploadString(photoRef, photos[i], 'data_url');
-      const url = await getDownloadURL(photoRef);
-      urls.push(url);
-    } catch(e) {
-      console.error('Photo upload error:', e);
-    }
-  }
-  return urls;
-};
-
-// Real-time listener — అన్ని phones లో update అవుతుంది!
-const q = query(collection(db, "listings"));
-onSnapshot(q, (snapshot) => {
-  listings = [];
-  snapshot.forEach((d) => {
-    const data = d.data();
-    listings.push({ ...data, id: d.id });
-  });
-  listings.sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
-  updateStats();
-  // Public website లో approved listings మాత్రమే చూపించు (admin add చేసినవి + approve అయినవి)
-  const publicListings = listings.filter(l => l.approvalStatus !== 'pending');
-  renderListings(publicListings);
-  renderManageTable();
-  console.log('Firebase sync:', listings.length, 'listings,', publicListings.length, 'public');
-}, (error) => {
-  console.error('onSnapshot error:', error);
-  showToast('❌ Data load error: ' + error.message);
-});
-
-// Save to Firestore
-window.saveToFirestore = async function(listing) {
-  try {
-    const docRef = await addDoc(collection(db, "listings"), listing);
-    return docRef.id;
-  } catch(e) {
-    console.error("Error saving:", e);
-    return null;
-  }
-};
-
-// Delete from Firestore
-window.deleteFromFirestore = async function(id) {
-  try {
-    await deleteDoc(doc(db, "listings", id));
-    return true;
-  } catch(e) {
-    console.error("Error deleting:", e);
-    return false;
-  }
-};
-
-// Update status in Firestore
-window.updateStatusFirestore = async function(id, status) {
-  try {
-    await updateDoc(doc(db, "listings", id), { status });
-    return true;
-  } catch(e) {
-    console.error("Error updating:", e);
-    return false;
-  }
-};
-
-// Override saveListing to use Firestore
-window.saveListingToCloud = saveToFirestore;
-window.deleteListingFromCloud = deleteFromFirestore;
-window.updateStatusInCloud = updateStatusFirestore;
-
-console.log("✅ Firebase connected! Data will sync across all devices.");
-
-// ═══ BLOG DATA ═══
-const BLOGS = [
-  {
-    title: "వ్యవసాయ భూమి కొనేముందు తెలుసుకోవాల్సిన 5 విషయాలు",
-    date: "మే 2026",
-    tag: "భూమి కొనుగోలు",
-    content: `
-      <h1>వ్యవసాయ భూమి కొనేముందు తెలుసుకోవాల్సిన 5 ముఖ్యమైన విషయాలు 🌾</h1>
-      <div class="blog-date">📅 మే 2026 • భూమి కొనుగోలు</div>
-
-      <p>ఈ రోజుల్లో చాలా మంది వ్యవసాయ భూమి కొనాలని ఆసక్తి చూపుతున్నారు. కొందరు farming కోసం, మరికొందరు future investment కోసం భూములు కొనుగోలు చేస్తున్నారు. కానీ సరైన సమాచారం లేకుండా భూమి కొనేస్తే తర్వాత లీగల్ సమస్యలు, డబ్బు నష్టం, లేదా మోసాలు జరిగే అవకాశాలు ఉంటాయి.</p>
-      <p>అందుకే వ్యవసాయ భూమి కొనేముందు ఈ 5 విషయాలు తప్పకుండా తెలుసుకోవాలి.</p>
-
-      <h3>1. పట్టా చెక్ చేయండి 📄</h3>
-      <p>భూమి కొనేముందు పట్టా మరియు documents పూర్తిగా clear గా ఉన్నాయో లేదో చెక్ చేయాలి.</p>
-      <p><strong>చూడాల్సిన ముఖ్యమైన పత్రాలు:</strong></p>
-      <p>• Pattadar Passbook<br/>• Title Deed<br/>• EC (Encumbrance Certificate)<br/>• 1B & Pahani<br/>• Survey Number Details</p>
-      <p>భూమిపై court case, loan లేదా dispute ఉందా అనేది కూడా తెలుసుకోవాలి.</p>
-      <p>భూమి వివరాలు అధికారికంగా verify చేయడానికి <strong>bhubharati.telangana.gov.in</strong> లో జిల్లా, మండలం, గ్రామం మరియు survey number enter చేస్తే భూమి వివరాలు కనిపిస్తాయి.</p>
-      <div class="highlight">👉 Documents clear లేకపోతే భవిష్యత్తులో పెద్ద సమస్యలు రావచ్చు.</div>
-
-      <h3>2. భూమికి రోడ్డు సౌకర్యం ఉందా? 🛣️</h3>
-      <p>భూమి వరకు సరైన road access ఉండటం చాలా ముఖ్యం.</p>
-      <p><strong>చూడాల్సిన విషయాలు:</strong></p>
-      <p>• Main road దగ్గరలో ఉందా?<br/>• Tractor లేదా Car వెళ్లగలదా?<br/>• CC road ఉందా?<br/>• Future లో road expansion అవకాశం ఉందా?</p>
-      <div class="highlight">👉 మంచి road ఉన్న భూమికి demand మరియు resale value ఎక్కువగా ఉంటుంది.</div>
-
-      <h3>3. నీటి సౌకర్యం ఉందా? 💧</h3>
-      <p>వ్యవసాయ భూమిలో నీరు చాలా ముఖ్యమైన అంశం.</p>
-      <p><strong>ఈ విషయాలు చెక్ చేయండి:</strong></p>
-      <p>• Borewell ఉందా?<br/>• Canal water వస్తుందా?<br/>• Ground water level ఎలా ఉంది?<br/>• Current connection ఉందా?</p>
-      <div class="highlight">👉 నీటి సౌకర్యం బాగుంటే farming కూడా బాగా చేయవచ్చు, future value కూడా పెరుగుతుంది.</div>
-
-      <h3>4. Physical Possession ఎవరి దగ్గర ఉంది? 👨‍🌾</h3>
-      <p>కొన్ని భూముల్లో ఇతరులు వ్యవసాయం చేస్తూ ఉండవచ్చు లేదా కౌలు రైతులు ఉండొచ్చు.</p>
-      <p><strong>అందుకే:</strong></p>
-      <p>• Actual possession ఎవరి దగ్గర ఉందో తెలుసుకోవాలి<br/>• Site visit తప్పనిసరిగా చేయాలి<br/>• Boundary clear గా ఉందా చూడాలి</p>
-      <div class="highlight">👉 "Documents clear" మాత్రమే కాదు, "Possession clear" కూడా చాలా ముఖ్యం.</div>
-
-      <h3>5. Market ధర తెలుసుకోండి 💰</h3>
-      <p>భూమి కొనేముందు ఆ ప్రాంతంలో ప్రస్తుతం market rate ఎంత ఉందో తప్పకుండా తెలుసుకోవాలి. ఒకే గ్రామంలో కూడా location బట్టి ధర మారుతుంది.</p>
-      <p><strong>చూడాల్సిన విషయాలు:</strong></p>
-      <p>• పక్క ప్రాంతాల్లో ఎకరా ధర ఎంత?<br/>• Recent registrations ఎంతకు జరిగాయి?<br/>• Road side land కి ఎంత demand ఉంది?<br/>• Future growth అవకాశం ఉందా?</p>
-      <div class="highlight">👉 <strong>onlineland.in</strong> లో జిల్లా వారీగా listings చూస్తే market price గురించి మంచి idea వస్తుంది. దాంతో మోసపోకుండా సరైన ధరకు భూమి కొనగలుగుతారు.</div>
-
-      <h3>ముగింపు ✅</h3>
-      <p>వ్యవసాయ భూమి కొనడం ఒక పెద్ద నిర్ణయం. తొందరపడకుండా:</p>
-      <p>• Documents<br/>• Road Access<br/>• Water Facility<br/>• Possession<br/>• Market Price</p>
-      <p>ఈ అన్ని విషయాలు పూర్తిగా చెక్ చేసి భూమి కొనాలి.</p>
-      <div class="highlight">🌾 సరైన భూమి ఎంపిక మీ భవిష్యత్తుకు మంచి ఆస్తిగా మారుతుంది.</div>
-    `
-  }
-];
-
-function openBlog(index){
-  document.getElementById('blogContent').innerHTML = BLOGS[index].content;
-  document.getElementById('blogModal').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-function closeBlog(){
-  document.getElementById('blogModal').classList.remove('open');
-  document.body.style.overflow='';
-}
-</script>
-
-
-<!-- ═══════ SELLER POST MODAL ═══════ -->
-<div class="modal-overlay" id="sellModal" onclick="if(event.target===this)closeSellModal()">
-  <div class="modal" style="max-width:560px;">
-    <button class="modal-close" onclick="closeSellModal()">✕</button>
-    <div style="padding:1.8rem;">
-      <h2 style="color:#1a3c2e;font-size:1.4rem;margin-bottom:.3rem;">🏡 మీ ప్రాపర్టీ పోస్ట్ చేయండి</h2>
-      <p style="color:#666;font-size:.9rem;margin-bottom:1.2rem;">వివరాలు నింపి, ప్లాన్ ఎంచుకొని, చెల్లింపు చేసి సబ్మిట్ చేయండి. అడ్మిన్ ఆమోదం తర్వాత మీ భూమి వెబ్‌సైట్‌లో కనిపిస్తుంది.</p>
-
-      <div id="sellStep1">
-        <div class="form-grid">
-          <div class="ff"><label>జిల్లా *</label>
-            <select id="sDistrict" onchange="sellPopulateMandals()"><option value="">ఎంచుకోండి</option></select>
-          </div>
-          <div class="ff"><label>మండలం *</label>
-            <select id="sMandal" onchange="sellPopulateVillages()"><option value="">ముందు జిల్లా ఎంచుకోండి</option></select>
-          </div>
-        </div>
-        <div class="form-grid">
-          <div class="ff"><label>గ్రామం *</label>
-            <select id="sVillageSelect" style="display:none" onchange="sellVillageChanged()"><option value="">గ్రామం ఎంచుకోండి</option></select>
-            <input type="text" id="sVillage" placeholder="గ్రామం పేరు"/>
-          </div>
-          <div class="ff"><label>సర్వే నంబర్ *</label><input type="text" id="sSurvey" placeholder="ఉదా: 129/అ"/></div>
-        </div>
-        <div class="form-grid">
-          <div class="ff"><label>విస్తీర్ణం (ఎకరాలు) *</label><input type="number" id="sAcres" step="0.01" placeholder="ఉదా: 2"/></div>
-          <div class="ff"><label>ధర (లక్షల్లో) *</label><input type="number" id="sPrice" step="0.1" placeholder="ఉదా: 20"/></div>
-        </div>
-        <div class="ff"><label>📍 ప్రాంతం / Location (Google Maps లింక్ లేదా చిరునామా)</label><input type="text" id="sLocation" placeholder="https://maps.google.com/... లేదా ల్యాండ్‌మార్క్"/></div>
-        <div class="form-grid">
-          <div class="ff"><label>మీ పేరు *</label><input type="text" id="sSeller" placeholder="యజమాని పేరు"/></div>
-          <div class="ff"><label>WhatsApp నంబర్ *</label><input type="tel" id="sWhatsApp" placeholder="91XXXXXXXXXX"/></div>
-        </div>
-        <div class="ff"><label>Phone నంబర్</label><input type="tel" id="sPhone" placeholder="9XXXXXXXXX"/></div>
-        <div class="ff"><label>🎥 YouTube వీడియో లింక్ (ఐచ్ఛికం)</label><input type="url" id="sYoutube" placeholder="https://youtu.be/..."/></div>
-        <div class="ff"><label>అదనపు వివరాలు</label><input type="text" id="sDesc" placeholder="నీటి వసతి, రోడ్డు, పట్టా మొదలైనవి"/></div>
-        <div class="ff"><label>📸 భూమి ఫోటోలు (గరిష్టంగా 5)</label>
-          <input type="file" id="sPhotos" accept="image/*" multiple onchange="sellHandlePhotos(event)"/>
-          <div id="sPhotoPreviews" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;"></div>
-        </div>
-
-        <div style="margin-top:1.2rem;">
-          <label style="font-weight:bold;color:#1a3c2e;display:block;margin-bottom:.5rem;">📅 ప్లాన్ ఎంచుకోండి *</label>
-          <div id="sellPlans" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-            <div class="plan-card" data-plan="1" data-fee="299" onclick="selectPlan(this)" style="border:2px solid #ddd;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
-              <div style="font-size:1.1rem;font-weight:bold;color:#1a3c2e;">1 నెల</div>
-              <div style="font-size:1.3rem;color:#d4a017;font-weight:bold;">₹299</div>
-            </div>
-            <div class="plan-card" data-plan="3" data-fee="599" onclick="selectPlan(this)" style="border:2px solid #ddd;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
-              <div style="font-size:1.1rem;font-weight:bold;color:#1a3c2e;">3 నెలలు</div>
-              <div style="font-size:1.3rem;color:#d4a017;font-weight:bold;">₹599</div>
-            </div>
-            <div class="plan-card" data-plan="6" data-fee="999" onclick="selectPlan(this)" style="border:2px solid #ddd;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
-              <div style="font-size:1.1rem;font-weight:bold;color:#1a3c2e;">6 నెలలు</div>
-              <div style="font-size:1.3rem;color:#d4a017;font-weight:bold;">₹999</div>
-            </div>
-          </div>
-        </div>
-
-        <button onclick="sellGotoPayment()" class="btn-gold" style="width:100%;margin-top:1.4rem;border:0;cursor:pointer;padding:14px;font-size:1rem;">తదుపరి → చెల్లింపు</button>
-      </div>
-
-      <div id="sellStep2" style="display:none;text-align:center;">
-        <h3 style="color:#1a3c2e;margin-bottom:1rem;">💳 చెల్లింపు చేయండి</h3>
-        <div style="background:#f4f9f0;border-radius:14px;padding:1.4rem;margin-bottom:1rem;">
-          <p style="font-size:1.1rem;color:#1a3c2e;margin-bottom:.8rem;">మొత్తం: <b id="payAmount" style="color:#d4a017;font-size:1.4rem;">₹0</b></p>
-
-          <!-- ఫోన్ నుండి: నేరుగా pay button -->
-          <a id="upiPayLink" href="#" class="btn-gold" style="display:block;text-decoration:none;padding:14px;border-radius:10px;font-size:1.05rem;font-weight:bold;">📱 UPI యాప్‌లో చెల్లించండి</a>
-          <p style="font-size:.78rem;color:#888;margin:.45rem 0 0;">PhonePe / GPay / Paytm లో నేరుగా తెరుచుకుంటుంది (amount already filled). Scan అవసరం లేదు.</p>
-
-          <!-- లేదా QR scan (laptop / వేరే ఫోన్) -->
-          <div style="margin:1.1rem 0 .6rem;font-size:.82rem;color:#999;">— లేదా QR scan చేయండి —</div>
-          <div id="payQrContainer" style="display:inline-block;background:#fff;padding:12px;border-radius:12px;border:1px solid #eee;min-width:120px;min-height:120px;"></div>
-          <p style="font-size:.78rem;color:#888;margin:.5rem 0 0;">ల్యాప్‌టాప్ లేదా వేరే ఫోన్ నుండి ఏదైనా UPI యాప్‌తో scan చేయండి.</p>
-
-          <!-- UPI ID text (copy చేయడానికి) -->
-          <p style="font-size:.85rem;color:#666;margin-top:1rem;margin-bottom:.3rem;">UPI ID:</p>
-          <div id="payUpiId" style="background:#fff;border:2px dashed #d4a017;border-radius:10px;padding:10px;font-size:1rem;font-weight:bold;color:#1a3c2e;user-select:all;">—</div>
-        </div>
-        <div class="ff" style="text-align:left;"><label>చెల్లింపు Transaction ID / UTR నంబర్ *</label><input type="text" id="sTxnId" placeholder="చెల్లింపు తర్వాత వచ్చే ID"/></div>
-        <p style="font-size:.82rem;color:#888;margin:.6rem 0;">చెల్లింపు చేసిన తర్వాత Transaction ID పెట్టి సబ్మిట్ చేయండి. అడ్మిన్ చెల్లింపు చెక్ చేసి మీ భూమిని ఆమోదిస్తారు.</p>
-        <button onclick="sellSubmit()" class="btn-gold" style="width:100%;border:0;cursor:pointer;padding:14px;font-size:1rem;" id="sellSubmitBtn">✅ సబ్మిట్ చేయండి</button>
-        <button onclick="document.getElementById('sellStep1').style.display='block';document.getElementById('sellStep2').style.display='none';" style="width:100%;margin-top:8px;background:transparent;border:1px solid #ccc;border-radius:10px;padding:10px;cursor:pointer;color:#666;">← వెనుకకు</button>
-      </div>
-
-      <div id="sellStep3" style="display:none;text-align:center;padding:2rem 0;">
-        <div style="font-size:3rem;">✅</div>
-        <h3 style="color:#1a3c2e;margin:1rem 0;">విజయవంతంగా సబ్మిట్ అయింది!</h3>
-        <p style="color:#666;">మీ భూమి వివరాలు అడ్మిన్‌కు పంపబడ్డాయి. చెల్లింపు ధృవీకరణ తర్వాత మీ భూమి వెబ్‌సైట్‌లో కనిపిస్తుంది. ధన్యవాదాలు! 🙏</p>
-        <button onclick="closeSellModal()" class="btn-gold" style="margin-top:1.2rem;border:0;cursor:pointer;padding:12px 28px;">సరే</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PWA Install Button -->
-<div id="pwaInstallBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a3c2e;color:#fff;padding:14px 20px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.3);z-index:9999;align-items:center;gap:14px;max-width:90%;font-family:inherit;">
-  <span style="font-size:.95rem;">📱 OnlineLand యాప్‌ను ఇన్‌స్టాల్ చేయండి</span>
-  <button id="pwaInstallBtn" style="background:#d4a017;color:#1a3c2e;border:0;padding:8px 16px;border-radius:10px;font-weight:bold;cursor:pointer;font-family:inherit;">ఇన్‌స్టాల్</button>
-  <button id="pwaCloseBtn" style="background:transparent;color:#fff;border:0;font-size:1.3rem;cursor:pointer;">✕</button>
-</div>
-
-<script>
-// PWA Install Prompt
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const banner = document.getElementById('pwaInstallBanner');
-  if(banner) banner.style.display = 'flex';
-  console.log('PWA install ready - banner shown');
-});
-
-// App ఇప్పటికే install అయిందా చెక్ చేయి
-window.addEventListener('appinstalled', () => {
-  console.log('PWA installed successfully');
-  const banner = document.getElementById('pwaInstallBanner');
-  if(banner) banner.style.display = 'none';
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  const installBtn = document.getElementById('pwaInstallBtn');
-  const closeBtn = document.getElementById('pwaCloseBtn');
-  const banner = document.getElementById('pwaInstallBanner');
-
-  if(installBtn){
-    installBtn.addEventListener('click', async () => {
-      if(!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log('PWA install:', outcome);
-      deferredPrompt = null;
-      if(banner) banner.style.display = 'none';
-    });
-  }
-  if(closeBtn){
-    closeBtn.addEventListener('click', () => {
-      if(banner) banner.style.display = 'none';
-    });
-  }
-});
-
-// Service Worker — offline support కోసం (sw.js file నుండి)
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Service Worker registered ✓'))
-      .catch(err => console.log('SW registration failed:', err));
-  });
-}
-</script>
-
-<!-- ═══ Floating Action Bar (scroll చేసినా ఎప్పుడూ కనిపిస్తుంది) ═══ -->
-<style>
-  body{padding-bottom:96px;}
-  @keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-  @keyframes glowPulse{0%,100%{box-shadow:0 6px 22px rgba(200,146,42,.5)}50%{box-shadow:0 12px 34px rgba(224,185,78,.95),0 0 0 5px rgba(224,185,78,.22)}}
-  @keyframes glowPulseBlue{0%,100%{box-shadow:0 6px 22px rgba(37,99,235,.5)}50%{box-shadow:0 12px 34px rgba(59,130,246,.92),0 0 0 5px rgba(59,130,246,.22)}}
-  @keyframes shine{0%{left:-70%}45%{left:150%}100%{left:150%}}
-  #floatingActions{animation:floatBob 2.6s ease-in-out infinite;will-change:transform;}
-  #floatingActions .fab-post{position:relative;overflow:hidden;animation:glowPulse 2s ease-in-out infinite;}
-  #floatingActions .fab-post::after{content:'';position:absolute;top:0;left:-70%;width:45%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg);animation:shine 3.2s ease-in-out infinite;pointer-events:none;}
-  #floatingActions .fab-search{animation:glowPulseBlue 2s ease-in-out infinite;animation-delay:1s;}
-  #floatingActions a:active,#floatingActions .fab-post:active{transform:scale(.96);}
-  @media(prefers-reduced-motion:reduce){#floatingActions,#floatingActions .fab-post,#floatingActions .fab-post::after{animation:none!important;}}
-</style>
-<div id="adminDirectWrap" style="position:fixed;bottom:74px;left:12px;right:12px;z-index:251;max-width:560px;margin:0 auto;display:none;">
-  <button onclick="adminDirectPost()" style="width:100%;border:0;cursor:pointer;background:linear-gradient(135deg,#0f5132,#1a7a45);color:#fff;padding:11px;border-radius:13px;font-weight:800;font-size:.95rem;font-family:inherit;box-shadow:0 5px 18px rgba(0,0,0,.3);">⚡ నేరుగా పోస్ట్ (Admin)</button>
-</div>
-<div id="floatingActions" style="position:fixed;bottom:14px;left:12px;right:12px;z-index:250;display:flex;gap:10px;max-width:560px;margin:0 auto;align-items:stretch;">
-  <a href="#search" class="fab-search" onclick="var s=document.getElementById('search');if(s){s.scrollIntoView({behavior:'smooth'});}return false;" style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;padding:12px 6px;border-radius:14px;font-weight:700;font-size:.9rem;line-height:1.2;font-family:inherit;">📋 జిల్లా వారీగా<br>వెతకండి</a>
-  <button class="fab-post" onclick="openSellModal()" style="flex:1.35;display:flex;align-items:center;justify-content:center;text-align:center;border:0;cursor:pointer;background:linear-gradient(135deg,#e0b94e,#c8922a);color:#1a3c2e;padding:13px 6px;border-radius:14px;font-weight:800;font-size:.98rem;line-height:1.2;font-family:inherit;">🏡 ప్రాపర్టీ<br>పోస్ట్ చేయండి</button>
-</div>
-<style>
-#aiFab{position:fixed;right:16px;bottom:90px;z-index:245;width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;background:linear-gradient(135deg,#1a3c2e,#2e7d4f);color:#fff;font-size:1.55rem;box-shadow:0 6px 20px rgba(0,0,0,.3);display:none;align-items:center;justify-content:center;}
-#aiFab .dot{position:absolute;top:-4px;right:-4px;background:#e0b94e;color:#1a3c2e;font-size:.52rem;font-weight:800;padding:2px 5px;border-radius:10px;}
-#aiPanel{position:fixed;right:14px;bottom:14px;z-index:305;width:min(380px,92vw);height:min(560px,78vh);background:#fff;border-radius:18px;box-shadow:0 12px 48px rgba(0,0,0,.32);display:none;flex-direction:column;overflow:hidden;border:1px solid #e3e3e3;}
-#aiPanel.open{display:flex;}
-#aiPanel .ai-head{background:linear-gradient(135deg,#1a3c2e,#2e7d4f);color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;}
-#aiPanel .ai-head b{font-size:1rem;}
-#aiPanel .ai-head .sub{font-size:.7rem;opacity:.85;}
-#aiPanel .ai-x{background:transparent;border:0;color:#fff;font-size:1.4rem;cursor:pointer;line-height:1;}
-#aiBody{flex:1;overflow-y:auto;padding:12px;background:#f7faf6;}
-.ai-msg{margin:6px 0;max-width:86%;padding:9px 12px;border-radius:14px;font-size:.9rem;line-height:1.5;white-space:pre-wrap;word-wrap:break-word;}
-.ai-user{background:#1a3c2e;color:#fff;margin-left:auto;border-bottom-right-radius:4px;}
-.ai-bot{background:#fff;border:1px solid #e3e3e3;color:#222;border-bottom-left-radius:4px;}
-.ai-card{background:#fff;border:1px solid #d9e7d0;border-left:4px solid #2e7d4f;border-radius:10px;padding:8px 10px;margin:6px 0;font-size:.82rem;cursor:pointer;line-height:1.45;}
-.ai-card b{color:#1a3c2e;}
-.ai-card .p{color:#2e7d4f;font-weight:700;}
-#aiInputRow{display:flex;gap:6px;padding:10px;border-top:1px solid #eee;background:#fff;}
-#aiInput{flex:1;border:1px solid #ccc;border-radius:12px;padding:10px;font-size:.9rem;font-family:inherit;resize:none;max-height:80px;}
-#aiSend{border:0;background:#2e7d4f;color:#fff;border-radius:12px;padding:0 16px;font-weight:700;cursor:pointer;font-family:inherit;font-size:1.1rem;}
-.ai-typing{font-size:.8rem;color:#888;padding:4px 12px;}
-</style>
-<button id="aiFab" onclick="toggleAIChat()" title="AI సహాయకుడు">🤖<span class="dot">AI</span></button>
-<div id="aiPanel">
-  <div class="ai-head">
-    <div><b>🌾 OnlineLand సహాయకుడు</b><div class="sub">భూమి వెతకడంలో సహాయం</div></div>
-    <button class="ai-x" onclick="toggleAIChat()">×</button>
-  </div>
-  <div id="aiBody"></div>
-  <div id="aiInputRow">
-    <textarea id="aiInput" rows="1" placeholder="ఉదా: నారాయణపేటలో 30 లక్షలలోపు పొలం..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIChat();}"></textarea>
-    <button id="aiSend" onclick="sendAIChat()">&#10148;</button>
-  </div>
-</div>
-<script>
-let aiHistory = [];
-let aiBusy = false;
-function initAIChat(){
-  try{
-    if(typeof AI_WORKER_URL!=='undefined' && AI_WORKER_URL && AI_WORKER_URL.indexOf('http')===0){
-      const fab=document.getElementById('aiFab'); if(fab) fab.style.display='flex';
-    }
-  }catch(e){}
-}
-function toggleAIChat(){
-  const p=document.getElementById('aiPanel');
-  p.classList.toggle('open');
-  if(p.classList.contains('open')){
-    if(!aiHistory.length){ addAIBot('నమస్కారం! 🙏 మీకు ఎలాంటి భూమి కావాలి? జిల్లా, ఎకరాలు, బడ్జెట్ చెప్పండి — వెతికి చూపిస్తాను.'); }
-    setTimeout(function(){ const i=document.getElementById('aiInput'); if(i) i.focus(); },100);
-  }
-}
-function addAIUser(t){ const b=document.getElementById('aiBody'); const d=document.createElement('div'); d.className='ai-msg ai-user'; d.textContent=t; b.appendChild(d); b.scrollTop=b.scrollHeight; }
-function addAIBot(t){ const b=document.getElementById('aiBody'); const d=document.createElement('div'); d.className='ai-msg ai-bot'; d.textContent=t; b.appendChild(d); b.scrollTop=b.scrollHeight; }
-function addAICards(ids){
-  const b=document.getElementById('aiBody');
-  (ids||[]).forEach(function(id){
-    const l=listings.find(function(x){return String(x.id)===String(id);}); if(!l) return;
-    const priceL=l.price?('₹'+l.price+' లక్షలు'):'';
-    const ac=(l.acres&&l.acres>0)?(' · '+l.acres+' ఎకరాలు'):'';
-    const c=document.createElement('div'); c.className='ai-card';
-    c.innerHTML='<b>📍 '+(l.village||'')+', '+(l.mandal||'')+'</b> ('+(l.district||'')+')<br>సర్వే: '+(l.survey||'-')+ac+'<br><span class="p">'+priceL+'</span> — చూడండి ›';
-    c.onclick=function(){ if(typeof openProp==='function') openProp(l.id); };
-    b.appendChild(c);
-  });
-  b.scrollTop=b.scrollHeight;
-}
-async function sendAIChat(){
-  if(aiBusy) return;
-  const inp=document.getElementById('aiInput'); const q=(inp.value||'').trim(); if(!q) return;
-  if(typeof AI_WORKER_URL==='undefined' || !AI_WORKER_URL){ addAIBot('AI ఇంకా setup కాలేదు.'); return; }
-  inp.value=''; addAIUser(q); aiHistory.push({role:'user',content:q});
-  aiBusy=true;
-  const b=document.getElementById('aiBody');
-  const typing=document.createElement('div'); typing.className='ai-typing'; typing.textContent='వెతుకుతున్నాను...'; b.appendChild(typing); b.scrollTop=b.scrollHeight;
-  try{
-    const trimmed=(listings||[]).filter(function(l){return l.approvalStatus!=='pending';}).map(function(l){return {id:l.id,propertyType:l.propertyType,district:l.district,mandal:l.mandal,village:l.village,survey:l.survey,acres:l.acres,price:l.price,water:l.water,road:l.road,patta:l.patta,status:l.status};});
-    const res=await fetch(AI_WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,history:aiHistory.slice(-6),listings:trimmed})});
-    const data=await res.json();
-    typing.remove();
-    const msg=data.message||'క్షమించండి, సమాధానం రాలేదు.';
-    addAIBot(msg); aiHistory.push({role:'assistant',content:msg});
-    addAICards(data.matchIds);
-  }catch(e){
-    if(typing&&typing.remove) typing.remove();
-    addAIBot('కనెక్షన్ సమస్య. ఇంటర్నెట్ చూసి మళ్ళీ ప్రయత్నించండి.');
-  }
-  aiBusy=false;
-}
-initAIChat();
-</script>
-<script>try{ if(typeof refreshAdminDirectBtn==='function') refreshAdminDirectBtn(); }catch(e){}</script>
-
-</body>
-</html>
+  setTimeout(()=>el.sty
