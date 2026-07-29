@@ -322,6 +322,17 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 </style>
 </head>
 <body>
+<!-- ===== TEMPORARY DEBUG PANEL (తర్వాత తీసేయాలి) ===== -->
+<div id="dbgBox" style="position:fixed;bottom:0;left:0;right:0;max-height:45vh;overflow:auto;background:#000;color:#0f0;font:11px/1.45 monospace;padding:8px 10px 30px;z-index:99999;white-space:pre-wrap;word-break:break-word">DEBUG ప్యానెల్ — ఇక్కడ ఉన్నదంతా స్క్రీన్‌షాట్ తీసి పంపండి
+</div>
+<button onclick="document.getElementById('dbgBox').style.display='none'" style="position:fixed;bottom:4px;right:8px;z-index:100000;background:#c0392b;color:#fff;border:0;padding:4px 10px;border-radius:6px;font-size:11px">మూసివేయి</button>
+<script>
+window.__dbg=function(m){try{var b=document.getElementById('dbgBox');if(b)b.textContent+="\n"+m;}catch(e){}};
+window.addEventListener('error',function(e){__dbg('JS ERROR: '+(e.message||'')+' @ '+(e.filename||'').split('/').pop()+':'+e.lineno);},true);
+window.addEventListener('unhandledrejection',function(e){__dbg('PROMISE REJECT: '+(e.reason&&(e.reason.code||e.reason.message)||e.reason));});
+setTimeout(function(){__dbg('--- 8 సెకన్ల తర్వాత: window.db = '+(window.db?'OK':'MISSING'));},8000);
+</script>
+
 
 <!-- NAV -->
 <nav id="navbar">
@@ -1610,30 +1621,4 @@ function getContactData(){
 }
 
 function validateContact(){
-  const {name, phone, subject, message} = getContactData();
-  if(!name||!phone||!subject||!message){
-    const el = document.getElementById('contactMsg');
-    el.textContent='⚠️ అన్ని fields తప్పనిసరిగా పూర్తి చేయండి';
-    el.style.display='block';
-    el.style.background='#fde8e8';
-    el.style.color='var(--red)';
-    el.style.border='1px solid #f5b7b1';
-    setTimeout(()=>el.style.display='none',3000);
-    return false;
-  }
-  return true;
-}
-
-function sendWhatsApp(){
-  if(!validateContact()) return;
-  const {name, phone, subject, message} = getContactData();
-  const text = `నమస్తే OnlineLand! 🌾\n\nపేరు: ${name}\nPhone: ${phone}\nవిషయం: ${subject}\n\nసందేశం: ${message}`;
-  window.open(`https://wa.me/919959731120?text=${encodeURIComponent(text)}`, '_blank');
-}
-
-function sendEmail(){
-  if(!validateContact()) return;
-  const {name, phone, subject, message} = getContactData();
-  const body = `పేరు: ${name}\nPhone: ${phone}\nవిషయం: ${subject}\n\nసందేశం: ${message}`;
-  window.open(`mailto:Info@onlineland.co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-  const el = document.getElementById('contactMsg'
+  const {name, phone, subject, message} = getC
