@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>లిస్టింగ్ పోస్టర్ తయారీ — OnlineLand</title>
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Telugu:wght@400;600;800&family=Noto+Sans+Telugu:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1E2A1F; --brick:#A03B21; --gold:#E0A93B;
+    --paper:#F2F4EF; --muted:#6B7A67; --line:#D5DACC;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:'Anek Telugu','Noto Sans Telugu',system-ui,sans-serif;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:1020px;margin:0 auto;padding:16px 16px 48px}
+  header{border-bottom:4px solid var(--ink);padding-bottom:12px;margin-bottom:20px}
+  .eyebrow{color:var(--brick);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin:0}
+  h1{margin:4px 0 2px;font-size:26px;font-weight:800}
+  header p{margin:0;color:#5b6659;font-size:14px}
+  .grid{display:grid;gap:24px}
+  @media(min-width:900px){.grid{grid-template-columns:1fr 400px}}
+  label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}
+  input,select{
+    width:100%;padding:10px 12px;border:1px solid #cdd3c6;border-radius:6px;
+    background:#fff;font-size:15px;font-family:inherit;color:var(--ink)
+  }
+  input:focus,select:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px #f0d9a6}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .field{margin-bottom:14px}
+  .pair{display:flex;gap:8px}.pair select{width:120px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    border:1px solid #cdd3c6;background:#fff;color:#3d463c;border-radius:999px;
+    padding:7px 13px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer
+  }
+  .chip.on{background:var(--brick);border-color:var(--brick);color:#fff}
+  .types{display:flex;flex-wrap:wrap;gap:8px}
+  .type{border:1px solid #cdd3c6;background:#fff;border-radius:6px;padding:9px 13px;
+    font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;color:#3d463c}
+  .type.on{background:var(--ink);border-color:var(--ink);color:var(--gold)}
+  canvas{width:100%;border:4px solid var(--ink);border-radius:8px;display:block;background:#fff}
+  .btns{display:flex;gap:8px;margin-top:12px}
+  button.act{flex:1;padding:14px;border-radius:6px;font-size:15px;font-weight:800;
+    font-family:inherit;cursor:pointer;border:2px solid var(--ink)}
+  .primary{background:var(--ink);color:var(--gold)}
+  .ghost{background:transparent;color:var(--ink)}
+  .msgbox{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:12px}
+  .msgbox p{margin:0 0 6px;font-size:12px;font-weight:700;color:var(--muted)}
+  pre{margin:0;white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.65}
+  .toggle{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:#3d463c}
+  .toggle input{width:auto}
+  #out{margin-top:12px;border:2px solid var(--brick);border-radius:6px;background:#fff;padding:10px;display:none}
+  #out b{display:block;font-size:13px;color:var(--brick);margin-bottom:8px}
+  #out img{width:100%;border-radius:4px;display:block}
+  input[type=file]{border:none;padding:0;font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">OnlineLand</p>
+    <h1>లిస్టింగ్ పోస్టర్ తయారీ</h1>
+    <p>వివరాలు నింపండి — WhatsApp కి పంపే పోస్టర్, మెసేజ్ రెడీ.</p>
+  </header>
 
+  <div class="grid">
+    <div>
+      <div class="field">
+        <label>ఆస్తి రకం</label>
+        <div class="types" id="types"></div>
+      </div>
+
+      <div class="row field">
+        <div><label>ఊరు</label><input id="village" placeholder="మక్తల్"></div>
+        <div><label>మండలం</label><input id="mandal" placeholder="మక్తల్ మండలం"></div>
+      </div>
+
+      <div class="field"><label>జిల్లా</label>
+        <input id="district" value="నారాయణపేట జిల్లా"></div>
+
+      <div class="row field">
+        <div><label>విస్తీర్ణం</label>
+          <div class="pair">
+            <input id="extent" placeholder="10">
+            <select id="extentUnit"></select>
+          </div>
+        </div>
+        <div><label>ధర</label>
+          <div class="pair">
+            <input id="price" placeholder="15 లక్షలు">
+            <select id="priceUnit"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="toggle"><input type="checkbox" id="hidePrice"> ధర చూపించొద్దు</label>
+      </div>
+
+      <div class="row field">
+        <div><label>సర్వే నంబర్</label><input id="survey" placeholder="124/2"></div>
+        <div><label>ఫోన్ నంబర్</label><input id="phone" placeholder="+91 "></div>
+      </div>
+
+      <div class="field">
+        <label>ప్రత్యేకతలు (గరిష్టంగా 4)</label>
+        <div class="chips" id="chips"></div>
+        <input id="extra" style="margin-top:8px" placeholder="సొంత పాయింట్లు — కామాతో వేరు చేయండి">
+      </div>
+
+      <div class="field">
+        <label>ఫోటో</label>
+        <input type="file" id="photo" accept="image/*">
+      </div>
+    </div>
+
+    <div>
+      <canvas id="cv" width="1080" height="1350"></canvas>
+      <div class="btns">
+        <button class="act primary" id="dl">పోస్టర్ డౌన్‌లోడ్</button>
+        <button class="act ghost" id="sh">షేర్</button>
+      </div>
+      <div class="btns">
+        <button class="act ghost" id="cp" style="flex:1">మెసేజ్ కాపీ</button>
+      </div>
+      <div id="out"><b>ఇమేజ్ మీద నొక్కి పట్టుకోండి → Save image</b><img id="outimg" alt="పోస్టర్"></div>
+      <div class="msgbox">
+        <p>WHATSAPP మెసేజ్</p>
+        <pre id="msg"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const INK="#1E2A1F",BRICK="#A03B21",GOLD="#E0A93B",PAPER="#F2F4EF",MUTED="#6B7A67";
+const TYPES=["వ్యవసాయ భూమి","ఓపెన్ ప్లాట్","ఇల్లు / విల్లా","కమర్షియల్"];
+const EXTENT_UNITS=["ఎకరాలు","గుంటలు","గజాలు","sft"];
+const PRICE_UNITS=["ఎకరాకు","గజానికి","మొత్తం","నెలకు"];
+const CHIPS=["రోడ్డు పక్కనే","బోరు నీరు ఉంది","కరెంట్ కనెక్షన్","పట్టా క్లియర్","చుట్టూ కంచె","పంట పొలం","వెంటనే రిజిస్ట్రేషన్","హైవేకి దగ్గర"];
+
+let type=TYPES[0], picked=["రోడ్డు పక్కనే","పట్టా క్లియర్"], img=null;
+const $=id=>document.getElementById(id);
+
+// build type buttons
+TYPES.forEach(t=>{
+  const b=document.createElement("button");
+  b.className="type"+(t===type?" on":""); b.textContent=t;
+  b.onclick=()=>{type=t;[...$("types").children].forEach(c=>c.classList.toggle("on",c.textContent===t));render();};
+  $("types").appendChild(b);
+});
+CHIPS.forEach(c=>{
+  const b=document.createElement("button");
+  b.className="chip"+(picked.includes(c)?" on":""); b.textContent=c;
+  b.onclick=()=>{
+    if(picked.includes(c)) picked=picked.filter(x=>x!==c);
+    else if(picked.length<4) picked.push(c);
+    b.classList.toggle("on",picked.includes(c)); render();
+  };
+  $("chips").appendChild(b);
+});
+EXTENT_UNITS.forEach(u=>$("extentUnit").add(new Option(u,u)));
+PRICE_UNITS.forEach(u=>$("priceUnit").add(new Option(u,u)));
+
+["village","mandal","district","extent","price","survey","phone","extra"].forEach(id=>$(id).oninput=render);
+["extentUnit","priceUnit"].forEach(id=>$(id).onchange=render);
+$("hidePrice").onchange=render;
+
+$("photo").onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{const i=new Image(); i.onload=()=>{img=i;render();}; i.src=r.result;};
+  r.readAsDataURL(f);
+};
+
+function val(id){return $(id).value.trim();}
+function highlights(){
+  return picked.concat(val("extra").split(",").map(s=>s.trim())).filter(Boolean).slice(0,4);
+}
+function placeText(){
+  const v=val("village"), m=val("mandal");
+  const parts=[v, v===m?"":m].filter(Boolean);
+  return parts.join(", ")||"ఊరు పేరు";
+}
+function priceText(){
+  const p=val("price");
+  return p?("₹ "+p):"₹ ధర";
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+
+function render(){
+  const cv=$("cv"), ctx=cv.getContext("2d"), W=1080,H=1350;
+  const tel="'Anek Telugu','Noto Sans Telugu',sans-serif";
+  const f=(w,s)=>w+" "+s+"px "+tel;
+  const hidePrice=$("hidePrice").checked;
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=PAPER; ctx.fillRect(0,0,W,H);
+
+  const PH=680;
+  if(img){
+    const r=Math.max(W/img.width,PH/img.height);
+    const w=img.width*r,h=img.height*r;
+    ctx.drawImage(img,(W-w)/2,(PH-h)/2,w,h);
+  }else{
+    const g=ctx.createLinearGradient(0,0,W,PH);
+    g.addColorStop(0,"#3F6B3A"); g.addColorStop(1,INK);
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,PH);
+    ctx.fillStyle="rgba(255,255,255,.35)"; ctx.font=f(600,34);
+    ctx.textAlign="center"; ctx.fillText("ఫోటో ఎంచుకోండి",W/2,PH/2-40); ctx.textAlign="left";
+  }
+  const sh=ctx.createLinearGradient(0,PH-400,0,PH);
+  sh.addColorStop(0,"rgba(18,26,18,0)"); sh.addColorStop(1,"rgba(18,26,18,.9)");
+  ctx.fillStyle=sh; ctx.fillRect(0,PH-400,W,400);
+
+  ctx.font=f(800,32);
+  const tw=ctx.measureText(type).width;
+  ctx.fillStyle=GOLD; roundRect(ctx,48,48,tw+56,66,8); ctx.fill();
+  ctx.fillStyle=INK; ctx.fillText(type,76,92);
+
+  ctx.fillStyle="#fff"; ctx.font=f(800,66); ctx.fillText(placeText(),48,PH-92);
+  ctx.fillStyle="#D8DCCF"; ctx.font=f(400,34); ctx.fillText(val("district"),48,PH-44);
+
+  ctx.fillStyle=INK; ctx.fillRect(0,PH,W,158);
+  if(hidePrice){
+    ctx.fillStyle=GOLD; ctx.font=f(800,60); ctx.fillText("ధర కోసం కాల్ చేయండి",48,PH+98);
+  }else{
+    ctx.fillStyle=GOLD; ctx.font=f(800,78);
+    const pt=priceText(); ctx.fillText(pt,48,PH+102);
+    const w=ctx.measureText(pt).width;
+    ctx.fillStyle="#B9C4B4"; ctx.font=f(600,32);
+    ctx.fillText($("priceUnit").value,48+w+24,PH+102);
+  }
+
+  let y=PH+158+76;
+  const cell=(l,v,x)=>{
+    ctx.fillStyle=MUTED; ctx.font=f(600,28); ctx.fillText(l,x,y);
+    ctx.fillStyle=INK; ctx.font=f(800,46); ctx.fillText(v||"—",x,y+56);
+  };
+  cell("విస్తీర్ణం", val("extent")?val("extent")+" "+$("extentUnit").value:"",48);
+  cell("సర్వే నం.", val("survey"),600);
+
+  y+=104;
+  ctx.strokeStyle="#D5DACC"; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(48,y); ctx.lineTo(W-48,y); ctx.stroke();
+
+  y+=62; ctx.font=f(600,38);
+  highlights().forEach((h,i)=>{
+    const yy=y+i*62;
+    ctx.fillStyle=BRICK; ctx.fillRect(48,yy-22,14,14);
+    ctx.fillStyle=INK; ctx.fillText(h,82,yy-8);
+  });
+
+  ctx.fillStyle=BRICK; ctx.fillRect(0,H-130,W,130);
+  ctx.fillStyle="#fff"; ctx.font=f(800,50);
+  ctx.fillText(val("phone")?"📞 "+val("phone"):"📞 ఫోన్ నంబర్",48,H-52);
+  ctx.textAlign="right";
+  ctx.font=f(600,34); ctx.fillText("onlineland.in",W-48,H-60);
+  ctx.font=f(400,26); ctx.fillStyle="#F3D6CC";
+  ctx.fillText("OnlineLand Prime Properties",W-48,H-26);
+  ctx.textAlign="left";
+
+  $("msg").textContent=message();
+}
+
+function message(){
+  const hp=$("hidePrice").checked;
+  let m="*"+type+" అమ్మకానికి*\n📍 "+placeText();
+  if(val("district")) m+=", "+val("district");
+  m+="\n";
+  if(val("extent")) m+="📐 విస్తీర్ణం: "+val("extent")+" "+$("extentUnit").value+"\n";
+  if(val("survey")) m+="📄 సర్వే నం: "+val("survey")+"\n";
+  if(!hp && val("price")) m+="💰 ధర: ₹"+val("price")+" ("+$("priceUnit").value+")\n";
+  const h=highlights();
+  if(h.length) m+="\n"+h.map(x=>"✅ "+x).join("\n")+"\n";
+  m+="\nవివరాలకు కాల్ చేయండి: "+(val("phone")||"—")+"\nOnlineLand — onlineland.in";
+  return m;
+}
+
+$("dl").onclick=()=>{
+  const url=$("cv").toDataURL("image/png");
+  const a=document.createElement("a");
+  a.download=(val("village")||"listing").replace(/\s+/g,"-")+"-poster.png";
+  a.href=url; document.body.appendChild(a); a.click(); a.remove();
+  $("outimg").src=url; $("out").style.display="block";
+};
+
+$("sh").onclick=()=>{
+  $("cv").toBlob(async b=>{
+    const url=$("cv").toDataURL("image/png");
+    $("outimg").src=url; $("out").style.display="block";
+    try{
+      const file=new File([b],"listing-poster.png",{type:"image/png"});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],text:message()});
+      }
+    }catch(e){}
+  },"image/png");
+};
+
+$("cp").onclick=async()=>{
+  try{ await navigator.clipboard.writeText(message()); $("cp").textContent="కాపీ అయ్యింది ✓";
+       setTimeout(()=>$("cp").textContent="మెసేజ్ కాపీ",1800);}catch(e){}
+};
+
+if(document.fonts && document.fonts.ready){document.fonts.ready.then(render);}
+setTimeout(render,1200);
+render();
+</script>
+</body>
+</html>
