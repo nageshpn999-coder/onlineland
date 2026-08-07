@@ -930,6 +930,36 @@ const VILLAGES = {
 const ADMIN_CREDS = {user:'admin', pass:'onlineland2025'};
 const STORE_KEY = 'onlineland_v2';
 
+// ═══ TELEGRAM ALERTS ═══
+// ⚠️ కింది రెండు ఖాళీలు మీరే నింపాలి:
+//    TELEGRAM_BOT_TOKEN — BotFather ఇచ్చిన టోకెన్
+//    TELEGRAM_CHAT_ID   — @userinfobot ఇచ్చిన Id నంబర్
+// ఖాళీగా ఉంటే నోటిఫికేషన్ పంపదు, మిగతా సైట్ మామూలుగా పనిచేస్తుంది.
+const TELEGRAM_BOT_TOKEN = '';
+const TELEGRAM_CHAT_ID   = '';
+
+function sendTelegramAlert(l){
+  if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;   // సెటప్ కాలేదు
+  try{
+    const acres = (l.acres && l.acres > 0) ? l.acres + ' ఎకరాలు' : (l.plotSize ? l.plotSize + ' గజాలు' : '—');
+    const price = (l.price && l.price > 0) ? '₹' + l.price + ' లక్షలు' : 'ధర చెప్పలేదు';
+    const txn   = l.txnId ? '\n🧾 Txn: ' + l.txnId : '';
+    const msg =
+      '🌾 కొత్త లిస్టింగ్ వచ్చింది!\n\n' +
+      '📍 ' + (l.district||'—') + ' › ' + (l.mandal||'—') + ' › ' + (l.village||'—') + '\n' +
+      '📐 ' + acres + '  |  💰 ' + price + '\n' +
+      '📋 సర్వే నం: ' + (l.survey||'—') + '\n' +
+      '👤 ' + (l.seller||'—') + ' — ' + (l.phone || l.whatsapp || '—') + txn + '\n\n' +
+      '👉 ఆమోదించడానికి: https://onlineland.in';
+
+    fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: msg, disable_web_page_preview: true })
+    }).catch(e => console.warn('Telegram alert failed:', e));
+  }catch(e){ console.warn('Telegram alert error:', e); }
+}
+
 let listings = [];
 let editingId = null;
 let photoDataURLs = [];
@@ -1376,6 +1406,7 @@ function sellSubmit(){
 
   window._addDoc(window._collection(window.db, "listings"), listing)
     .then(()=>{
+      sendTelegramAlert(listing);   // 📲 Telegram నోటిఫికేషన్
       document.getElementById('sellStep2').style.display='none';
       document.getElementById('sellStep3').style.display='block';
       // reset
