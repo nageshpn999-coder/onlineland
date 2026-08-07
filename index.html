@@ -1153,31 +1153,18 @@ function saveListing(){
     }
   }
 
-  // ⚠️ IMPORTANT: Photos base64 గా Firestore లో save చేయకూడదు (1MB limit)
-  // Photos ముందు Firebase Storage కి upload చేసి, URLs మాత్రమే Firestore లో save చేస్తాం
-  const photosToUpload = listing.photos || [];
-  // Edit mode లో already URL గా ఉన్న photos (https://) skip చేసి, కొత్త base64 photos మాత్రమే upload
-  const needsUpload = photosToUpload.some(p => p.startsWith('data:'));
+  // Firebase Storage ఉచిత ప్లాన్‌లో లేదు కాబట్టి photos base64 గానే Firestore లో save చేస్తాం
+  // (compressImage() ఇప్పటికే 800px + JPEG 60% కి కుదిస్తుంది — public form లాగే)
+  const photosToSave = listing.photos || [];
 
-  if(needsUpload && window.uploadPhotos){
-    showFormMsg('success','📤 ఫోటోలు upload అవుతున్నాయి... దయచేసి వేచి ఉండండి');
-    window.uploadPhotos(photosToUpload.filter(p => p.startsWith('data:')))
-      .then(uploadedURLs => {
-        const existingURLs = photosToUpload.filter(p => !p.startsWith('data:'));
-        const allURLs = [...existingURLs, ...uploadedURLs];
-        if(photosToUpload.length > 0 && allURLs.length === 0){
-          showFormMsg('error','❌ ఫోటో upload విఫలమైంది. Firebase Storage rules చెక్ చేయండి.');
-          return;
-        }
-        doSave(allURLs);
-      })
-      .catch(e => {
-        console.error('Photo upload error:', e);
-        showFormMsg('error','❌ ఫోటో upload విఫలమైంది: ' + e.message);
-      });
-  } else {
-    doSave(photosToUpload);
+  // Firestore document limit ~1MB — దాటకుండా చూడాలి
+  const totalBytes = photosToSave.reduce((n, p) => n + p.length, 0);
+  if(totalBytes > 900000){
+    showFormMsg('error','❌ ఫోటోలు చాలా పెద్దవి ('+Math.round(totalBytes/1024)+' KB). ఒకటి రెండు ఫోటోలు తీసేసి మళ్లీ ప్రయత్నించండి.');
+    return;
   }
+
+  doSave(photosToSave);
 }
 
 function resetForm(){
