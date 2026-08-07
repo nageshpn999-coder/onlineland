@@ -65,6 +65,8 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden}
+/* ===== NUMBER FONT FIX v2 — పేజీ మొత్తం అంకెలు ఒకే ఎత్తులో ===== */
+html,body,*{font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1,'tnum' 1,'onum' 0}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(253,250,244,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,146,42,.2);transition:box-shadow .3s}
