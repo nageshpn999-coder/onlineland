@@ -2190,6 +2190,25 @@ if('serviceWorker' in navigator){
       .catch(err => console.log('SW registration failed:', err));
   });
 }
+
+// #blog వంటి లింక్‌లు — డేటా లోడ్ అయ్యాక పేజీ పొడవు మారుతుంది కాబట్టి
+// మళ్లీ సరైన చోటికి తీసుకెళ్లాలి
+(function(){
+  if(!location.hash) return;
+  var go = function(){
+    var el = document.querySelector(location.hash);
+    if(el){
+      el.classList.add('visible');
+      el.scrollIntoView({behavior:'auto', block:'start'});
+    }
+  };
+  window.addEventListener('load', function(){
+    go();
+    setTimeout(go, 400);
+    setTimeout(go, 1200);
+    setTimeout(go, 2500);
+  });
+})();
 </script>
 
 <!-- ═══ AI CHAT BUBBLE ═══ -->
