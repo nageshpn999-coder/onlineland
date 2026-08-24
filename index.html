@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
 <!-- PWA Meta Tags -->
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%20%22OnlineLand%20-%20%E0%B0%A4%E0%B1%86%E0%B0%B2%E0%B0%82%E0%B0%97%E0%B0%BE%E0%B0%A3%20%E0%B0%AD%E0%B1%82%E0%B0%AE%E0%B1%81%E0%B0%B2%E0%B1%81%22%2C%20%22short_name%22%3A%20%22OnlineLand%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%23faf6ed%22%2C%20%22theme_color%22%3A%20%22%23123A63%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-192.png%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%2C%20%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-512.png%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D"/>
-<meta name="theme-color" content="#123A63"/>
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%20%22OnlineLand%20-%20%E0%B0%A4%E0%B1%86%E0%B0%B2%E0%B0%82%E0%B0%97%E0%B0%BE%E0%B0%A3%20%E0%B0%AD%E0%B1%82%E0%B0%AE%E0%B1%81%E0%B0%B2%E0%B1%81%22%2C%20%22short_name%22%3A%20%22OnlineLand%22%2C%20%22start_url%22%3A%20%22./%22%2C%20%22display%22%3A%20%22standalone%22%2C%20%22background_color%22%3A%20%22%23faf6ed%22%2C%20%22theme_color%22%3A%20%22%232F52A6%22%2C%20%22icons%22%3A%20%5B%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-192.png%22%2C%20%22sizes%22%3A%20%22192x192%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%2C%20%7B%22src%22%3A%20%22https%3A//onlineland.in/icon-512.png%22%2C%20%22sizes%22%3A%20%22512x512%22%2C%20%22type%22%3A%20%22image/png%22%2C%20%22purpose%22%3A%20%22any%20maskable%22%7D%5D%7D"/>
+<meta name="theme-color" content="#2F52A6"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="OnlineLand"/>
@@ -55,12 +55,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  /* నీలం (blue) పాలెట్ — వేరియబుల్ పేర్లు పాతవే ఉంచాం, విలువలు మాత్రమే మారాయి */
-  --green:#123A63;--green2:#1B5A96;--green3:#3A8DD8;
-  --gold:#C8922A;--gold2:#E8B84B;--gold3:#FDD87A;
-  --earth:#F5EDD6;--earth2:#EDE0BC;--earth3:#D4C49A;
-  --dark:#071A2E;--text:#14263D;--muted:#5E7793;
-  --white:#FDFAF4;--red:#C0392B;
+  /* OnlineLand బ్రాండ్ పాలెట్ — నీలం #2F52A6 + ఆకుపచ్చ #3D891C — వేరియబుల్ పేర్లు పాతవే ఉంచాం, విలువలు మాత్రమే మారాయి */
+  --green:#2F52A6;--green2:#24418A;--green3:#6B8DD0;
+  --gold:#3D891C;--gold2:#4FA828;--gold3:#A8DC85;
+  --earth:#F1F5FB;--earth2:#DDE5F2;--earth3:#A8B8D4;
+  --dark:#16295C;--text:#1C2740;--muted:#6B7A99;
+  --white:#FFFFFF;--red:#C0392B;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -69,8 +69,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);
 html,body,*{font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1,'tnum' 1,'onum' 0}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(253,250,244,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(200,146,42,.2);transition:box-shadow .3s}
-nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(61,137,28,.2);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 4px 30px rgba(47,82,166,.12)}
 .logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--green);text-decoration:none}
 .logo span{color:var(--gold)}
 .nav-right{display:flex;gap:1rem;align-items:center}
@@ -80,28 +80,28 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 .btn-admin:hover{background:var(--green2)}
 
 /* HERO */
-.hero{min-height:100vh;display:grid;place-items:center;padding:7rem 2rem 6rem;background:linear-gradient(150deg,var(--dark) 0%,var(--green) 60%,#2B6CA8 100%);position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 85%,rgba(200,146,42,.18) 0%,transparent 50%),radial-gradient(ellipse at 85% 15%,rgba(58,141,216,.1) 0%,transparent 45%)}
-.hero-dots{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle,rgba(200,146,42,1) 1px,transparent 1px);background-size:32px 32px}
+.hero{min-height:100vh;display:grid;place-items:center;padding:7rem 2rem 6rem;background:linear-gradient(150deg,var(--dark) 0%,var(--green) 60%,#4A6FC4 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 85%,rgba(61,137,28,.18) 0%,transparent 50%),radial-gradient(ellipse at 85% 15%,rgba(107,141,208,.1) 0%,transparent 45%)}
+.hero-dots{position:absolute;inset:0;opacity:.06;background-image:radial-gradient(circle,rgba(61,137,28,1) 1px,transparent 1px);background-size:32px 32px}
 .hero-content{position:relative;text-align:center;max-width:760px}
-.hero-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(200,146,42,.15);border:1px solid rgba(200,146,42,.35);color:var(--gold3);border-radius:100px;padding:.4rem 1.2rem;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.8rem;animation:fadeUp .6s .1s both}
+.hero-pill{display:inline-flex;align-items:center;gap:.5rem;background:rgba(61,137,28,.15);border:1px solid rgba(61,137,28,.35);color:var(--gold3);border-radius:100px;padding:.4rem 1.2rem;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.8rem;animation:fadeUp .6s .1s both}
 .hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,5.5vw,4.5rem);font-weight:900;line-height:1.1;color:#fff;margin-bottom:1.2rem;animation:fadeUp .6s .25s both}
 .hero h1 em{color:var(--gold2);font-style:normal}
-.hero p{font-size:1.05rem;color:rgba(245,237,214,.7);line-height:1.8;max-width:500px;margin:0 auto 2.5rem;font-weight:300;animation:fadeUp .6s .4s both}
+.hero p{font-size:1.05rem;color:rgba(241,245,251,.7);line-height:1.8;max-width:500px;margin:0 auto 2.5rem;font-weight:300;animation:fadeUp .6s .4s both}
 .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .6s .55s both}
-.btn-gold{background:var(--gold);color:var(--dark);padding:.85rem 2rem;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(200,146,42,.4);transition:all .25s}
-.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(200,146,42,.5)}
+.btn-gold{background:var(--gold);color:#FFFFFF;padding:.85rem 2rem;border-radius:8px;font-weight:700;font-size:.95rem;text-decoration:none;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(61,137,28,.4);transition:all .25s}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-2px);box-shadow:0 8px 28px rgba(61,137,28,.5)}
 .btn-ghost{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3);padding:.85rem 2rem;border-radius:8px;font-weight:500;font-size:.95rem;text-decoration:none;cursor:pointer;transition:all .25s}
 .btn-ghost:hover{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.08);transform:translateY(-2px)}
-.hero-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(7,26,46,.4);backdrop-filter:blur(8px);border-top:1px solid rgba(200,146,42,.15);animation:fadeUp .6s .7s both}
-.hstat{flex:1;max-width:180px;padding:1.3rem .8rem;text-align:center;border-right:1px solid rgba(200,146,42,.12)}
+.hero-stats{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(22,41,92,.4);backdrop-filter:blur(8px);border-top:1px solid rgba(61,137,28,.15);animation:fadeUp .6s .7s both}
+.hstat{flex:1;max-width:180px;padding:1.3rem .8rem;text-align:center;border-right:1px solid rgba(61,137,28,.12)}
 .hstat:last-child{border-right:none}
 .hstat-n{font-family:'DM Sans',sans-serif;font-variant-numeric:lining-nums tabular-nums;font-feature-settings:'lnum' 1,'tnum' 1;font-size:1.75rem;font-weight:700;letter-spacing:-.02em;color:var(--gold2)}
-.hstat-l{font-size:.7rem;color:rgba(245,237,214,.5);letter-spacing:.8px;text-transform:uppercase;margin-top:.15rem}
+.hstat-l{font-size:.7rem;color:rgba(241,245,251,.5);letter-spacing:.8px;text-transform:uppercase;margin-top:.15rem}
 
 /* SEARCH */
 .search-wrap{background:var(--white);padding:3rem 2rem;border-bottom:1px solid var(--earth2)}
-.search-box{max-width:900px;margin:0 auto;background:#fff;border:1.5px solid var(--earth3);border-radius:16px;padding:1.8rem;box-shadow:0 6px 40px rgba(18,58,99,.07)}
+.search-box{max-width:900px;margin:0 auto;background:#fff;border:1.5px solid var(--earth3);border-radius:16px;padding:1.8rem;box-shadow:0 6px 40px rgba(47,82,166,.07)}
 .search-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:1.2rem;text-align:center}
 .search-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;align-items:end}
 .sf label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-bottom:.35rem}
@@ -120,13 +120,13 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 
 /* CARDS */
 .card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--earth2);transition:transform .3s,box-shadow .3s;cursor:pointer}
-.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(18,58,99,.12)}
+.card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(47,82,166,.12)}
 .card-img{height:200px;position:relative;overflow:hidden;background:var(--green)}
 .card-photo{width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .card:hover .card-photo{transform:scale(1.06)}
 .card-no-photo{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--green),var(--green2));color:rgba(255,255,255,.4);font-size:.8rem;gap:.5rem}
 .card-no-photo span{font-size:2.5rem}
-.card-badge{position:absolute;top:.8rem;left:.8rem;background:var(--gold);color:var(--dark);font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.28rem .7rem;border-radius:100px}
+.card-badge{position:absolute;top:.8rem;left:.8rem;background:var(--gold);color:#FFFFFF;font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:.28rem .7rem;border-radius:100px}
 .card-sold{background:var(--red)!important;color:#fff!important}
 .card-body{padding:1.2rem}
 .card-loc{font-size:.75rem;color:var(--muted);margin-bottom:.4rem}
@@ -145,7 +145,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 .empty-state .es-icon{font-size:3rem;margin-bottom:1rem}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,26,46,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(22,41,92,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.open{display:flex}
 .modal{background:#fff;border-radius:20px;max-width:680px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
 .modal-imgs{height:260px;overflow:hidden;border-radius:20px 20px 0 0;background:var(--green)}
@@ -166,7 +166,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 .modal-close{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;font-size:1.1rem;display:grid;place-items:center;z-index:10;box-shadow:0 2px 10px rgba(0,0,0,.15)}
 
 /* ADMIN LOGIN */
-.admin-login{display:none;position:fixed;inset:0;z-index:400;background:rgba(7,26,46,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
+.admin-login{display:none;position:fixed;inset:0;z-index:400;background:rgba(22,41,92,.88);backdrop-filter:blur(8px);align-items:center;justify-content:center}
 .admin-login.open{display:flex}
 .login-box{background:#fff;border-radius:20px;padding:2.5rem;width:100%;max-width:380px;text-align:center}
 .login-box h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--green);margin-bottom:.4rem}
@@ -208,7 +208,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 
 /* photo upload */
 .photo-upload{border:2px dashed var(--earth3);border-radius:12px;padding:1.8rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;position:relative}
-.photo-upload:hover{border-color:var(--green3);background:rgba(58,141,216,.03)}
+.photo-upload:hover{border-color:var(--green3);background:rgba(107,141,208,.03)}
 .photo-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
 .photo-upload .pu-icon{font-size:2rem;margin-bottom:.5rem}
 .photo-upload p{font-size:.85rem;color:var(--muted)}
@@ -247,7 +247,7 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 .td-actions{display:flex;gap:.4rem;flex-wrap:wrap}
 .act-btn{padding:.3rem .65rem;border-radius:5px;font-size:.7rem;font-weight:700;cursor:pointer;border:none;transition:opacity .2s}
 .act-btn:hover{opacity:.8}
-.act-edit{background:var(--gold);color:var(--dark)}
+.act-edit{background:var(--gold);color:#FFFFFF}
 .act-sold{background:var(--muted);color:#fff}
 .act-del{background:var(--red);color:#fff}
 .manage-card{background:#fff;border-radius:12px;border:1px solid var(--earth2);padding:1rem;margin-bottom:.8rem}
@@ -262,16 +262,16 @@ nav.scrolled{box-shadow:0 4px 30px rgba(18,58,99,.12)}
 .empty-table{text-align:center;padding:3rem;color:var(--muted);font-size:.9rem}
 
 /* FOOTER */
-footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5rem}
+footer{background:var(--dark);color:rgba(241,245,251,.5);padding:3rem 2rem 1.5rem}
 .footer-in{max-width:1100px;margin:0 auto}
 .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:2rem}
 .fl .logo{color:var(--gold2);font-size:1.3rem;margin-bottom:.8rem;display:block;text-decoration:none}
 .fl p{font-size:.85rem;line-height:1.7;max-width:260px}
-.fc h4{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(245,237,214,.7);margin-bottom:.8rem}
+.fc h4{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(241,245,251,.7);margin-bottom:.8rem}
 .fc ul{list-style:none;display:flex;flex-direction:column;gap:.5rem}
-.fc a{font-size:.83rem;color:rgba(245,237,214,.45);text-decoration:none;transition:color .2s}
+.fc a{font-size:.83rem;color:rgba(241,245,251,.45);text-decoration:none;transition:color .2s}
 .fc a:hover{color:var(--gold2)}
-.footer-bot{border-top:1px solid rgba(245,237,214,.08);padding-top:1.2rem;display:flex;justify-content:space-between;align-items:center;font-size:.78rem;flex-wrap:wrap;gap:.5rem}
+.footer-bot{border-top:1px solid rgba(241,245,251,.08);padding-top:1.2rem;display:flex;justify-content:space-between;align-items:center;font-size:.78rem;flex-wrap:wrap;gap:.5rem}
 .footer-bot span{color:var(--gold)}
 
 /* TOAST */
@@ -300,9 +300,9 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 
 
 /* ═══ AI CHAT BUBBLE ═══ */
-.ai-fab{position:fixed;right:16px;bottom:16px;z-index:900;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:var(--green);color:var(--gold3);font-size:1.5rem;box-shadow:0 6px 22px rgba(7,26,46,.35);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+.ai-fab{position:fixed;right:16px;bottom:16px;z-index:900;width:56px;height:56px;border-radius:50%;border:none;cursor:pointer;background:var(--green);color:var(--gold3);font-size:1.5rem;box-shadow:0 6px 22px rgba(22,41,92,.35);display:flex;align-items:center;justify-content:center;transition:transform .2s}
 .ai-fab:hover{transform:scale(1.06)}
-.ai-panel{position:fixed;right:12px;bottom:12px;z-index:901;width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 90px));background:var(--white);border-radius:16px;box-shadow:0 12px 44px rgba(7,26,46,.3);display:none;flex-direction:column;overflow:hidden;border:1px solid var(--earth2)}
+.ai-panel{position:fixed;right:12px;bottom:12px;z-index:901;width:min(380px,calc(100vw - 24px));height:min(560px,calc(100vh - 90px));background:var(--white);border-radius:16px;box-shadow:0 12px 44px rgba(22,41,92,.3);display:none;flex-direction:column;overflow:hidden;border:1px solid var(--earth2)}
 .ai-panel.open{display:flex}
 .ai-head{background:var(--green);color:#fff;padding:.9rem 1rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .ai-head b{font-size:.95rem}
@@ -322,7 +322,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 .ai-foot{display:flex;gap:.5rem;padding:.7rem;background:#fff;border-top:1px solid var(--earth2);flex-shrink:0}
 .ai-foot input{flex:1;padding:.6rem .9rem;border:1.5px solid var(--earth2);border-radius:100px;font-family:inherit;font-size:.85rem;outline:none;color:var(--text)}
 .ai-foot input:focus{border-color:var(--gold)}
-.ai-send{background:var(--gold);color:var(--dark);border:none;border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:1rem;flex-shrink:0}
+.ai-send{background:var(--gold);color:#FFFFFF;border:none;border-radius:50%;width:38px;height:38px;cursor:pointer;font-size:1rem;flex-shrink:0}
 .ai-send:disabled{opacity:.5;cursor:default}
 .ai-note{font-size:.65rem;color:var(--muted);text-align:center;padding:.3rem .7rem .5rem;background:#fff}
 @media(max-width:500px){
@@ -333,17 +333,17 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 .blog{padding:4.5rem 2rem;background:var(--white)}
 .blog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;max-width:1200px;margin:0 auto}
 .blog-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--earth2);transition:transform .3s,box-shadow .3s;cursor:pointer}
-.blog-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(18,58,99,.1)}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(47,82,166,.1)}
 .blog-card-img{height:180px;background:linear-gradient(135deg,var(--green),var(--green2));display:flex;align-items:center;justify-content:center;font-size:4rem;position:relative}
 .blog-card-date{position:absolute;bottom:.8rem;right:.8rem;background:rgba(0,0,0,.4);color:#fff;font-size:.7rem;padding:.25rem .7rem;border-radius:100px}
 .blog-card-body{padding:1.2rem}
-.blog-card-tag{display:inline-block;background:rgba(18,58,99,.1);color:var(--green);font-size:.7rem;font-weight:700;padding:.25rem .8rem;border-radius:100px;margin-bottom:.6rem;letter-spacing:.5px;text-transform:uppercase}
+.blog-card-tag{display:inline-block;background:rgba(47,82,166,.1);color:var(--green);font-size:.7rem;font-weight:700;padding:.25rem .8rem;border-radius:100px;margin-bottom:.6rem;letter-spacing:.5px;text-transform:uppercase}
 .blog-card-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--green);margin-bottom:.6rem;line-height:1.4}
 .blog-card-excerpt{font-size:.82rem;color:var(--muted);line-height:1.7;margin-bottom:1rem}
 .blog-card-read{font-size:.8rem;font-weight:700;color:var(--gold);text-decoration:none}
 
 /* BLOG MODAL */
-.blog-modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(7,26,46,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.blog-modal-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(22,41,92,.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
 .blog-modal-overlay.open{display:flex}
 .blog-modal{background:#fff;border-radius:20px;max-width:700px;width:100%;max-height:90vh;overflow-y:auto;position:relative;padding:2.5rem}
 .blog-modal-close{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:var(--earth);border:none;cursor:pointer;font-size:1.1rem;display:grid;place-items:center}
@@ -448,7 +448,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
       <p class="sec-sub">భూమి కొనుగోలు, అమ్మకం లేదా ఏదైనా సందేహాలు ఉంటే మాకు పంపండి</p>
     </div>
 
-    <div style="background:#fff;border-radius:16px;border:1px solid var(--earth2);padding:2rem;box-shadow:0 6px 30px rgba(18,58,99,.07)" class="reveal">
+    <div style="background:#fff;border-radius:16px;border:1px solid var(--earth2);padding:2rem;box-shadow:0 6px 30px rgba(47,82,166,.07)" class="reveal">
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
         <div class="ff">
@@ -480,7 +480,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
 
       <div style="display:flex;gap:.8rem;flex-wrap:wrap">
         <button onclick="sendWhatsApp()" style="flex:1;min-width:140px;background:#25D366;color:#fff;border:none;padding:.85rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
-          💬 WhatsApp పంపండి
+          <svg viewBox='0 0 24 24' width='1.05em' height='1.05em' fill='currentColor' style='vertical-align:-.15em' aria-hidden='true'><path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488'/></svg> WhatsApp పంపండి
         </button>
         <button onclick="sendEmail()" style="flex:1;min-width:140px;background:var(--green);color:#fff;border:none;padding:.85rem;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:opacity .2s" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
           📧 Email పంపండి
@@ -493,7 +493,7 @@ footer{background:var(--dark);color:rgba(245,237,214,.5);padding:3rem 2rem 1.5re
     <!-- Direct contact -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem" class="reveal">
       <a href="https://wa.me/919959731120" target="_blank" style="background:#25D366;color:#fff;padding:1rem;border-radius:12px;text-decoration:none;text-align:center;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
-        💬 నేరుగా WhatsApp చేయండి
+        <svg viewBox='0 0 24 24' width='1.05em' height='1.05em' fill='currentColor' style='vertical-align:-.15em' aria-hidden='true'><path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488'/></svg> నేరుగా WhatsApp చేయండి
       </a>
       <a href="tel:9959731120" style="background:var(--green);color:#fff;padding:1rem;border-radius:12px;text-decoration:none;text-align:center;font-weight:700;font-size:.9rem;display:flex;align-items:center;justify-content:center;gap:.5rem">
         📞 Phone Call చేయండి
@@ -1390,7 +1390,7 @@ function renderListings(data){
             <small>${perAcre?'₹'+perAcre+'L/ఎకరం':''}</small>
           </div>
           <div class="card-contacts" onclick="event.stopPropagation()">
-            <a class="btn-wp" href="https://wa.me/${l.whatsapp||''}" target="_blank">💬 WA</a>
+            <a class="btn-wp" href="https://wa.me/${l.whatsapp||''}" target="_blank"><svg viewBox='0 0 24 24' width='1.05em' height='1.05em' fill='currentColor' style='vertical-align:-.15em' aria-hidden='true'><path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488'/></svg> WA</a>
             <a class="btn-ph" href="tel:${l.phone||l.whatsapp||''}">📞</a>
           </div>
         </div>
@@ -1466,7 +1466,7 @@ function sellPopulateMandals(){
 }
 function selectPlan(el){
   document.querySelectorAll('.plan-card').forEach(p=>{ p.style.border='2px solid #ddd'; p.style.background='#fff'; });
-  el.style.border='2px solid #d4a017'; el.style.background='#fdf6e3';
+  el.style.border='2px solid #3D891C'; el.style.background='#EEF3FB';
   selectedPlanFee = parseInt(el.dataset.fee);
   selectedPlanMonths = parseInt(el.dataset.plan);
 }
@@ -1591,7 +1591,7 @@ function openProp(id){
   `;
   document.getElementById('modalPrice').textContent=`₹${l.price} లక్షలు`;
   document.getElementById('modalBtns').innerHTML=`
-    <a href="https://wa.me/${l.whatsapp||''}" target="_blank" style="background:#25D366;color:#fff">💬 WhatsApp</a>
+    <a href="https://wa.me/${l.whatsapp||''}" target="_blank" style="background:#25D366;color:#fff"><svg viewBox='0 0 24 24' width='1.05em' height='1.05em' fill='currentColor' style='vertical-align:-.15em' aria-hidden='true'><path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0 0 20.464 3.488'/></svg> WhatsApp</a>
     <a href="tel:${l.phone||l.whatsapp||''}" style="background:var(--green);color:#fff">📞 Phone Call</a>
   `;
   document.getElementById('propModal').classList.add('open');
@@ -1695,7 +1695,7 @@ function renderManageTable(){
     const isSold = l.status==='sold';
     const isPending = l.approvalStatus==='pending';
     const sellerInfo = l.postedBy==='seller' ? `
-      <div style="background:#fff8e1;border-radius:8px;padding:8px;margin:6px 0;font-size:.8rem;">
+      <div style="background:#EAF6E2;border-radius:8px;padding:8px;margin:6px 0;font-size:.8rem;">
         <div>👤 యజమాని: <b>${l.seller||'-'}</b> (${l.whatsapp||'-'})</div>
         <div>📅 ప్లాన్: <b>${l.planMonths} నెలలు</b> | 💰 ₹${l.planFee}</div>
         <div>🧾 Txn ID: <b>${l.txnId||'-'}</b></div>
@@ -1703,13 +1703,13 @@ function renderManageTable(){
         <div>⏳ గడువు: ${l.expiryDate||'-'}</div>
       </div>` : '';
     return `
-    <div class="manage-card" style="${isPending?'border:2px solid #f5a623;':''}">
+    <div class="manage-card" style="${isPending?'border:2px solid #4FA828;':''}">
       <div class="manage-card-top">
         <div>
           <div class="manage-card-title">సర్వే: ${l.survey} ${acres}</div>
           <div class="manage-card-loc">📍 ${l.district} › ${l.mandal} › ${l.village}</div>
         </div>
-        <span class="${isPending?'':isSold?'status-sold':'status-active'}" style="${isPending?'background:#f5a623;color:#fff;padding:4px 10px;border-radius:20px;font-size:.75rem;':''}">${isPending?'⏳ ఆమోదం కోసం':isSold?'అమ్ముడు':'అందుబాటు'}</span>
+        <span class="${isPending?'':isSold?'status-sold':'status-active'}" style="${isPending?'background:#4FA828;color:#fff;padding:4px 10px;border-radius:20px;font-size:.75rem;':''}">${isPending?'⏳ ఆమోదం కోసం':isSold?'అమ్ముడు':'అందుబాటు'}</span>
       </div>
       ${sellerInfo}
       <div class="manage-card-info">
@@ -1717,7 +1717,7 @@ function renderManageTable(){
         <span style="font-size:.75rem;color:var(--muted)">${l.createdAt||''}</span>
       </div>
       <div class="manage-card-actions">
-        ${isPending?`<button style="background:#2e7d32;color:#fff" onclick="approveListing('${l.id}')">✅ ఆమోదించు</button>`:`<button style="background:var(--gold);color:var(--dark)" onclick="editListing('${l.id}')">✏️ Edit</button>`}
+        ${isPending?`<button style="background:#2e7d32;color:#fff" onclick="approveListing('${l.id}')">✅ ఆమోదించు</button>`:`<button style="background:var(--gold);color:#FFFFFF" onclick="editListing('${l.id}')">✏️ Edit</button>`}
         ${!isPending?`<button style="background:var(--muted);color:#fff" onclick="toggleSold('${l.id}')">${isSold?'🔄 తిరిగి':'✅ అమ్ముడు'}</button>`:''}
         <button style="background:var(--red);color:#fff" onclick="deleteListing('${l.id}')">🗑️ ${isPending?'తిరస్కరించు':'Delete'}</button>
       </div>
@@ -2054,7 +2054,7 @@ function closeBlog(){
   <div class="modal" style="max-width:560px;">
     <button class="modal-close" onclick="closeSellModal()">✕</button>
     <div style="padding:1.8rem;">
-      <h2 style="color:#123A63;font-size:1.4rem;margin-bottom:.3rem;">🏡 మీ ప్రాపర్టీ పోస్ట్ చేయండి</h2>
+      <h2 style="color:#2F52A6;font-size:1.4rem;margin-bottom:.3rem;">🏡 మీ ప్రాపర్టీ పోస్ట్ చేయండి</h2>
       <p style="color:#666;font-size:.9rem;margin-bottom:1.2rem;">వివరాలు నింపి, ప్లాన్ ఎంచుకొని, చెల్లింపు చేసి సబ్మిట్ చేయండి. అడ్మిన్ ఆమోదం తర్వాత మీ భూమి వెబ్‌సైట్‌లో కనిపిస్తుంది.</p>
 
       <div id="sellStep1">
@@ -2088,19 +2088,19 @@ function closeBlog(){
         </div>
 
         <div style="margin-top:1.2rem;">
-          <label style="font-weight:bold;color:#123A63;display:block;margin-bottom:.5rem;">📅 ప్లాన్ ఎంచుకోండి *</label>
+          <label style="font-weight:bold;color:#2F52A6;display:block;margin-bottom:.5rem;">📅 ప్లాన్ ఎంచుకోండి *</label>
           <div id="sellPlans" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
             <div class="plan-card" data-plan="1" data-fee="100" onclick="selectPlan(this)" style="border:2px solid #ddd;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
-              <div style="font-size:1.1rem;font-weight:bold;color:#123A63;">1 నెల</div>
-              <div style="font-size:1.3rem;color:#d4a017;font-weight:bold;">₹100</div>
+              <div style="font-size:1.1rem;font-weight:bold;color:#2F52A6;">1 నెల</div>
+              <div style="font-size:1.3rem;color:#3D891C;font-weight:bold;">₹100</div>
             </div>
             <div class="plan-card" data-plan="3" data-fee="250" onclick="selectPlan(this)" style="border:2px solid #ddd;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
-              <div style="font-size:1.1rem;font-weight:bold;color:#123A63;">3 నెలలు</div>
-              <div style="font-size:1.3rem;color:#d4a017;font-weight:bold;">₹250</div>
+              <div style="font-size:1.1rem;font-weight:bold;color:#2F52A6;">3 నెలలు</div>
+              <div style="font-size:1.3rem;color:#3D891C;font-weight:bold;">₹250</div>
             </div>
             <div class="plan-card" data-plan="6" data-fee="400" onclick="selectPlan(this)" style="border:2px solid #ddd;border-radius:12px;padding:14px;text-align:center;cursor:pointer;">
-              <div style="font-size:1.1rem;font-weight:bold;color:#123A63;">6 నెలలు</div>
-              <div style="font-size:1.3rem;color:#d4a017;font-weight:bold;">₹400</div>
+              <div style="font-size:1.1rem;font-weight:bold;color:#2F52A6;">6 నెలలు</div>
+              <div style="font-size:1.3rem;color:#3D891C;font-weight:bold;">₹400</div>
             </div>
           </div>
         </div>
@@ -2109,11 +2109,11 @@ function closeBlog(){
       </div>
 
       <div id="sellStep2" style="display:none;text-align:center;">
-        <h3 style="color:#123A63;margin-bottom:1rem;">💳 చెల్లింపు చేయండి</h3>
-        <div style="background:#F0F5FB;border-radius:14px;padding:1.4rem;margin-bottom:1rem;">
-          <p style="font-size:1.1rem;color:#123A63;margin-bottom:.5rem;">మొత్తం: <b id="payAmount" style="color:#d4a017;font-size:1.4rem;">₹0</b></p>
+        <h3 style="color:#2F52A6;margin-bottom:1rem;">💳 చెల్లింపు చేయండి</h3>
+        <div style="background:#EEF3FB;border-radius:14px;padding:1.4rem;margin-bottom:1rem;">
+          <p style="font-size:1.1rem;color:#2F52A6;margin-bottom:.5rem;">మొత్తం: <b id="payAmount" style="color:#3D891C;font-size:1.4rem;">₹0</b></p>
           <p style="font-size:.9rem;color:#666;">కింది UPI ID కి చెల్లించండి:</p>
-          <div style="background:#fff;border:2px dashed #d4a017;border-radius:10px;padding:12px;margin:.8rem 0;font-size:1.1rem;font-weight:bold;color:#123A63;user-select:all;">9959731120@ybl</div>
+          <div style="background:#fff;border:2px dashed #3D891C;border-radius:10px;padding:12px;margin:.8rem 0;font-size:1.1rem;font-weight:bold;color:#2F52A6;user-select:all;">9959731120@ybl</div>
           <a id="upiPayLink" href="#" class="btn-gold" style="display:inline-block;text-decoration:none;padding:12px 24px;border-radius:10px;">📱 UPI యాప్‌లో చెల్లించండి</a>
         </div>
         <div class="ff" style="text-align:left;"><label>చెల్లింపు Transaction ID / UTR నంబర్ *</label><input type="text" id="sTxnId" placeholder="చెల్లింపు తర్వాత వచ్చే ID"/></div>
@@ -2124,7 +2124,7 @@ function closeBlog(){
 
       <div id="sellStep3" style="display:none;text-align:center;padding:2rem 0;">
         <div style="font-size:3rem;">✅</div>
-        <h3 style="color:#123A63;margin:1rem 0;">విజయవంతంగా సబ్మిట్ అయింది!</h3>
+        <h3 style="color:#2F52A6;margin:1rem 0;">విజయవంతంగా సబ్మిట్ అయింది!</h3>
         <p style="color:#666;">మీ భూమి వివరాలు అడ్మిన్‌కు పంపబడ్డాయి. చెల్లింపు ధృవీకరణ తర్వాత మీ భూమి వెబ్‌సైట్‌లో కనిపిస్తుంది. ధన్యవాదాలు! 🙏</p>
         <button onclick="closeSellModal()" class="btn-gold" style="margin-top:1.2rem;border:0;cursor:pointer;padding:12px 28px;">సరే</button>
       </div>
@@ -2133,9 +2133,9 @@ function closeBlog(){
 </div>
 
 <!-- PWA Install Button -->
-<div id="pwaInstallBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#123A63;color:#fff;padding:14px 20px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.3);z-index:9999;align-items:center;gap:14px;max-width:90%;font-family:inherit;">
+<div id="pwaInstallBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2F52A6;color:#fff;padding:14px 20px;border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.3);z-index:9999;align-items:center;gap:14px;max-width:90%;font-family:inherit;">
   <span style="font-size:.95rem;">📱 OnlineLand యాప్‌ను ఇన్‌స్టాల్ చేయండి</span>
-  <button id="pwaInstallBtn" style="background:#d4a017;color:#123A63;border:0;padding:8px 16px;border-radius:10px;font-weight:bold;cursor:pointer;font-family:inherit;">ఇన్‌స్టాల్</button>
+  <button id="pwaInstallBtn" style="background:#3D891C;color:#2F52A6;border:0;padding:8px 16px;border-radius:10px;font-weight:bold;cursor:pointer;font-family:inherit;">ఇన్‌స్టాల్</button>
   <button id="pwaCloseBtn" style="background:transparent;color:#fff;border:0;font-size:1.3rem;cursor:pointer;">✕</button>
 </div>
 
