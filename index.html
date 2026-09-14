@@ -200,9 +200,9 @@ nav.scrolled{box-shadow:0 4px 30px rgba(47,82,166,.12)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .form-grid.one{grid-template-columns:1fr}
 .ff{display:flex;flex-direction:column;gap:.35rem}
-.ff label{font-size:.75rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
+.ff label{font-size:.82rem;font-weight:700;color:var(--muted);letter-spacing:.5px;text-transform:uppercase}
 .ff.req label::after{content:' *';color:var(--red)}
-.ff input,.ff select,.ff textarea{padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--earth);outline:none;transition:border-color .2s}
+.ff input,.ff select,.ff textarea{padding:.65rem 1rem;border:1.5px solid var(--earth2);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--text);background:var(--earth);outline:none;transition:border-color .2s}
 .ff input:focus,.ff select:focus,.ff textarea:focus{border-color:var(--green3);background:#fff}
 .ff textarea{resize:vertical;min-height:80px}
 
@@ -1519,6 +1519,11 @@ function sellGotoPayment(){
 function sellSubmit(){
   const txn=document.getElementById('sTxnId').value.trim();
   if(!txn){ alert('దయచేసి Transaction ID పెట్టండి'); return; }
+  // UPI UTR నంబర్ సరిగ్గా 12 అంకెలు ఉంటుంది
+  if(!/^[0-9]{12}$/.test(txn)){
+    alert('UTR నంబర్ సరిగ్గా 12 అంకెలు ఉండాలి.\n\nమీ UPI యాప్‌లో చెల్లింపు వివరాలు తెరిచి, "UTR" లేదా "UPI Transaction ID" కింద ఉన్న 12 అంకెల నంబర్ పెట్టండి.');
+    return;
+  }
   const btn=document.getElementById('sellSubmitBtn');
   btn.disabled=true; btn.textContent='సబ్మిట్ అవుతోంది...';
 
@@ -2119,8 +2124,8 @@ window.closeBlog = closeBlog;
           <div style="background:#fff;border:2px dashed #3D891C;border-radius:10px;padding:12px;margin:.8rem 0;font-size:1.1rem;font-weight:bold;color:#2F52A6;user-select:all;">9959731120@ybl</div>
           <a id="upiPayLink" href="#" class="btn-gold" style="display:inline-block;text-decoration:none;padding:12px 24px;border-radius:10px;">📱 UPI యాప్‌లో చెల్లించండి</a>
         </div>
-        <div class="ff" style="text-align:left;"><label>చెల్లింపు Transaction ID / UTR నంబర్ *</label><input type="text" id="sTxnId" placeholder="చెల్లింపు తర్వాత వచ్చే ID"/></div>
-        <p style="font-size:.82rem;color:#888;margin:.6rem 0;">చెల్లింపు చేసిన తర్వాత Transaction ID పెట్టి సబ్మిట్ చేయండి. అడ్మిన్ చెల్లింపు చెక్ చేసి మీ భూమిని ఆమోదిస్తారు.</p>
+        <div class="ff" style="text-align:left;"><label>చెల్లింపు Transaction ID / UTR నంబర్ *</label><input type="text" id="sTxnId" inputmode="numeric" maxlength="12" placeholder="12 అంకెల UTR నంబర్"/></div>
+        <p style="font-size:.82rem;color:#888;margin:.6rem 0;">చెల్లింపు తర్వాత UPI యాప్‌లో కనిపించే 12 అంకెల UTR నంబర్ పెట్టి సబ్మిట్ చేయండి. అడ్మిన్ చెల్లింపు చెక్ చేసి మీ భూమిని ఆమోదిస్తారు.</p>
         <button onclick="sellSubmit()" class="btn-gold" style="width:100%;border:0;cursor:pointer;padding:14px;font-size:1rem;" id="sellSubmitBtn">✅ సబ్మిట్ చేయండి</button>
         <button onclick="document.getElementById('sellStep1').style.display='block';document.getElementById('sellStep2').style.display='none';" style="width:100%;margin-top:8px;background:transparent;border:1px solid #ccc;border-radius:10px;padding:10px;cursor:pointer;color:#666;">← వెనుకకు</button>
       </div>
