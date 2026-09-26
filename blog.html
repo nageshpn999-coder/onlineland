@@ -84,6 +84,9 @@ footer a{color:var(--gold2);text-decoration:none}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .fade{animation:fadeUp .5s ease both}
 </style>
+<script>
+window.OL_POSTS_READY=new Promise(function(res){var s=document.createElement('script');s.src='posts.js?t='+Date.now();s.onload=res;s.onerror=res;document.head.appendChild(s);});
+</script>
 </head>
 <body>
 
@@ -109,6 +112,7 @@ footer a{color:var(--gold2);text-decoration:none}
   <!-- BLOG LIST -->
   <div class="blog-list">
     <div class="blog-list-title">📚 అన్ని బ్లాగ్ పోస్ట్‌లు</div>
+    <div id="dynamicBlogList">
 
     <a class="blog-item fade" onclick="openPost(0)" href="javascript:void(0)">
       <div class="blog-item-img">🌾</div>
@@ -122,6 +126,7 @@ footer a{color:var(--gold2);text-decoration:none}
         <div class="blog-item-read">పూర్తిగా చదవండి →</div>
       </div>
     </a>
+    </div>
 
   </div>
 </div>
@@ -141,9 +146,9 @@ function parseMarkdown(text){
   if(!text) return '';
   let html = text
     // Headings
-    .replace(/^### (.+)$/gm, '<h4 style="font-family:'Playfair Display',serif;font-size:1rem;color:var(--green);margin:1.5rem 0 .5rem">$1</h4>')
-    .replace(/^## (.+)$/gm, '<h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--green);margin:1.8rem 0 .7rem">$1</h3>')
-    .replace(/^# (.+)$/gm, '<h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--green);margin:2rem 0 .8rem">$1</h2>')
+    .replace(/^### (.+)$/gm, '<h4 style="font-family:Playfair Display,serif;font-size:1rem;color:var(--green);margin:1.5rem 0 .5rem">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 style="font-family:Playfair Display,serif;font-size:1.15rem;color:var(--green);margin:1.8rem 0 .7rem">$1</h3>')
+    .replace(/^# (.+)$/gm, '<h2 style="font-family:Playfair Display,serif;font-size:1.4rem;color:var(--green);margin:2rem 0 .8rem">$1</h2>')
     // Bold
     .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--green)">$1</strong>')
     // Italic
@@ -154,18 +159,14 @@ function parseMarkdown(text){
     .replace(/^• (.+)$/gm, '<li style="margin:.3rem 0;font-size:.9rem">$1</li>')
     .replace(/^- (.+)$/gm, '<li style="margin:.3rem 0;font-size:.9rem">$1</li>')
     // Wrap consecutive li items in ul
-    .replace(/(<li[^>]*>.*<\/li>
-?)+/g, '<ul style="padding-left:1.5rem;margin:.8rem 0">$&</ul>')
+    .replace(/(<li[^>]*>.*<\/li>\n?)+/g, '<ul style="padding-left:1.5rem;margin:.8rem 0">$&</ul>')
     // Line breaks to paragraphs
-    .split(/
-
-+/)
+    .split(/\n\n+/)
     .map(para => {
       para = para.trim();
       if(!para) return '';
       if(para.startsWith('<h') || para.startsWith('<div') || para.startsWith('<ul')) return para;
-      return `<p style="font-size:.92rem;color:var(--text);line-height:1.85;margin-bottom:.8rem">${para.replace(/
-/g, '<br/>')}</p>`;
+      return `<p style="font-size:.92rem;color:var(--text);line-height:1.85;margin-bottom:.8rem">${para.replace(/\n/g, '<br/>')}</p>`;
     })
     .join('\n');
   return html;
@@ -215,8 +216,14 @@ async function loadPosts(){
   }
 }
 
-function loadStaticPost(){
-  // Default static post
+async function loadStaticPost(){
+  try{ await window.OL_POSTS_READY; }catch(e){}
+  if(window.OL_POSTS && window.OL_POSTS.length){
+    allPosts = window.OL_POSTS.map(p=>({id:p.id,title:p.title,category:p.tag,createdAt:p.date,content:p.content,excerpt:p.excerpt,emoji:p.emoji}));
+    renderBlogList();
+    return;
+  }
+  // Default static post (posts.js లోడ్ కాకపోతే మాత్రమే)
   allPosts = [{
     id: 'static2',
     title: 'మహబూబ్‌నగర్, నారాయణపేట, మక్తల్ – కృష్ణా నది తీర ప్రాంతంలో వ్యవసాయ భూమి కొనుగోలు – పూర్తి గైడ్ 🌊',
@@ -364,14 +371,14 @@ function renderBlogList(){
   const container = document.getElementById('dynamicBlogList');
   container.innerHTML = allPosts.map((p, i) => `
     <a class="blog-item fade" onclick="openPost(${i})" href="javascript:void(0)">
-      <div class="blog-item-img">🌾</div>
+      <div class="blog-item-img">${p.emoji || '🌾'}</div>
       <div class="blog-item-body">
         <div class="blog-item-meta">
           <span class="blog-item-tag">${p.category}</span>
           <span class="blog-item-date">📅 ${p.createdAt}</span>
         </div>
         <div class="blog-item-title">${p.title}</div>
-        <div class="blog-item-excerpt">${p.content.substring(0, 120)}...</div>
+        <div class="blog-item-excerpt">${p.excerpt || (p.content.substring(0, 120) + '...')}</div>
         <div class="blog-item-read">పూర్తిగా చదవండి →</div>
       </div>
     </a>
