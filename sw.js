@@ -1,7 +1,7 @@
 // OnlineLand Service Worker
 // v2 — cross-origin requests bypass the SW entirely (Firebase/gstatic fix)
 
-const CACHE_NAME = 'onlineland-v12';
+const CACHE_NAME = 'onlineland-v13';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

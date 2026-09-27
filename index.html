@@ -521,15 +521,6 @@ footer{background:var(--dark);color:rgba(241,245,251,.5);padding:3rem 2rem 1.5re
   </div>
   <div class="blog-grid">
     <div class="blog-card" onclick="openBlog(0)">
-      <div class="blog-card-img">🌊<div class="blog-card-date">సెప్టెంబర్ 2026</div></div>
-      <div class="blog-card-body">
-        <div class="blog-card-tag">భూమి కొనుగోలు</div>
-        <div class="blog-card-title">కృష్ణా నది తీర ప్రాంతంలో వ్యవసాయ భూమి కొనుగోలు – పూర్తి గైడ్</div>
-        <div class="blog-card-excerpt">మహబూబ్‌నగర్, నారాయణపేట, మక్తల్ కృష్ణా తీర భూములు కొనేముందు చూడాల్సిన పత్రాలు, ముంపు తనిఖీ, రిజిస్ట్రేషన్ ఖర్చులు, మోసాల నుంచి జాగ్రత్తలు.</div>
-        <a class="blog-card-read">పూర్తిగా చదవండి →</a>
-      </div>
-    </div>
-    <div class="blog-card" onclick="openBlog(1)">
       <div class="blog-card-img">🌾<div class="blog-card-date">మే 2026</div></div>
       <div class="blog-card-body">
         <div class="blog-card-tag">భూమి కొనుగోలు</div>
@@ -1089,6 +1080,24 @@ document.addEventListener('DOMContentLoaded', ()=>{
 // ఖాళీగా ఉంటే నోటిఫికేషన్ పంపదు, మిగతా సైట్ మామూలుగా పనిచేస్తుంది.
 const TELEGRAM_BOT_TOKEN = '';
 const TELEGRAM_CHAT_ID   = '';
+
+function sendTelegramContact(c){
+  if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;   // సెటప్ కాలేదు
+  try{
+    const msg =
+      '📩 కొత్త సంప్రదింపు వచ్చింది!\n\n' +
+      '👤 ' + (c.name||'—') + '\n' +
+      '📞 ' + (c.phone||'—') + '\n' +
+      '📌 ' + (c.subject||'—') + '\n\n' +
+      '💬 ' + (c.message||'—') + '\n\n' +
+      '👉 వెంటనే జవాబు ఇవ్వండి';
+    fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: msg, disable_web_page_preview: true })
+    }).catch(e => console.warn('Telegram contact alert failed:', e));
+  }catch(e){ console.warn('Telegram contact alert error:', e); }
+}
 
 function sendTelegramAlert(l){
   if(!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;   // సెటప్ కాలేదు
@@ -1851,6 +1860,7 @@ function sendWhatsApp(){
   if(!validateContact()) return;
   const {name, phone, subject, message} = getContactData();
   const text = `నమస్తే OnlineLand! 🌾\n\nపేరు: ${name}\nPhone: ${phone}\nవిషయం: ${subject}\n\nసందేశం: ${message}`;
+  sendTelegramContact({name, phone, subject, message});   // 📩 Telegram అలర్ట్
   window.open(`https://wa.me/919959731120?text=${encodeURIComponent(text)}`, '_blank');
 }
 
@@ -1858,6 +1868,7 @@ function sendEmail(){
   if(!validateContact()) return;
   const {name, phone, subject, message} = getContactData();
   const body = `పేరు: ${name}\nPhone: ${phone}\nవిషయం: ${subject}\n\nసందేశం: ${message}`;
+  sendTelegramContact({name, phone, subject, message});   // 📩 Telegram అలర్ట్
   window.open(`mailto:Info@onlineland.co?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
   const el = document.getElementById('contactMsg');
   el.textContent='✅ Email app తెరుచుకుంటోంది...';
@@ -2008,44 +2019,6 @@ console.log("✅ Firebase connected! Data will sync across all devices.");
 
 // ═══ BLOG DATA ═══
 const BLOGS = [
-  {
-    title: "మహబూబ్‌నగర్, నారాయణపేట, మక్తల్ – కృష్ణా నది తీర ప్రాంతంలో వ్యవసాయ భూమి కొనుగోలు – పూర్తి గైడ్ 🌊",
-    date: "సెప్టెంబర్ 2026",
-    tag: "భూమి కొనుగోలు",
-    content: `
-      <h1>మహబూబ్‌నగర్, నారాయణపేట, మక్తల్ – కృష్ణా నది తీర ప్రాంతంలో వ్యవసాయ భూమి కొనుగోలు – పూర్తి గైడ్ 🌊</h1>
-      <div class="blog-date">📅 సెప్టెంబర్ 2026 • భూమి కొనుగోలు</div>
-      <h3>మహబూబ్‌నగర్ ఎందుకు?</h3>
-      <p>హైదరాబాద్‌కు దగ్గరగా ఉండి, ఇంకా అందుబాటు ధరల్లో వ్యవసాయ భూమి దొరికే జిల్లాల్లో మహబూబ్‌నగర్ ఒకటి. సరైన పత్రాలు, సరైన ప్రాంతం ఎంచుకుంటే ఇది వ్యవసాయానికీ, దీర్ఘకాల పెట్టుబడికీ మంచి అవకాశం.</p>
-      <p>ముఖ్యంగా మహబూబ్‌నగర్, నారాయణపేట జిల్లాల్లో — మక్తల్ మండలం సహా — కృష్ణా నది తీర ప్రాంత భూములు ప్రత్యేక ఆకర్షణ. నదికి దగ్గరగా ఉండటం వల్ల భూగర్భ జలాలు మెరుగ్గా ఉండి, వరి, వేరుశనగ, కూరగాయల సాగుకు అనుకూలం.</p>
-      <ul><li><strong>కనెక్టివిటీ:</strong> హైదరాబాద్–బెంగళూరు జాతీయ రహదారి (NH-44) జడ్చర్ల మీదుగా వెళ్తుంది; హైదరాబాద్ నుంచి జిల్లా కేంద్రానికి సుమారు 100 కి.మీ.</li><li><strong>సాగునీరు:</strong> పాలమూరు–రంగారెడ్డి ఎత్తిపోతల పథకం, కృష్ణా నది కాలువల వల్ల కొన్ని మండలాల్లో నీటి లభ్యత మెరుగవుతోంది.</li><li><strong>పారిశ్రామిక వృద్ధి:</strong> జడ్చర్ల, పోలేపల్లి పరిసరాల్లో ఇండస్ట్రియల్ పార్కులు, ఫార్మా SEZ భూముల విలువను పెంచుతున్నాయి.</li><li><strong>ధరలు:</strong> హైదరాబాద్ శివారు జిల్లాలతో పోలిస్తే ఎకరా ధర ఇంకా తక్కువ; ఖచ్చితమైన రేటు గ్రామం, రోడ్డు దూరం, నీటి వసతిని బట్టి చాలా మారుతుంది.</li></ul>
-      <h3>సరైన ప్రాంతాన్ని ఎలా ఎంచుకోవాలి</h3>
-      <p>భూమి విలువను ఎక్కువగా నిర్ణయించేవి మూడు: రోడ్డు, నీరు, సమీపంలో జరుగుతున్న అభివృద్ధి. కొనేముందు ఈ అంశాలను పోల్చి చూడండి.</p>
-      <ul><li><strong>రోడ్డు:</strong> భూమికి నేరుగా దారి ఉందా? బీటీ రోడ్డు లేదా జాతీయ/రాష్ట్ర రహదారి నుంచి ఎంత దూరం?</li><li><strong>నీరు:</strong> బోరు నీటి లోతు, కాలువ లేదా చెరువు దగ్గర ఉందా, కరెంటు కనెక్షన్ ఉందా</li><li><strong>అభివృద్ధి:</strong> సమీపంలో ఇండస్ట్రియల్ పార్క్, కొత్త రోడ్డు ప్రాజెక్టులు, పట్టణ విస్తరణ</li><li><strong>మట్టి:</strong> ఎర్ర నేల, నల్ల నేల — ఏ పంటకు సరిపోతుంది</li><li><strong>గ్రామ వాతావరణం:</strong> స్థానిక రైతులతో మాట్లాడి భూ వివాదాల చరిత్ర తెలుసుకోండి</li></ul>
-      <p>జడ్చర్ల, భూత్పూర్, బాలానగర్ వంటి హైవే దగ్గరి మండలాల్లో ధరలు ఎక్కువ; లోపలి గ్రామాల్లో తక్కువ ధరకు దొరికినా రీసేల్ విలువ నెమ్మదిగా పెరుగుతుంది.</p>
-      <p><strong>కృష్ణా తీర భూములకు అదనపు తనిఖీ:</strong> భూమి వరద ముంపు ప్రాంతమా, ప్రాజెక్టు బ్యాక్‌వాటర్ ముంపు (submergence) పరిధిలో ఉందా, నది హద్దు దగ్గర నిర్మాణ ఆంక్షలు ఉన్నాయా అని ఇరిగేషన్ శాఖ, తహసీల్దార్ కార్యాలయంలో నిర్ధారించుకోండి.</p>
-      <h3>కొనేముందు తప్పనిసరిగా చూడాల్సిన పత్రాలు</h3>
-      <p>పత్రాలు క్లియర్‌గా ఉంటేనే అడ్వాన్స్ ఇవ్వండి. తెలంగాణలో ధరణి స్థానంలో ఇప్పుడు <strong>భూ భారతి</strong> పోర్టల్ భూ రికార్డులకు ఆధారం.</p>
-      <ol><li><strong>పట్టాదార్ పాస్‌బుక్:</strong> అమ్మే వ్యక్తి పేరు మీదే భూమి ఉందా, విస్తీర్ణం సరిపోతుందా చూడండి.</li><li><strong>భూ భారతి రికార్డు:</strong> సర్వే నంబర్‌తో ఆన్‌లైన్‌లో యజమాని పేరు, భూమి రకం (పట్టా/అసైన్డ్/ప్రభుత్వ) తనిఖీ చేయండి.</li><li><strong>పహాణీ / అడంగల్:</strong> గత కొన్నేళ్ల సాగు వివరాలు, యాజమాన్య మార్పులు.</li><li><strong>లింక్ డాక్యుమెంట్లు:</strong> కనీసం 30 ఏళ్ల యాజమాన్య చరిత్ర — గత సేల్ డీడ్‌లు, వారసత్వ పత్రాలు.</li><li><strong>ఎన్‌కంబరెన్స్ సర్టిఫికెట్ (EC):</strong> బ్యాంక్ లోన్, తాకట్టు లేదా ఇతర బాకీలు లేవని నిర్ధారణ.</li><li><strong>FMB / సర్వే మ్యాప్:</strong> భూమి హద్దులు, ఆకారం రికార్డుతో సరిపోతున్నాయా.</li><li><strong>వారసుల అంగీకారం:</strong> ఉమ్మడి కుటుంబ భూమి అయితే వారసులందరి సంతకాలు అవసరం.</li></ol>
-      <p><strong>దూరంగా ఉండాల్సినవి:</strong> అసైన్డ్ భూములు, ప్రభుత్వ భూములు, నిషేధిత జాబితా (22-A) లో ఉన్న సర్వే నంబర్లు, కోర్టు కేసుల్లో ఉన్న భూములు.</p>
-      <h3>స్వయంగా భూమిని చూసి తనిఖీ చేయండి</h3>
-      <p>పత్రాల్లో ఉన్నది, భూమిపై ఉన్నది ఒకటేనని నిర్ధారించుకోవడమే ఈ దశ లక్ష్యం.</p>
-      <ul><li><strong>సర్వే:</strong> మండల సర్వేయర్‌తో అధికారిక కొలత చేయించి, హద్దు రాళ్లు పాతించండి.</li><li><strong>పొరుగు రైతులు:</strong> హద్దులపై వారికి అభ్యంతరం లేదని మాట్లాడి తెలుసుకోండి.</li><li><strong>కబ్జా:</strong> భూమి ప్రస్తుతం ఎవరి సాగులో ఉంది? కౌలుదారు ఉంటే ముందే స్పష్టత తీసుకోండి.</li><li><strong>నీరు, కరెంటు:</strong> బోరు పనిచేస్తుందా, వ్యవసాయ కరెంటు కనెక్షన్ అమ్మేవారి పేరు మీద ఉందా.</li><li><strong>దారి:</strong> భూమికి వెళ్లే దారి ప్రభుత్వ రోడ్డా లేక ఇతరుల పొలం గుండానా — దీనివల్ల తర్వాత గొడవలు రావచ్చు.</li><li><strong>మట్టి పరీక్ష:</strong> సాగు చేయాలనుకుంటే వ్యవసాయ శాఖ ల్యాబ్‌లో మట్టి పరీక్ష చేయించండి.</li></ul>
-      <h3>రిజిస్ట్రేషన్ ప్రక్రియ, ఖర్చులు</h3>
-      <p>తెలంగాణలో వ్యవసాయ భూమి రిజిస్ట్రేషన్, మ్యుటేషన్ రెండూ తహసీల్దార్ కార్యాలయంలోనే జరుగుతాయి.</p>
-      <ol><li>భూ భారతి పోర్టల్‌లో స్లాట్ బుక్ చేసి, చలాన్ ద్వారా ఫీజు చెల్లించండి.</li><li>కొనేవారు, అమ్మేవారు, ఇద్దరు సాక్షులు ఆధార్‌తో తహసీల్దార్ కార్యాలయానికి హాజరు కావాలి.</li><li>రిజిస్ట్రేషన్ తర్వాత మ్యుటేషన్ జరిగి, కొత్త పట్టాదార్ పాస్‌బుక్ మీ పేరు మీద వస్తుంది.</li></ol>
-      <p><strong>ఖర్చులు (సుమారు):</strong> స్టాంప్ డ్యూటీ, బదిలీ సుంకం, రిజిస్ట్రేషన్ ఫీజు కలిపి ప్రభుత్వ మార్కెట్ విలువపై సుమారు 7.5%. రేట్లు మారవచ్చు కాబట్టి స్లాట్ బుక్ చేసే ముందు పోర్టల్‌లో ప్రస్తుత రేటు చూసుకోండి.</p>
-      <p><strong>చెల్లింపు:</strong> మొత్తం డబ్బు బ్యాంక్ ట్రాన్స్‌ఫర్ ద్వారా చెల్లించి, అసలు ధరనే డీడ్‌లో చూపించండి.</p>
-      <h3>సాధారణంగా జరిగే మోసాలు</h3>
-      <p>చాలా నష్టాలు తొందరపాటు వల్లే జరుగుతాయి. ఈ సంకేతాలు కనిపిస్తే ఆగండి.</p>
-      <ul><li><strong>ఒకే భూమి ఇద్దరికి అమ్మడం:</strong> EC, భూ భారతి రికార్డు తాజాగా తనిఖీ చేస్తే దీన్ని పట్టుకోవచ్చు.</li><li><strong>GPA హోల్డర్ అమ్మకం:</strong> జనరల్ పవర్ ఆఫ్ అటార్నీపై అమ్ముతుంటే, అసలు యజమాని బతికి ఉన్నారా, GPA రద్దు కాలేదా నిర్ధారించుకోండి.</li><li><strong>"ఈరోజే అడ్వాన్స్ ఇవ్వాలి" ఒత్తిడి:</strong> నిజమైన అమ్మకందారు పత్రాల తనిఖీకి సమయం ఇస్తారు.</li><li><strong>మార్కెట్ కంటే చాలా తక్కువ ధర:</strong> ఏదో సమస్య దాగి ఉండొచ్చు — అసైన్డ్ భూమి, కేసు, లేదా దారి లేకపోవడం.</li><li><strong>నగదు లావాదేవీలు:</strong> రశీదు లేని నగదు చెల్లింపులకు చట్టపరమైన రక్షణ ఉండదు.</li></ul>
-      <p>పెద్ద మొత్తం పెట్టుబడి అయితే, స్థానిక రెవెన్యూ న్యాయవాదితో టైటిల్ వెరిఫికేషన్ చేయించడం ఉత్తమం.</p>
-      <h3>కొనుగోలు చెక్‌లిస్ట్</h3>
-      <p>ఈ జాబితాలో అన్నీ టిక్ అయ్యాకే పూర్తి మొత్తం చెల్లించండి.</p>
-      <ul><li>✅ భూ భారతిలో యజమాని పేరు, విస్తీర్ణం సరిపోయాయి</li><li>✅ 30 ఏళ్ల లింక్ డాక్యుమెంట్లు, EC తనిఖీ పూర్తయింది</li><li>✅ నిషేధిత జాబితాలో సర్వే నంబర్ లేదు</li><li>✅ సర్వేయర్ కొలత, హద్దు రాళ్లు పూర్తయ్యాయి</li><li>✅ భూమికి చట్టబద్ధమైన దారి ఉంది</li><li>✅ వారసులందరి అంగీకారం ఉంది</li><li>✅ న్యాయవాది టైటిల్ వెరిఫికేషన్ చేశారు</li><li>✅ రిజిస్ట్రేషన్ తర్వాత మ్యుటేషన్, కొత్త పాస్‌బుక్ వచ్చాయి</li></ul>
-      <div class="highlight">🌾 మహబూబ్‌నగర్, నారాయణపేట, మక్తల్ కృష్ణా నది తీర ప్రాంతాల్లో వెరిఫై చేసిన వ్యవసాయ భూముల కోసం OnlineLand (https://onlineland.in)ను సంప్రదించండి.</div>
-    `
-  },
   {
     title: "వ్యవసాయ భూమి కొనేముందు తెలుసుకోవాల్సిన 5 విషయాలు",
     date: "మే 2026",
@@ -2287,49 +2260,5 @@ if('serviceWorker' in navigator){
   <div class="ai-note">AI సమాధానాలు తప్పు కావచ్చు — వివరాలు యజమానితో నిర్ధారించుకోండి.</div>
 </div>
 
-
-<!-- ═══ BLOG POSTS FROM posts.js ═══ -->
-<script>
-(function(){
-  function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-  function inl(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');}
-  function md(text){
-    return String(text||'').trim().split(/\n\s*\n/).map(function(b){
-      var ls=b.trim().split('\n'), out='';
-      if(ls[0].indexOf('## ')===0){ out+='<h3>'+inl(ls.shift().slice(3))+'</h3>'; }
-      if(!ls.length) return out;
-      if(ls.every(function(l){return l.indexOf('- ')===0;}))
-        return out+'<ul style="padding-left:1.4rem;margin:.6rem 0">'+ls.map(function(l){return '<li style="margin:.3rem 0">'+inl(l.slice(2))+'</li>';}).join('')+'</ul>';
-      if(ls.every(function(l){return /^\d+\. /.test(l);}))
-        return out+'<ol style="padding-left:1.4rem;margin:.6rem 0">'+ls.map(function(l){return '<li style="margin:.3rem 0">'+inl(l.replace(/^\d+\. /,''))+'</li>';}).join('')+'</ol>';
-      if(ls.every(function(l){return l.indexOf('> ')===0;}))
-        return out+'<div class="highlight">👉 '+ls.map(function(l){return inl(l.slice(2));}).join('<br/>')+'</div>';
-      return out+'<p>'+ls.map(inl).join('<br/>')+'</p>';
-    }).join('\n');
-  }
-  function render(){
-    var P=window.OL_POSTS, grid=document.querySelector('#blog .blog-grid');
-    if(!P||!P.length||!grid) return;
-    grid.innerHTML=P.map(function(p,i){
-      return '<div class="blog-card" onclick="openOLPost('+i+')">'+
-        '<div class="blog-card-img">'+(p.emoji||'🌾')+'<div class="blog-card-date">'+esc(p.date)+'</div></div>'+
-        '<div class="blog-card-body"><div class="blog-card-tag">'+esc(p.tag)+'</div>'+
-        '<div class="blog-card-title">'+esc(p.title)+'</div>'+
-        '<div class="blog-card-excerpt">'+esc(p.excerpt||'')+'</div>'+
-        '<a class="blog-card-read">పూర్తిగా చదవండి →</a></div></div>';
-    }).join('');
-  }
-  window.openOLPost=function(i){
-    var p=window.OL_POSTS[i];
-    document.getElementById('blogContent').innerHTML='<h1>'+esc(p.title)+'</h1><div class="blog-date">📅 '+esc(p.date)+' • '+esc(p.tag)+'</div>'+md(p.content);
-    document.getElementById('blogModal').classList.add('open');
-    document.body.style.overflow='hidden';
-  };
-  var s=document.createElement('script');
-  s.src='posts.js?t='+Date.now();
-  s.onload=render;
-  document.head.appendChild(s);
-})();
-</script>
 </body>
 </html>
