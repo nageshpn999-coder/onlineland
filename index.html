@@ -2260,5 +2260,49 @@ if('serviceWorker' in navigator){
   <div class="ai-note">AI సమాధానాలు తప్పు కావచ్చు — వివరాలు యజమానితో నిర్ధారించుకోండి.</div>
 </div>
 
+
+<!-- ═══ BLOG POSTS FROM posts.js ═══ -->
+<script>
+(function(){
+  function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function inl(t){return esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');}
+  function md(text){
+    return String(text||'').trim().split(/\n\s*\n/).map(function(b){
+      var ls=b.trim().split('\n'), out='';
+      if(ls[0].indexOf('## ')===0){ out+='<h3>'+inl(ls.shift().slice(3))+'</h3>'; }
+      if(!ls.length) return out;
+      if(ls.every(function(l){return l.indexOf('- ')===0;}))
+        return out+'<ul style="padding-left:1.4rem;margin:.6rem 0">'+ls.map(function(l){return '<li style="margin:.3rem 0">'+inl(l.slice(2))+'</li>';}).join('')+'</ul>';
+      if(ls.every(function(l){return /^\d+\. /.test(l);}))
+        return out+'<ol style="padding-left:1.4rem;margin:.6rem 0">'+ls.map(function(l){return '<li style="margin:.3rem 0">'+inl(l.replace(/^\d+\. /,''))+'</li>';}).join('')+'</ol>';
+      if(ls.every(function(l){return l.indexOf('> ')===0;}))
+        return out+'<div class="highlight">👉 '+ls.map(function(l){return inl(l.slice(2));}).join('<br/>')+'</div>';
+      return out+'<p>'+ls.map(inl).join('<br/>')+'</p>';
+    }).join('\n');
+  }
+  function render(){
+    var P=window.OL_POSTS, grid=document.querySelector('#blog .blog-grid');
+    if(!P||!P.length||!grid) return;
+    grid.innerHTML=P.map(function(p,i){
+      return '<div class="blog-card" onclick="openOLPost('+i+')">'+
+        '<div class="blog-card-img">'+(p.emoji||'🌾')+'<div class="blog-card-date">'+esc(p.date)+'</div></div>'+
+        '<div class="blog-card-body"><div class="blog-card-tag">'+esc(p.tag)+'</div>'+
+        '<div class="blog-card-title">'+esc(p.title)+'</div>'+
+        '<div class="blog-card-excerpt">'+esc(p.excerpt||'')+'</div>'+
+        '<a class="blog-card-read">పూర్తిగా చదవండి →</a></div></div>';
+    }).join('');
+  }
+  window.openOLPost=function(i){
+    var p=window.OL_POSTS[i];
+    document.getElementById('blogContent').innerHTML='<h1>'+esc(p.title)+'</h1><div class="blog-date">📅 '+esc(p.date)+' • '+esc(p.tag)+'</div>'+md(p.content);
+    document.getElementById('blogModal').classList.add('open');
+    document.body.style.overflow='hidden';
+  };
+  var s=document.createElement('script');
+  s.src='posts.js?t='+Date.now();
+  s.onload=render;
+  document.head.appendChild(s);
+})();
+</script>
 </body>
 </html>
