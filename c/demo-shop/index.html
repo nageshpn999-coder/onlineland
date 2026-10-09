@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sri Sai Mobiles — Sample Card</title>
+<!-- WhatsApp link preview: ప్రతి customer కి ఈ 4 lines మార్చండి -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="శ్రీ సాయి మొబైల్స్ — నమూనా డిజిటల్ కార్డ్">
+<meta property="og:description" content="ఒక్క లైన్ లో business వివరాలు • ఊరు. కాల్ / WhatsApp ఒక్క tap.">
+<meta property="og:image" content="https://onlineland.in/c/onlineland/preview.jpg">
+<meta property="og:url" content="https://onlineland.in/c/demo-shop/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mandali&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+/* =====================================================================
+   ✏️  ఇక్కడ మాత్రమే మార్చండి — EDIT ONLY THIS BLOCK FOR EACH CUSTOMER
+   ===================================================================== */
+const CARD = {
+  name:     { en: "Sri Sai Mobiles", te: "శ్రీ సాయి మొబైల్స్" },
+  tagline:  { en: "Phones, accessories & repairs", te: "ఫోన్లు, యాక్సెసరీస్ & రిపేర్లు" },
+  owner:    { en: "Ramesh", te: "రమేష్" },
+  initials: "SS",
+  logo:     "",
+  color:    "#1F3A8A",
+  accent:   "#F2A31B",
+
+  phone:    "919959731120",
+  whatsapp: "919959731120",
+  email:    "",
+  address:  { en: "Main Road, Makthal, Narayanpet District", te: "మెయిన్ రోడ్, మక్తల్, నారాయణపేట జిల్లా" },
+  mapLink:  "https://maps.google.com/?q=Makthal,Narayanpet,Telangana",
+
+  about: { en: "Genuine phones, same-day repairs and easy EMI.", te: "ఒరిజినల్ ఫోన్లు, అదే రోజు రిపేర్, సులభమైన EMI." },
+
+  services: [
+    { en: "New smartphones", te: "కొత్త స్మార్ట్‌ఫోన్లు" },
+    { en: "Screen & battery repair", te: "స్క్రీన్ & బ్యాటరీ రిపేర్" },
+    { en: "Accessories", te: "యాక్సెసరీస్" },
+    { en: "Recharge & bill pay", te: "రీఛార్జ్ & బిల్ పేమెంట్" }
+  ],
+
+  hours: { en: "Mon–Sat 9 AM – 9 PM", te: "సోమ–శని ఉదయం 9 – రాత్రి 9" },
+
+  upi: { id: "", name: "" },
+  gallery: [],
+  social: { instagram: "", facebook: "", youtube: "", website: "" },
+
+  demo:     true,
+  validTill: "",
+  provider: { name: "OnlineLand", link: "https://onlineland.in", whatsapp: "919959731120" }
+};
+/* ===================================================================== */
+</script>
+
+<style>
+:root{
+  --brand:#1F3A8A; --accent:#F2A31B;
+  --bg:#ECEEF4; --surface:#FFFFFF; --ink:#18203A; --muted:#5B6275; --line:#DDE1EA;
+  --wa:#1E8E4E;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){ --bg:#0F1320; --surface:#1A2033; --ink:#EEF0F6; --muted:#A3AAC0; --line:#2C344B; }
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Mandali","Noto Sans Telugu",system-ui,sans-serif;
+  font-size:16px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:440px;margin:0 auto;padding:16px 14px 32px}
+
+/* ---------- Header ---------- */
+.head{
+  position:relative; overflow:hidden;
+  background:var(--brand); color:#fff;
+  border-radius:22px 22px 0 0;
+  padding:22px 20px 64px;
+}
+.head::after{ /* marigold arc — the one signature element */
+  content:""; position:absolute; right:-70px; bottom:-120px;
+  width:230px; height:230px; border-radius:50%;
+  border:26px solid var(--accent); opacity:.9;
+}
+.lang{
+  position:absolute; top:14px; right:14px; z-index:2;
+  display:flex; background:rgba(255,255,255,.14); border-radius:999px; padding:3px;
+}
+.lang button{
+  font:inherit; font-size:13px; border:0; background:none; color:#fff;
+  padding:4px 11px; border-radius:999px; cursor:pointer;
+}
+.lang button[aria-pressed="true"]{background:#fff;color:var(--brand);font-weight:600}
+.logo{
+  width:76px;height:76px;border-radius:20px;
+  background:var(--accent); color:var(--brand);
+  display:grid;place-items:center;
+  font-family:"Mandali",sans-serif; font-weight:400; font-size:32px;
+  overflow:hidden; position:relative; z-index:1;
+}
+.logo img{width:100%;height:100%;object-fit:cover}
+.logo.has-img{display:inline-flex;align-items:center;width:auto;height:auto;max-width:calc(100% - 110px);background:#fff;padding:10px 14px;border-radius:14px}
+.logo.has-img img{display:block;width:auto;height:36px;max-width:100%;object-fit:contain}
+h1{
+  font-family:"Mandali",sans-serif; font-weight:400;
+  font-size:30px; line-height:1.15; margin:16px 0 4px; position:relative; z-index:1;
+  max-width:85%;
+}
+.tag{margin:0;opacity:.88;position:relative;z-index:1;max-width:80%}
+.owner{margin:10px 0 0;font-size:14px;opacity:.75;position:relative;z-index:1}
+
+/* ---------- Quick actions ---------- */
+.actions{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px;
+  margin:-44px 12px 0; position:relative; z-index:3;
+  background:var(--surface); border-radius:18px; padding:12px 8px;
+  box-shadow:0 10px 24px -12px rgba(24,32,58,.35);
+}
+.act{
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  text-decoration:none; color:var(--ink); font-size:13px; font-weight:500;
+  background:none; border:0; font-family:inherit; cursor:pointer; padding:4px 0;
+}
+.act .ic{
+  width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+  background:color-mix(in srgb, var(--brand) 12%, transparent); color:var(--brand);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) .act .ic{color:#fff;background:color-mix(in srgb,var(--brand) 55%,transparent)} }
+.act.wa .ic{background:var(--wa);color:#fff}
+.act svg{width:22px;height:22px}
+
+/* ---------- Body sections ---------- */
+.body{background:var(--surface);border-radius:0 0 22px 22px;padding:20px 20px 8px;margin-top:-30px;padding-top:50px}
+section{padding:16px 0;border-top:1px solid var(--line)}
+section:first-child{border-top:0}
+h2{
+  font-family:"Mandali",sans-serif;font-weight:400;
+  font-size:19px;margin:0 0 8px;color:var(--brand);
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) h2{color:var(--accent)} }
+p{margin:0}
+.muted{color:var(--muted)}
+.svc{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.svc li{
+  border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;font-size:15px;
+}
+.row{display:flex;gap:12px;align-items:flex-start}
+.row svg{flex:none;width:20px;height:20px;margin-top:3px;color:var(--muted)}
+.row + .row{margin-top:10px}
+.row a{color:inherit}
+
+.gallery{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;display:block}
+
+.pay{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+#qr{background:#fff;padding:8px;border-radius:12px;line-height:0}
+#qr img,#qr canvas{width:120px!important;height:120px!important}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font:inherit;font-weight:600;text-decoration:none;cursor:pointer;
+  border:0;border-radius:12px;padding:12px 18px;
+  background:var(--brand);color:#fff;
+}
+.btn.ghost{background:none;color:var(--ink);border:1.5px solid var(--line)}
+.btn:focus-visible,.act:focus-visible,.lang button:focus-visible,.soc a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.soc{display:flex;gap:10px;flex-wrap:wrap}
+.soc a{
+  width:44px;height:44px;border-radius:12px;display:grid;place-items:center;
+  border:1.5px solid var(--line);color:var(--ink);
+}
+.soc svg{width:20px;height:20px}
+
+.share{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:16px 0 12px;border-top:1px solid var(--line)}
+footer{text-align:center;font-size:13px;color:var(--muted);margin-top:18px}
+footer a{color:inherit;font-weight:600}
+
+/* ---------- Expired screen ---------- */
+.expired{
+  position:fixed;inset:0;z-index:10;background:var(--bg);
+  display:grid;place-items:center;padding:24px;text-align:center;
+}
+.expired h1{color:var(--ink);max-width:none;margin:0 0 8px;font-size:26px}
+.expired p{margin-bottom:20px}
+[hidden]{display:none!important}
+.demo-bar{display:block;text-align:center;text-decoration:none;font-weight:600;font-size:15px;
+  background:var(--accent);color:#111;padding:10px 16px;position:sticky;top:0;z-index:9}
+/* ---------- Brand-tinted background (light mode) ---------- */
+@media (prefers-color-scheme:light){
+  body{background:color-mix(in srgb,var(--brand) 16%,#fff)}
+  .body{background:color-mix(in srgb,var(--brand) 7%,#fff)}
+  section{border-top-color:color-mix(in srgb,var(--brand) 18%,#fff)}
+  .svc li,.soc a{background:#fff;border-color:color-mix(in srgb,var(--brand) 22%,#fff)}
+  .btn.ghost{background:#fff;border-color:color-mix(in srgb,var(--brand) 22%,#fff)}
+  .share{border-top-color:color-mix(in srgb,var(--brand) 18%,#fff)}
+  footer{color:color-mix(in srgb,var(--brand) 70%,#000)}
+}
+
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);
+  width:max-content;max-width:calc(100% - 32px);background:#18203A;color:#fff;padding:12px 16px;border-radius:12px;
+  font-size:15px;text-align:center;box-shadow:0 8px 24px -8px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:20}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media (prefers-reduced-motion:no-preference){
+  .actions{animation:rise .5s cubic-bezier(.2,.8,.2,1) both .1s}
+  @keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+}
+</style>
+</head>
+<body>
+
+<a class="demo-bar" id="demoBar" target="_blank" rel="noopener" hidden></a>
+<div class="wrap">
+  <header class="head">
+    <div class="lang" role="group" aria-label="Language">
+      <button data-l="te" aria-pressed="true">తె</button>
+      <button data-l="en" aria-pressed="false">EN</button>
+    </div>
+    <div class="logo" id="logo"></div>
+    <h1 id="name"></h1>
+    <p class="tag" id="tagline"></p>
+    <p class="owner" id="owner"></p>
+  </header>
+
+  <nav class="actions" aria-label="Quick actions">
+    <a class="act" id="aCall"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg></span><span data-t="call"></span></a>
+    <a class="act wa" id="aWa" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg></span><span>WhatsApp</span></a>
+    <a class="act" id="aMap" target="_blank" rel="noopener"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span><span data-t="map"></span></a>
+    <button class="act" id="aSave" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span><span data-t="save"></span></button>
+  </nav>
+
+  <main class="body">
+    <section id="sAbout"><h2 data-t="about"></h2><p id="about"></p></section>
+
+    <section id="sServices"><h2 data-t="services"></h2><ul class="svc" id="services"></ul></section>
+
+    <section id="sContact">
+      <h2 data-t="contact"></h2>
+      <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg><p id="address"></p></div>
+      <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><p id="hours"></p></div>
+      <div class="row" id="rEmail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg><p><a id="email"></a></p></div>
+    </section>
+
+    <section id="sGallery"><h2 data-t="gallery"></h2><div class="gallery" id="gallery"></div></section>
+
+    <section id="sPay">
+      <h2 data-t="pay"></h2>
+      <div class="pay">
+        <div id="qr"></div>
+        <div>
+          <p class="muted" id="upiId" style="margin-bottom:10px;word-break:break-all"></p>
+          <a class="btn" id="upiBtn" data-t="payNow"></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="sSocial"><h2 data-t="follow"></h2><div class="soc" id="social"></div></section>
+
+    <div class="share">
+      <button class="btn" id="shareBtn" type="button" data-t="share"></button>
+      <a class="btn ghost" id="waShare" target="_blank" rel="noopener" data-t="sendWa"></a>
+    </div>
+  </main>
+
+  <footer><span data-t="madeBy"></span> <a id="provider" target="_blank" rel="noopener"></a></footer>
+</div>
+
+<div class="expired" id="expired" hidden>
+  <div>
+    <h1 data-t="expTitle"></h1>
+    <p class="muted" data-t="expText"></p>
+    <a class="btn" id="renewBtn" target="_blank" rel="noopener" data-t="renew"></a>
+  </div>
+</div>
+
+<script>
+const T = {
+  te:{call:"కాల్",map:"మ్యాప్",save:"సేవ్",about:"మా గురించి",services:"మా సేవలు",contact:"చిరునామా & సమయం",
+      gallery:"ఫోటోలు",pay:"UPI ద్వారా చెల్లించండి",payNow:"ఇప్పుడు చెల్లించండి",follow:"మమ్మల్ని ఫాలో అవ్వండి",
+      share:"షేర్ చేయండి",sendWa:"WhatsApp లో పంపండి",madeBy:"డిజిటల్ కార్డ్ తయారీ:",
+      saveHint:"Download అయిన file ని ఓపెన్ చేసి, Contacts ఎంచుకుని Save నొక్కండి",expTitle:"ఈ కార్డ్ గడువు ముగిసింది",expText:"ఈ డిజిటల్ కార్డ్‌ని మళ్ళీ యాక్టివ్ చేయడానికి రెన్యూ చేయండి.",renew:"ఇప్పుడే రెన్యూ చేయండి"},
+  en:{call:"Call",map:"Map",save:"Save",about:"About us",services:"Our services",contact:"Address & hours",
+      gallery:"Photos",pay:"Pay with UPI",payNow:"Pay now",follow:"Follow us",
+      share:"Share card",sendWa:"Send on WhatsApp",madeBy:"Digital card by",
+      saveHint:"Open the downloaded file, choose Contacts and tap Save",expTitle:"This card has expired",expText:"Renew to make this digital card active again.",renew:"Renew now"}
+};
+const ICONS = {
+  instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
+  facebook:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>',
+  youtube:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.5 6.4a2.8 2.8 0 0 0-2-2C18.9 4 12 4 12 4s-6.9 0-8.5.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1 12a29 29 0 0 0 .5 5.6 2.8 2.8 0 0 0 2 2c1.6.4 8.5.4 8.5.4s6.9 0 8.5-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 23 12a29 29 0 0 0-.5-5.6z"/><path d="m9.8 15.5 5.7-3.5-5.7-3.5z"/></svg>',
+  website:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>'
+};
+const $ = id => document.getElementById(id);
+function toast(msg){
+  let t = $("toast");
+  if (!t){ t = document.createElement("div"); t.id = "toast"; t.setAttribute("role","status"); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 5000);
+}
+let lang = "te";
+try { lang = localStorage.getItem("cardLang") || "te"; } catch(e){}
+
+function render(){
+  const L = o => (o && (o[lang] || o.en)) || "";
+  document.documentElement.lang = lang;
+  document.documentElement.style.setProperty("--brand", CARD.color);
+  document.documentElement.style.setProperty("--accent", CARD.accent);
+  document.title = L(CARD.name);
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = T[lang][el.dataset.t]);
+  document.querySelectorAll(".lang button").forEach(b => b.setAttribute("aria-pressed", b.dataset.l === lang));
+
+  $("logo").innerHTML = CARD.logo ? `<img src="${CARD.logo}" alt="">` : CARD.initials;
+  const li = $("logo").querySelector("img");
+  $("logo").classList.toggle("has-img", !!li);
+  if (li) li.onerror = () => { $("logo").classList.remove("has-img"); $("logo").textContent = CARD.initials; };
+  $("name").textContent = L(CARD.name);
+  $("tagline").textContent = L(CARD.tagline);
+  $("owner").textContent = L(CARD.owner);
+  $("about").textContent = L(CARD.about);   $("sAbout").hidden = !L(CARD.about);
+  $("services").innerHTML = CARD.services.map(s => `<li>${L(s)}</li>`).join("");
+  $("sServices").hidden = !CARD.services.length;
+  $("address").textContent = L(CARD.address);
+  $("hours").textContent = L(CARD.hours);
+  $("email").textContent = CARD.email; $("email").href = "mailto:" + CARD.email; $("rEmail").hidden = !CARD.email;
+}
+
+function setup(){
+  $("aCall").href = "tel:+" + CARD.phone;
+  $("aWa").href = `https://wa.me/${CARD.whatsapp}`;
+  $("aMap").href = CARD.mapLink;
+
+  $("gallery").innerHTML = CARD.gallery.map(u => `<img src="${u}" alt="" loading="lazy">`).join("");
+  $("sGallery").hidden = !CARD.gallery.length;
+
+  if (CARD.upi.id){
+    const upi = `upi://pay?pa=${encodeURIComponent(CARD.upi.id)}&pn=${encodeURIComponent(CARD.upi.name)}&cu=INR`;
+    $("upiBtn").href = upi; $("upiId").textContent = CARD.upi.id;
+    if (window.QRCode) new QRCode($("qr"), { text: upi, width: 240, height: 240 });
+  } else $("sPay").hidden = true;
+
+  const soc = Object.entries(CARD.social).filter(([,u]) => u);
+  $("social").innerHTML = soc.map(([k,u]) => `<a href="${u}" target="_blank" rel="noopener" aria-label="${k}">${ICONS[k]}</a>`).join("");
+  $("sSocial").hidden = !soc.length;
+
+  $("provider").textContent = CARD.provider.name; $("provider").href = CARD.provider.link;
+  if (CARD.demo){
+    const b = $("demoBar"); b.hidden = false;
+    b.textContent = lang === "te" ? "ఇది నమూనా కార్డ్ • మీ బిజినెస్ కి ఇలాంటి కార్డ్ కావాలా? ఇక్కడ నొక్కండి"
+                                  : "This is a sample card • Want one for your business? Tap here";
+    b.href = `https://wa.me/${CARD.provider.whatsapp}?text=` + encodeURIComponent(`I want a digital card like this: ${location.href}`);
+  }
+
+  $("aSave").onclick = () => {
+    const v = ["BEGIN:VCARD","VERSION:3.0",`N:;${CARD.name.en};;;`,`FN:${CARD.name.en}`,`ORG:${CARD.name.en}`,
+      `TEL;TYPE=CELL:+${CARD.phone}`, CARD.email ? `EMAIL:${CARD.email}` : "",
+      `ADR:;;${CARD.address.en};;;;`, `URL:${location.href}`, "END:VCARD"].filter(Boolean).join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([v], {type:"text/vcard"}));
+    a.download = CARD.name.en.replace(/\s+/g,"_") + ".vcf"; a.click();
+    toast(T[lang].saveHint);
+  };
+
+  const shareText = () => `${CARD.name[lang] || CARD.name.en} – ${location.href}`;
+  $("shareBtn").onclick = async () => {
+    if (navigator.share) { try { await navigator.share({ title: CARD.name.en, url: location.href }); } catch(e){} }
+    else window.open("https://wa.me/?text=" + encodeURIComponent(shareText()), "_blank");
+  };
+  $("waShare").onclick = () => $("waShare").href = "https://wa.me/?text=" + encodeURIComponent(shareText());
+
+  document.querySelectorAll(".lang button").forEach(b => b.onclick = () => {
+    lang = b.dataset.l; try { localStorage.setItem("cardLang", lang); } catch(e){}
+    render();
+    if (CARD.demo) $("demoBar").textContent = lang === "te" ? "ఇది నమూనా కార్డ్ • మీ బిజినెస్ కి ఇలాంటి కార్డ్ కావాలా? ఇక్కడ నొక్కండి" : "This is a sample card • Want one for your business? Tap here";
+  });
+
+  // Renewal check
+  if (CARD.validTill && new Date() > new Date(CARD.validTill + "T23:59:59")){
+    $("expired").hidden = false;
+    $("renewBtn").href = `https://wa.me/${CARD.provider.whatsapp}?text=` +
+      encodeURIComponent(`Renew my digital card: ${CARD.name.en}`);
+  }
+}
+render(); setup();
+</script>
+</body>
+</html>
