@@ -200,6 +200,17 @@ footer a{color:inherit;font-weight:600}
 .expired h1{color:var(--ink);max-width:none;margin:0 0 8px;font-size:26px}
 .expired p{margin-bottom:20px}
 [hidden]{display:none!important}
+/* ---------- Brand-tinted background (light mode) ---------- */
+@media (prefers-color-scheme:light){
+  body{background:color-mix(in srgb,var(--brand) 16%,#fff)}
+  .body{background:color-mix(in srgb,var(--brand) 7%,#fff)}
+  section{border-top-color:color-mix(in srgb,var(--brand) 18%,#fff)}
+  .svc li,.soc a{background:#fff;border-color:color-mix(in srgb,var(--brand) 22%,#fff)}
+  .btn.ghost{background:#fff;border-color:color-mix(in srgb,var(--brand) 22%,#fff)}
+  .share{border-top-color:color-mix(in srgb,var(--brand) 18%,#fff)}
+  footer{color:color-mix(in srgb,var(--brand) 70%,#000)}
+}
+
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);
   width:max-content;max-width:calc(100% - 32px);background:#18203A;color:#fff;padding:12px 16px;border-radius:12px;
   font-size:15px;text-align:center;box-shadow:0 8px 24px -8px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:20}
