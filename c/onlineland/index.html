@@ -200,6 +200,10 @@ footer a{color:inherit;font-weight:600}
 .expired h1{color:var(--ink);max-width:none;margin:0 0 8px;font-size:26px}
 .expired p{margin-bottom:20px}
 [hidden]{display:none!important}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);
+  width:max-content;max-width:calc(100% - 32px);background:#18203A;color:#fff;padding:12px 16px;border-radius:12px;
+  font-size:15px;text-align:center;box-shadow:0 8px 24px -8px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:20}
+#toast.show{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:no-preference){
   .actions{animation:rise .5s cubic-bezier(.2,.8,.2,1) both .1s}
   @keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
@@ -276,11 +280,11 @@ const T = {
   te:{call:"కాల్",map:"మ్యాప్",save:"సేవ్",about:"మా గురించి",services:"మా సేవలు",contact:"చిరునామా & సమయం",
       gallery:"ఫోటోలు",pay:"UPI ద్వారా చెల్లించండి",payNow:"ఇప్పుడు చెల్లించండి",follow:"మమ్మల్ని ఫాలో అవ్వండి",
       share:"షేర్ చేయండి",sendWa:"WhatsApp లో పంపండి",madeBy:"డిజిటల్ కార్డ్ తయారీ:",
-      expTitle:"ఈ కార్డ్ గడువు ముగిసింది",expText:"ఈ డిజిటల్ కార్డ్‌ని మళ్ళీ యాక్టివ్ చేయడానికి రెన్యూ చేయండి.",renew:"ఇప్పుడే రెన్యూ చేయండి"},
+      saveHint:"Download అయిన file ని ఓపెన్ చేసి, Contacts ఎంచుకుని Save నొక్కండి",expTitle:"ఈ కార్డ్ గడువు ముగిసింది",expText:"ఈ డిజిటల్ కార్డ్‌ని మళ్ళీ యాక్టివ్ చేయడానికి రెన్యూ చేయండి.",renew:"ఇప్పుడే రెన్యూ చేయండి"},
   en:{call:"Call",map:"Map",save:"Save",about:"About us",services:"Our services",contact:"Address & hours",
       gallery:"Photos",pay:"Pay with UPI",payNow:"Pay now",follow:"Follow us",
       share:"Share card",sendWa:"Send on WhatsApp",madeBy:"Digital card by",
-      expTitle:"This card has expired",expText:"Renew to make this digital card active again.",renew:"Renew now"}
+      saveHint:"Open the downloaded file, choose Contacts and tap Save",expTitle:"This card has expired",expText:"Renew to make this digital card active again.",renew:"Renew now"}
 };
 const ICONS = {
   instagram:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>',
@@ -289,6 +293,12 @@ const ICONS = {
   website:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>'
 };
 const $ = id => document.getElementById(id);
+function toast(msg){
+  let t = $("toast");
+  if (!t){ t = document.createElement("div"); t.id = "toast"; t.setAttribute("role","status"); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("show"), 5000);
+}
 let lang = "te";
 try { lang = localStorage.getItem("cardLang") || "te"; } catch(e){}
 
@@ -337,12 +347,13 @@ function setup(){
   $("provider").textContent = CARD.provider.name; $("provider").href = CARD.provider.link;
 
   $("aSave").onclick = () => {
-    const v = ["BEGIN:VCARD","VERSION:3.0",`FN:${CARD.name.en}`,`ORG:${CARD.name.en}`,
+    const v = ["BEGIN:VCARD","VERSION:3.0",`N:;${CARD.name.en};;;`,`FN:${CARD.name.en}`,`ORG:${CARD.name.en}`,
       `TEL;TYPE=CELL:+${CARD.phone}`, CARD.email ? `EMAIL:${CARD.email}` : "",
       `ADR:;;${CARD.address.en};;;;`, `URL:${location.href}`, "END:VCARD"].filter(Boolean).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([v], {type:"text/vcard"}));
     a.download = CARD.name.en.replace(/\s+/g,"_") + ".vcf"; a.click();
+    toast(T[lang].saveHint);
   };
 
   const shareText = () => `${CARD.name[lang] || CARD.name.en} – ${location.href}`;
