@@ -16,12 +16,14 @@
 - `.env.example` for website and admin; `.gitignore` blocks env files, service accounts, keystores.
 - Docs: `README.md`, `docs/ARCHITECTURE.md`, `docs/LEGACY_SITE.md`.
 
+- GitHub Actions CI (`.github/workflows/ci.yml`) runs install, type-check and the emulator check on every push to `develop`.
+
 **Tests**
 
-- `npm install` — passes.
-- `npm run typecheck` — shared package type-checks.
-- `npm run emulators:check` — Auth, Firestore, Storage emulators start; deny-all rules return 403.
-- Legacy site files byte-identical to `main`.
+- `npm install` — passes. `npm audit` reports moderate issues inside `firebase-tools` (developer CLI only, never shipped to users); revisit when firebase-tools updates.
+- `npm run typecheck` — passes; a deliberate type error was confirmed to fail it.
+- `npm run emulators:check` — run on GitHub Actions (run 43118119374): Auth emulator up; Firestore read/write and Storage read all return 403 under deny-all rules. 4/4 passed.
+- Legacy site files on `develop` are identical to `main`; `main` has no new commits.
 
 **Pending (needs Nagesh)**
 
