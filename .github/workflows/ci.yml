@@ -1,0 +1,38 @@
+name: CI
+
+# Runs on the new-platform branch only; the live site on main is not affected.
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  setup-check:
+    name: Install, type-check, emulator rules check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Emulators + deny-all rules
+        run: npm run emulators:check

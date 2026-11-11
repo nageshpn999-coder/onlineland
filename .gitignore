@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+
+# Environment files — NEVER commit real values (Rule 13)
+.env
+.env.*
+!.env.example
+
+# Secrets and signing keys
+*service-account*.json
+*serviceAccount*.json
+*-firebase-adminsdk-*.json
+*.keystore
+*.jks
+key.properties
+google-services.json
+GoogleService-Info.plist
+
+# Next.js / build output
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+.vercel/
+
+# Flutter / Android
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+local.properties
+.gradle/
+*.iml
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+firestore-debug.log
+ui-debug.log
+database-debug.log
+pubsub-debug.log
+emulator-data/
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+npm-debug.log*

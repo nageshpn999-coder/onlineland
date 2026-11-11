@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "onlineland-dev",
+    "dev": "onlineland-dev",
+    "prod": "onlineland-prod"
+  }
+}

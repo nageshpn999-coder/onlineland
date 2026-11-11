@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// Phase 2 baseline: deny everything.
+// Upload rules (owner-only, images only, size limits) come in Phase 4.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
