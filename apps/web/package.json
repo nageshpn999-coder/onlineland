@@ -1,0 +1,30 @@
+{
+  "name": "@onlineland/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/anek-telugu": "^5.3.0",
+    "@fontsource-variable/noto-sans-telugu": "^5.3.0",
+    "@onlineland/shared": "*",
+    "next": "16.4.6",
+    "next-intl": "^4.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "tailwindcss": "^4.3.5"
+  }
+}

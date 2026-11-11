@@ -27,7 +27,10 @@ Requirements: Node.js 22+, Java 21+ (for Firebase emulators).
 
 ```bash
 npm install
-npm run typecheck        # type-check shared code
+npm run dev:web          # website at http://localhost:3000 (redirects to /te)
+npm run build:web        # production build of the website
+npm run lint             # ESLint
+npm run typecheck        # type-check all packages
 npm run emulators        # start Auth, Firestore, Storage emulators (UI at http://127.0.0.1:4000)
 npm run emulators:check  # verify emulators + deny-all rules
 ```

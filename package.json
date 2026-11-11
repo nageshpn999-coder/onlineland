@@ -11,6 +11,9 @@
     "node": ">=22"
   },
   "scripts": {
+    "dev:web": "npm run dev -w @onlineland/web",
+    "build:web": "npm run build -w @onlineland/web",
+    "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "emulators": "firebase emulators:start --config firebase/firebase.json --project demo-onlineland",
     "emulators:check": "firebase emulators:exec --config firebase/firebase.json --project demo-onlineland --only auth,firestore,storage \"node scripts/check-emulators.mjs\"",
@@ -19,6 +22,6 @@
   },
   "devDependencies": {
     "firebase-tools": "^15.35.0",
-    "typescript": "^7.0.2"
+    "typescript": "~6.0.3"
   }
 }

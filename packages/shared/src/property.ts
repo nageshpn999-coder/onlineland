@@ -1,4 +1,4 @@
-import type { LocalizedText } from './i18n.js';
+import type { LocalizedText } from './i18n';
 
 /** Property categories, in display order. `slug` is used in URLs. */
 export const PROPERTY_CATEGORIES = [

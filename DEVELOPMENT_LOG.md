@@ -15,6 +15,7 @@
 - `firebase/`: config with dev/prod aliases, deny-all Firestore and Storage rules, empty indexes, emulator ports.
 - `.env.example` for website and admin; `.gitignore` blocks env files, service accounts, keystores.
 - Docs: `README.md`, `docs/ARCHITECTURE.md`, `docs/LEGACY_SITE.md`.
+- (Phase 3 note: TypeScript later pinned to 6.0.x for ESLint compatibility.)
 
 - GitHub Actions CI (`.github/workflows/ci.yml`) runs install, type-check and the emulator check on every push to `develop`.
 
@@ -30,4 +31,38 @@
 - Create Firebase projects `onlineland-dev` and `onlineland-prod`, enable Blaze, set budget alert.
 - If the console assigns different IDs, update `firebase/.firebaserc`.
 
-## Phase 3 — Website Homepage ⏳ (awaiting approval)
+## Phase 3 — Website Homepage ✅ (12 Nov 2026)
+
+**Completed**
+
+- `apps/web`: Next.js 16 (App Router, Turbopack) + TypeScript + Tailwind CSS 4 + next-intl 4.
+- Telugu-first routing: `/` → `/te`; `/te` and `/en` pre-rendered; choice remembered by cookie.
+- Self-hosted fonts: Anek Telugu (headings), Noto Sans Telugu (text) — no Google Fonts request.
+- Homepage sections: header (nav, language switch, WhatsApp, mobile menu without JS), hero with survey-map illustration, search panel, 9 category tiles, 6 featured properties, services, sell-your-property band, footer.
+- Search is a plain GET form (works before JavaScript loads) → `/[locale]/properties`, which shows the visitor's search and sends it to WhatsApp until real listings arrive in Phase 5.
+- All WhatsApp buttons open wa.me/919959731120 with a pre-filled Telugu/English message.
+- SEO basics: per-language title/description, canonical + hreflang (te/en), Open Graph, theme colour, favicon. `/properties` is `noindex` until it has listings.
+- Shared package: imports made extension-less for the Next.js bundler.
+- TypeScript pinned to 6.0.x (ESLint's TypeScript plugin does not support 7.0 yet).
+- CI now also runs lint and the website production build.
+
+**Sample content (clearly marked)**
+
+- Featured properties are design samples (`src/data/sample-properties.ts`) with a "నమూనా / Sample" badge and a note above the grid. Replaced by approved Firestore listings in Phase 5.
+- Property pictures are drawn illustrations until real photos come from Firebase Storage.
+- The hero map is an illustration captioned "నమూనా మ్యాప్ / Sample map".
+
+**Tests**
+
+- `npm run typecheck`, `npm run lint`, `next build` — all pass.
+- Screenshots checked at 1440 px (te, en) and 390 px mobile (te): no horizontal overflow, no console errors.
+- Search flow (mobile): switching to Rent changes budget options; submit → `/te/properties?purpose=rent&type=rental&q=…&budget=0-10000`; summary chips and WhatsApp message carry the search.
+- Language switch `/te` → `/en` keeps the page; keyboard focus ring visible.
+- Reduced-motion users see the map without animation.
+
+**Pending**
+
+- Blog link points to the live `https://onlineland.in/blog.html` until the old site is copied into `public/` (Phase 8).
+- Firebase projects `onlineland-dev` / `onlineland-prod` (needed for Phase 4).
+
+## Phase 4 — Firebase Backend ⏳ (awaiting approval)

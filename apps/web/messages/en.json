@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "title": "OnlineLand | Agricultural land, plots and homes in Telangana",
+    "description": "Agricultural land, open plots, flats and villas across Telangana. OnlineLand helps from document checks to the site visit."
+  },
+  "nav": {
+    "buy": "Buy",
+    "rent": "Rent",
+    "services": "Services",
+    "blog": "Blog",
+    "sell": "Sell property",
+    "whatsapp": "WhatsApp",
+    "home": "OnlineLand home",
+    "menu": "Menu",
+    "close": "Close"
+  },
+  "language": {
+    "label": "Language",
+    "switchTo": "తెలుగు"
+  },
+  "hero": {
+    "title": "Find your perfect property",
+    "lead": "Agricultural land, open plots and homes across Telangana. We stay with you from the document check to the site visit.",
+    "mapPlot": "Survey No. 214/2",
+    "mapPlotDetail": "Near Makthal, 2.5 acres",
+    "mapCaption": "Sample map"
+  },
+  "search": {
+    "label": "Search properties",
+    "buy": "Buy",
+    "rent": "Rent",
+    "type": "Property type",
+    "anyType": "All types",
+    "location": "Location",
+    "locationPlaceholder": "District or mandal",
+    "budget": "Budget",
+    "anyBudget": "Any",
+    "submit": "Search",
+    "budgetsSale": {
+      "0-1000000": "Under ₹10 lakh",
+      "1000000-2500000": "₹10 – 25 lakh",
+      "2500000-5000000": "₹25 – 50 lakh",
+      "5000000-10000000": "₹50 lakh – 1 crore",
+      "10000000-": "Above ₹1 crore"
+    },
+    "budgetsRent": {
+      "0-10000": "Under ₹10,000",
+      "10000-25000": "₹10,000 – 25,000",
+      "25000-50000": "₹25,000 – 50,000",
+      "50000-": "Above ₹50,000"
+    }
+  },
+  "categories": {
+    "title": "What are you looking for?",
+    "lead": "Pick a type and we'll show what's available in your area."
+  },
+  "featured": {
+    "title": "Featured properties",
+    "sampleNote": "These are sample listings for the design. Real listings are coming soon.",
+    "sample": "Sample",
+    "ask": "Ask for details",
+    "askMessage": "Hello OnlineLand, I'd like details about this property: {title}, {place}",
+    "perAcre": "per acre",
+    "perMonth": "per month",
+    "forSale": "For sale",
+    "forRent": "For rent"
+  },
+  "services": {
+    "title": "From first visit to registration",
+    "lead": "OnlineLand is a property consultancy. We don't just show a listing and leave.",
+    "consult": {
+      "title": "Property consultancy",
+      "body": "Tell us your budget and needs. We find and shortlist properties that fit."
+    },
+    "docs": {
+      "title": "Document check",
+      "body": "We check pahani, EC and link documents before you buy."
+    },
+    "visit": {
+      "title": "Site visit",
+      "body": "Our team walks the land with you and shows boundaries, road access and water."
+    },
+    "sell": {
+      "title": "Sell your property",
+      "body": "We bring genuine buyers for your land or home."
+    }
+  },
+  "sell": {
+    "title": "Want to sell your land or home?",
+    "body": "Send photos, location and price on WhatsApp. We'll call you back.",
+    "cta": "Send on WhatsApp",
+    "message": "Hello OnlineLand, I want to sell my property."
+  },
+  "footer": {
+    "about": "Real estate consultancy and property marketplace for Telangana.",
+    "office": "Office",
+    "address": "Makthal, Narayanpet District, Telangana",
+    "contact": "Contact",
+    "call": "Call",
+    "explore": "Properties",
+    "company": "OnlineLand",
+    "rights": "© {year} OnlineLand. All rights reserved."
+  },
+  "properties": {
+    "title": "Property listings are coming soon",
+    "body": "Tell us what you need on WhatsApp and we'll send matching properties.",
+    "youSearched": "You searched for",
+    "cta": "Ask on WhatsApp",
+    "back": "Back to home",
+    "message": "Hello OnlineLand, I'm looking for a property: {query}"
+  },
+  "districts": {
+    "narayanpet": "Narayanpet",
+    "mahabubnagar": "Mahabubnagar",
+    "hyderabad": "Hyderabad",
+    "rangareddy": "Rangareddy",
+    "sangareddy": "Sangareddy",
+    "vikarabad": "Vikarabad",
+    "nagarkurnool": "Nagarkurnool",
+    "wanaparthy": "Wanaparthy",
+    "gadwal": "Jogulamba Gadwal",
+    "medchal": "Medchal-Malkajgiri"
+  }
+}
