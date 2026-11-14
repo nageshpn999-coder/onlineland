@@ -19,14 +19,14 @@ await check('Auth emulator responds', async () => {
   if (!res.ok) throw new Error(`status ${res.status}`);
 });
 
-await check('Firestore denies public read (deny-all rules)', async () => {
+await check('Firestore denies public read (security rules)', async () => {
   const res = await fetch(
     `http://127.0.0.1:8080/v1/projects/${project}/databases/(default)/documents/properties/test`,
   );
   if (res.status !== 403) throw new Error(`expected 403, got ${res.status}`);
 });
 
-await check('Firestore denies public write (deny-all rules)', async () => {
+await check('Firestore denies public write (security rules)', async () => {
   const res = await fetch(
     `http://127.0.0.1:8080/v1/projects/${project}/databases/(default)/documents/properties?documentId=test`,
     {

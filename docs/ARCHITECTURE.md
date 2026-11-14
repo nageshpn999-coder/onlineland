@@ -62,7 +62,7 @@ Telugu default + English (`/te`, `/en`); all visitor text stored as `{ te, en }`
 
 1. Phase 2 — Folder structure ✅
 2. Phase 3 — Website homepage ✅
-3. Phase 4 — Firebase backend
+3. Phase 4 — Firebase backend ✅ (emulators; deploy pending)
 4. Phase 5 — Property listings
 5. Phase 6 — Android app
 6. Phase 7 — Admin dashboard

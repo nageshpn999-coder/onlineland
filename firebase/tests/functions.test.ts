@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { deleteApp as deleteAdminApp, initializeApp as initAdmin, type App } from 'firebase-admin/app';
@@ -171,5 +172,26 @@ describe('reviewProperty', () => {
     expect(await callError('reviewProperty', { propertyId: 'does-not-exist', decision: 'approve' })).toBe('functions/not-found');
     await signInAs(`seller-${run}`);
     expect(await callError('reviewProperty', { propertyId: `prop-c-${run}`, decision: 'approve' })).toBe('functions/permission-denied');
+  });
+});
+
+describe('scripts/set-role.mjs (first-admin setup)', () => {
+  it('gives an existing user a role by phone number', async () => {
+    const uid = `cli-${run}`;
+    await createAccount(uid, '+919000000077');
+    const script = fileURLToPath(new URL('../../scripts/set-role.mjs', import.meta.url));
+    const out = execFileSync('node', [script, '--project', PROJECT_ID, '--phone', '+919000000077', '--role', 'admin'], {
+      env: process.env,
+      encoding: 'utf8',
+    });
+    expect(out).toContain('buyer → admin');
+    expect((await adminAuth().getUser(uid)).customClaims?.role).toBe('admin');
+    expect((await adminDb().doc(`users/${uid}`).get()).data()?.role).toBe('admin');
+  });
+  it('refuses an unknown role', () => {
+    const script = fileURLToPath(new URL('../../scripts/set-role.mjs', import.meta.url));
+    expect(() =>
+      execFileSync('node', [script, '--project', PROJECT_ID, '--uid', 'x', '--role', 'king'], { env: process.env, stdio: 'pipe' }),
+    ).toThrow();
   });
 });

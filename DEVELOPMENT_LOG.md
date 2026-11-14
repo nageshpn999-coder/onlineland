@@ -65,4 +65,42 @@
 - Blog link points to the live `https://onlineland.in/blog.html` until the old site is copied into `public/` (Phase 8).
 - Firebase projects `onlineland-dev` / `onlineland-prod` (needed for Phase 4).
 
-## Phase 4 — Firebase Backend ⏳ (awaiting approval)
+## Phase 4 — Firebase Backend ✅ (14 Nov 2026, on emulators)
+
+**Completed**
+
+- `packages/shared/src/models.ts`: typed shapes for users, favorites, properties (+ media, private contact), locations, leads, site visits, plans, subscriptions, audit logs.
+- `firebase/firestore.rules`: roles from Auth custom claims (buyer, owner, dealer, agent, admin).
+  - Public sees only `approved` listings; owners see their own; staff see all.
+  - Owners/dealers create listings only as `draft`/`pending`, cannot set status, featured, code or verified flags; editing an approved listing sends it back to review; approved → sold/rented allowed.
+  - Owner's real phone lives in `properties/{id}/private/contact`: owner + admin only (D3).
+  - Visitors send enquiries and book site visits without login (validated 10-digit mobile, no self-assigned agent/stage); only the assigned agent and admin read them.
+  - `subscriptions`, `notifications`, `auditLogs`, `counters` are written only by Cloud Functions.
+- `firebase/storage.rules`: listing photos public to view; upload only by the listing owner (checked against Firestore) or admin; images only, < 5 MB; profile photos < 2 MB.
+- `firebase/firestore.indexes.json`: 14 composite indexes for listing search (purpose, category, district, price, featured), owner listings, leads, site visits, locations.
+- `firebase/functions` (Node 22, asia-south1):
+  - `onUserCreated` — profile + `buyer` role for every new account (keeps an existing role).
+  - `becomeOwner` — buyer becomes owner to post a property.
+  - `setUserRole` — admin only; refuses self-demotion; audit log.
+  - `reviewProperty` — admin approves/rejects pending listings; approval assigns `OL-1001`, `OL-1002`…; rejection needs a reason; audit log.
+- `scripts/set-role.mjs`: make the first admin from Cloud Shell.
+- `apps/web/src/lib/firebase/client.ts` (browser, emulator switch) and `admin.ts` (server-only).
+- `docs/FIREBASE_SETUP.md`: console steps for when the projects exist.
+
+**Decision taken:** a buyer becomes an owner with one tap before posting; dealer role is given only by admin (linked to subscription).
+
+**Tests** — GitHub Actions run 43611535242, Firebase emulators:
+
+- Firestore rules: 50 tests passed.
+- Storage rules: 9 tests passed.
+- Cloud Functions + set-role script: 13 tests passed (includes check that functions' role list matches `@onlineland/shared`).
+- Type-check, lint, website build: pass.
+
+**Pending**
+
+- Not deployed: waiting for the project-quota increase to create `onlineland-dev` / `onlineland-prod` (see `docs/FIREBASE_SETUP.md`).
+- Location list (districts → mandals → villages) is seeded in Phase 5.
+- Limit of 20 photos per listing is enforced in the upload screen (Phase 5/6); Storage rules cannot count files.
+- Lead auto-assignment and notifications: Phase 7.
+
+## Phase 5 / 6 — awaiting approval
