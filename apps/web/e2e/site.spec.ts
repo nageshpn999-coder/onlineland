@@ -138,7 +138,7 @@ test.describe('property page', () => {
   test('mobile layout with bottom contact bar', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/te/properties/OL-1001');
-    await expect(page.locator('.fixed.bottom-0').getByText('WhatsApp చేయండి')).toBeVisible();
+    await expect(page.locator('.fixed.bottom-0').getByText('WhatsApp', { exact: true })).toBeVisible();
     await page.screenshot({ path: `${SHOTS}/property-mobile-te.png`, fullPage: false });
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
     expect(overflow).toBeLessThanOrEqual(0);
