@@ -63,7 +63,7 @@ jobs:
         run: |
           for f in apps/web/test-results/screens/*.png; do
             [ -f "$f" ] || continue
-            echo "SCREEN-BEGIN $(basename "$f")"; base64 -w 0 "$f"; echo; echo "SCREEN-END"
+            echo "SCREEN-BEGIN $(basename "$f")"; base64 -w 120 "$f"; echo "SCREEN-END"
           done
 
       - name: Upload screenshots
