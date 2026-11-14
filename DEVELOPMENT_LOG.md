@@ -89,7 +89,7 @@
 
 **Decision taken:** a buyer becomes an owner with one tap before posting; dealer role is given only by admin (linked to subscription).
 
-**Tests** — GitHub Actions run 43611535242, Firebase emulators:
+**Tests** — GitHub Actions run 43611898006, Firebase emulators — 72 tests passed:
 
 - Firestore rules: 50 tests passed.
 - Storage rules: 9 tests passed.
