@@ -12,7 +12,9 @@
     "whatsapp": "WhatsApp",
     "home": "OnlineLand home",
     "menu": "Menu",
-    "close": "Close"
+    "close": "Close",
+    "favorites": "Saved",
+    "properties": "Properties"
   },
   "language": {
     "label": "Language",
@@ -32,7 +34,6 @@
     "type": "Property type",
     "anyType": "All types",
     "location": "Location",
-    "locationPlaceholder": "District or mandal",
     "budget": "Budget",
     "anyBudget": "Any",
     "submit": "Search",
@@ -56,14 +57,18 @@
   },
   "featured": {
     "title": "Featured properties",
-    "sampleNote": "These are sample listings for the design. Real listings are coming soon.",
-    "sample": "Sample",
-    "ask": "Ask for details",
-    "askMessage": "Hello OnlineLand, I'd like details about this property: {title}, {place}",
     "perAcre": "per acre",
     "perMonth": "per month",
     "forSale": "For sale",
-    "forRent": "For rent"
+    "forRent": "For rent",
+    "lead": "Listings checked and approved by OnlineLand.",
+    "viewAll": "View all properties",
+    "perUnit": {
+      "acre": "per acre",
+      "gunta": "per gunta",
+      "sq-yd": "per sq. yd",
+      "sq-ft": "per sq. ft"
+    }
   },
   "services": {
     "title": "From first visit to registration",
@@ -101,24 +106,119 @@
     "company": "OnlineLand",
     "rights": "© {year} OnlineLand. All rights reserved."
   },
-  "properties": {
-    "title": "Property listings are coming soon",
-    "body": "Tell us what you need on WhatsApp and we'll send matching properties.",
-    "youSearched": "You searched for",
-    "cta": "Ask on WhatsApp",
-    "back": "Back to home",
-    "message": "Hello OnlineLand, I'm looking for a property: {query}"
+  "listings": {
+    "titleSale": "Properties for sale",
+    "titleRent": "Properties for rent",
+    "count": "{count, plural, =0 {No properties} one {# property} other {# properties}}",
+    "filters": "Filters",
+    "apply": "Show results",
+    "clear": "Clear all",
+    "district": "District",
+    "anyDistrict": "All districts",
+    "mandal": "Mandal",
+    "anyMandal": "All mandals",
+    "sort": "Sort by",
+    "sorts": {
+      "newest": "Newest first",
+      "price-asc": "Price: low to high",
+      "price-desc": "Price: high to low"
+    },
+    "page": "Page {page} of {pages}",
+    "prev": "Previous",
+    "next": "Next",
+    "pagination": "Pages",
+    "emptyTitle": "No properties match your search right now",
+    "emptyBody": "Tell us what you need on WhatsApp and we'll find matching properties for you.",
+    "emptyCta": "Ask on WhatsApp",
+    "emptyMessage": "Hello OnlineLand, I'm looking for a property: {query}",
+    "metaTitle": "{title} | OnlineLand"
   },
-  "districts": {
-    "narayanpet": "Narayanpet",
-    "mahabubnagar": "Mahabubnagar",
-    "hyderabad": "Hyderabad",
-    "rangareddy": "Rangareddy",
-    "sangareddy": "Sangareddy",
-    "vikarabad": "Vikarabad",
-    "nagarkurnool": "Nagarkurnool",
-    "wanaparthy": "Wanaparthy",
-    "gadwal": "Jogulamba Gadwal",
-    "medchal": "Medchal-Malkajgiri"
+  "property": {
+    "code": "Property code",
+    "total": "Total price",
+    "home": "Home",
+    "details": "Details",
+    "category": "Type",
+    "area": "Area",
+    "location": "Location",
+    "facing": "Facing",
+    "road": "Road access",
+    "water": "Water",
+    "rera": "RERA number",
+    "docs": "Documents",
+    "docsVerified": "Checked by OnlineLand",
+    "yes": "Yes",
+    "no": "No",
+    "facings": {
+      "east": "East",
+      "west": "West",
+      "north": "North",
+      "south": "South",
+      "north-east": "North-east",
+      "north-west": "North-west",
+      "south-east": "South-east",
+      "south-west": "South-west"
+    },
+    "about": "About this property",
+    "map": "Map",
+    "openMap": "Open in Google Maps",
+    "contactTitle": "Ask about this property",
+    "contactNote": "Your enquiry goes straight to the OnlineLand team.",
+    "whatsapp": "WhatsApp",
+    "call": "Call",
+    "whatsappMessage": "Hello OnlineLand, I'd like details about property {code}: {title}",
+    "photo": "Photo {n} of {total}",
+    "prevPhoto": "Previous photo",
+    "nextPhoto": "Next photo",
+    "showPhoto": "Show photo {n}",
+    "noPhotos": "Photos coming soon",
+    "save": "Save",
+    "saved": "Saved",
+    "notFoundTitle": "This property is no longer available",
+    "notFoundBody": "It may have been sold, or the link may be wrong.",
+    "browse": "Browse other properties"
+  },
+  "enquiry": {
+    "title": "Ask for details",
+    "name": "Your name",
+    "phone": "Mobile number",
+    "message": "Message (optional)",
+    "submit": "Send enquiry",
+    "sending": "Sending…",
+    "sent": "Enquiry received. Our team will call you shortly.",
+    "invalidPhone": "Enter a valid 10-digit mobile number (starting with 6, 7, 8 or 9).",
+    "error": "Couldn't send. Check your internet and try again, or message us on WhatsApp.",
+    "privacy": "Only the OnlineLand team sees your number."
+  },
+  "visit": {
+    "title": "Book a site visit",
+    "lead": "Our team will walk the property with you and show the boundaries.",
+    "name": "Your name",
+    "phone": "Mobile number",
+    "date": "Date",
+    "slot": "Time",
+    "slots": {
+      "morning": "Morning (9–12)",
+      "afternoon": "Afternoon (12–3)",
+      "evening": "Evening (3–6)"
+    },
+    "submit": "Book visit",
+    "sending": "Booking…",
+    "sent": "Visit request received. We'll call you to confirm the date.",
+    "nameRequired": "Enter your name.",
+    "invalidDate": "Pick a date from tomorrow up to 60 days ahead."
+  },
+  "favorites": {
+    "title": "Saved properties",
+    "lead": "Saved on this phone or computer. After login arrives they'll also be in your account.",
+    "emptyTitle": "You haven't saved any properties yet",
+    "emptyBody": "Tap ♡ on a property and it will appear here.",
+    "browse": "Browse properties",
+    "remove": "Remove"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "The link may be wrong, or the page was removed.",
+    "home": "Go to home"
   }
 }

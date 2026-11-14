@@ -22,7 +22,10 @@
     "deploy:rules:dev": "firebase deploy --config firebase/firebase.json --project dev --only firestore:rules,firestore:indexes,storage",
     "deploy:rules:prod": "firebase deploy --config firebase/firebase.json --project prod --only firestore:rules,firestore:indexes,storage",
     "build:functions": "npm run build -w @onlineland/functions",
-    "test:firebase": "npm run build:functions && firebase emulators:exec --config firebase/firebase.json --project demo-onlineland \"npm test -w @onlineland/firebase-tests\""
+    "test:firebase": "npm run build:functions && firebase emulators:exec --config firebase/firebase.json --project demo-onlineland \"npm test -w @onlineland/firebase-tests\"",
+    "test": "npm run test -w @onlineland/web",
+    "test:e2e": "firebase emulators:exec --config firebase/firebase.json --project demo-onlineland --only auth,firestore,storage \"node scripts/seed-emulator.mjs && cd apps/web && NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true NEXT_TELEMETRY_DISABLED=1 npx next build && npx playwright test\"",
+    "seed:emulator": "node scripts/seed-emulator.mjs"
   },
   "devDependencies": {
     "firebase-tools": "^15.35.0",

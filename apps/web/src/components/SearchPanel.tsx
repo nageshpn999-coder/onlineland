@@ -2,17 +2,16 @@
 
 import { useId, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { PROPERTY_CATEGORIES, type Locale, type PropertyPurpose } from '@onlineland/shared';
-import { RENT_BUDGETS, SALE_BUDGETS, SEARCH_DISTRICTS } from '@/data/districts';
+import { PROPERTY_CATEGORIES, TELANGANA_DISTRICTS, type Locale, type PropertyPurpose } from '@onlineland/shared';
+import { RENT_BUDGETS, SALE_BUDGETS } from '@/data/districts';
 import { SearchIcon } from './icons';
 
 /**
  * Search form. A plain GET form, so it also works before JavaScript loads.
- * Results page (/properties) shows real listings from Phase 5.
  */
 export function SearchPanel() {
   const t = useTranslations('search');
-  const td = useTranslations('districts');
+  const tl = useTranslations('listings');
   const locale = useLocale() as Locale;
   const [purpose, setPurpose] = useState<PropertyPurpose>('sale');
   const id = useId();
@@ -69,23 +68,17 @@ export function SearchPanel() {
         </div>
 
         <div>
-          <label htmlFor={`${id}-q`} className={label}>
+          <label htmlFor={`${id}-district`} className={label}>
             {t('location')}
           </label>
-          <input
-            id={`${id}-q`}
-            name="q"
-            type="text"
-            list={`${id}-districts`}
-            placeholder={t('locationPlaceholder')}
-            autoComplete="off"
-            className={field}
-          />
-          <datalist id={`${id}-districts`}>
-            {SEARCH_DISTRICTS.map((d) => (
-              <option key={d} value={td(d)} />
+          <select id={`${id}-district`} name="district" defaultValue="" className={field}>
+            <option value="">{tl('anyDistrict')}</option>
+            {TELANGANA_DISTRICTS.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.name[locale]}
+              </option>
             ))}
-          </datalist>
+          </select>
         </div>
 
         <div className="sm:col-span-2 lg:col-span-1">

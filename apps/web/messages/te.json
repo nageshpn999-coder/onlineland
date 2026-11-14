@@ -12,7 +12,9 @@
     "whatsapp": "WhatsApp",
     "home": "OnlineLand హోమ్",
     "menu": "మెనూ",
-    "close": "మూసివేయండి"
+    "close": "మూసివేయండి",
+    "favorites": "సేవ్ చేసినవి",
+    "properties": "ఆస్తులు"
   },
   "language": {
     "label": "భాష",
@@ -32,7 +34,6 @@
     "type": "ఆస్తి రకం",
     "anyType": "అన్ని రకాలు",
     "location": "ప్రాంతం",
-    "locationPlaceholder": "జిల్లా లేదా మండలం",
     "budget": "బడ్జెట్",
     "anyBudget": "ఏదైనా",
     "submit": "వెతకండి",
@@ -56,14 +57,18 @@
   },
   "featured": {
     "title": "ఎంపిక చేసిన ఆస్తులు",
-    "sampleNote": "ఇవి డిజైన్ కోసం నమూనా ఆస్తులు. నిజమైన జాబితాలు త్వరలో వస్తాయి.",
-    "sample": "నమూనా",
-    "ask": "వివరాలు అడగండి",
-    "askMessage": "నమస్తే OnlineLand, ఈ ఆస్తి గురించి వివరాలు కావాలి: {title}, {place}",
     "perAcre": "ఎకరానికి",
     "perMonth": "నెలకు",
     "forSale": "అమ్మకానికి",
-    "forRent": "అద్దెకు"
+    "forRent": "అద్దెకు",
+    "lead": "OnlineLand పరిశీలించి ఆమోదించిన ఆస్తులు.",
+    "viewAll": "అన్ని ఆస్తులు చూడండి",
+    "perUnit": {
+      "acre": "ఎకరానికి",
+      "gunta": "గుంటకు",
+      "sq-yd": "గజానికి",
+      "sq-ft": "చ.అ.కు"
+    }
   },
   "services": {
     "title": "కొనే ముందు నుంచి రిజిస్ట్రేషన్ వరకు",
@@ -101,24 +106,119 @@
     "company": "OnlineLand",
     "rights": "© {year} OnlineLand. అన్ని హక్కులు ప్రత్యేకించబడ్డాయి."
   },
-  "properties": {
-    "title": "ఆస్తుల జాబితా త్వరలో వస్తోంది",
-    "body": "మీ అవసరం WhatsApp లో చెప్పండి. సరిపోయే ఆస్తులను మేమే పంపుతాం.",
-    "youSearched": "మీరు వెతికింది",
-    "cta": "WhatsApp లో అడగండి",
-    "back": "హోమ్‌కి వెళ్లండి",
-    "message": "నమస్తే OnlineLand, నాకు ఆస్తి కావాలి: {query}"
+  "listings": {
+    "titleSale": "అమ్మకానికి ఆస్తులు",
+    "titleRent": "అద్దెకు ఆస్తులు",
+    "count": "{count, plural, =0 {ఆస్తులు లేవు} one {# ఆస్తి} other {# ఆస్తులు}}",
+    "filters": "ఫిల్టర్లు",
+    "apply": "చూపించండి",
+    "clear": "అన్నీ తొలగించండి",
+    "district": "జిల్లా",
+    "anyDistrict": "అన్ని జిల్లాలు",
+    "mandal": "మండలం",
+    "anyMandal": "అన్ని మండలాలు",
+    "sort": "క్రమం",
+    "sorts": {
+      "newest": "కొత్తవి ముందు",
+      "price-asc": "తక్కువ ధర ముందు",
+      "price-desc": "ఎక్కువ ధర ముందు"
+    },
+    "page": "పేజీ {page} / {pages}",
+    "prev": "ముందు పేజీ",
+    "next": "తర్వాత పేజీ",
+    "pagination": "పేజీలు",
+    "emptyTitle": "మీ వెతుకులాటకు సరిపోయే ఆస్తులు ఇప్పుడు లేవు",
+    "emptyBody": "మీ అవసరం WhatsApp లో చెప్పండి. సరిపోయే ఆస్తులు వెతికి మీకు పంపుతాం.",
+    "emptyCta": "WhatsApp లో అడగండి",
+    "emptyMessage": "నమస్తే OnlineLand, నాకు ఆస్తి కావాలి: {query}",
+    "metaTitle": "{title} | OnlineLand"
   },
-  "districts": {
-    "narayanpet": "నారాయణపేట",
-    "mahabubnagar": "మహబూబ్‌నగర్",
-    "hyderabad": "హైదరాబాద్",
-    "rangareddy": "రంగారెడ్డి",
-    "sangareddy": "సంగారెడ్డి",
-    "vikarabad": "వికారాబాద్",
-    "nagarkurnool": "నాగర్‌కర్నూల్",
-    "wanaparthy": "వనపర్తి",
-    "gadwal": "జోగులాంబ గద్వాల్",
-    "medchal": "మేడ్చల్-మల్కాజిగిరి"
+  "property": {
+    "code": "ఆస్తి కోడ్",
+    "total": "మొత్తం ధర",
+    "home": "హోమ్",
+    "details": "వివరాలు",
+    "category": "రకం",
+    "area": "విస్తీర్ణం",
+    "location": "ప్రాంతం",
+    "facing": "ముఖం",
+    "road": "రోడ్డు సౌకర్యం",
+    "water": "నీటి వసతి",
+    "rera": "RERA నంబర్",
+    "docs": "పత్రాలు",
+    "docsVerified": "OnlineLand పరిశీలించింది",
+    "yes": "ఉంది",
+    "no": "లేదు",
+    "facings": {
+      "east": "తూర్పు",
+      "west": "పడమర",
+      "north": "ఉత్తరం",
+      "south": "దక్షిణం",
+      "north-east": "ఈశాన్యం",
+      "north-west": "వాయువ్యం",
+      "south-east": "ఆగ్నేయం",
+      "south-west": "నైరుతి"
+    },
+    "about": "ఆస్తి గురించి",
+    "map": "మ్యాప్",
+    "openMap": "Google Maps లో చూడండి",
+    "contactTitle": "ఈ ఆస్తి గురించి అడగండి",
+    "contactNote": "మీ enquiry నేరుగా OnlineLand team కి వస్తుంది.",
+    "whatsapp": "WhatsApp చేయండి",
+    "call": "కాల్ చేయండి",
+    "whatsappMessage": "నమస్తే OnlineLand, ఆస్తి {code} గురించి వివరాలు కావాలి: {title}",
+    "photo": "ఫోటో {n} / {total}",
+    "prevPhoto": "ముందు ఫోటో",
+    "nextPhoto": "తర్వాత ఫోటో",
+    "showPhoto": "ఫోటో {n} చూపించండి",
+    "noPhotos": "ఫోటోలు త్వరలో",
+    "save": "సేవ్ చేయండి",
+    "saved": "సేవ్ అయ్యింది",
+    "notFoundTitle": "ఈ ఆస్తి ఇప్పుడు అందుబాటులో లేదు",
+    "notFoundBody": "ఇది అమ్ముడై ఉండవచ్చు లేదా లింక్ తప్పు కావచ్చు.",
+    "browse": "ఇతర ఆస్తులు చూడండి"
+  },
+  "enquiry": {
+    "title": "వివరాలు అడగండి",
+    "name": "మీ పేరు",
+    "phone": "మొబైల్ నంబర్",
+    "message": "సందేశం (ఐచ్ఛికం)",
+    "submit": "Enquiry పంపండి",
+    "sending": "పంపుతోంది…",
+    "sent": "మీ enquiry అందింది. మా team త్వరలో మీకు కాల్ చేస్తుంది.",
+    "invalidPhone": "సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6, 7, 8 లేదా 9 తో మొదలయ్యేది).",
+    "error": "పంపడం కుదరలేదు. Internet చెక్ చేసి మళ్ళీ ప్రయత్నించండి, లేదా WhatsApp చేయండి.",
+    "privacy": "మీ నంబర్ OnlineLand team కి మాత్రమే కనిపిస్తుంది."
+  },
+  "visit": {
+    "title": "సైట్ విజిట్ బుక్ చేయండి",
+    "lead": "మా team మీతో కలిసి స్థలానికి వచ్చి హద్దులు చూపిస్తుంది.",
+    "name": "మీ పేరు",
+    "phone": "మొబైల్ నంబర్",
+    "date": "తేదీ",
+    "slot": "సమయం",
+    "slots": {
+      "morning": "ఉదయం (9–12)",
+      "afternoon": "మధ్యాహ్నం (12–3)",
+      "evening": "సాయంత్రం (3–6)"
+    },
+    "submit": "విజిట్ బుక్ చేయండి",
+    "sending": "బుక్ అవుతోంది…",
+    "sent": "మీ విజిట్ request అందింది. తేదీ confirm చేయడానికి మేము కాల్ చేస్తాం.",
+    "nameRequired": "మీ పేరు రాయండి.",
+    "invalidDate": "రేపటి నుంచి 60 రోజుల లోపు తేదీ ఎంచుకోండి."
+  },
+  "favorites": {
+    "title": "సేవ్ చేసిన ఆస్తులు",
+    "lead": "ఇవి ఈ ఫోన్ లేదా కంప్యూటర్‌లో సేవ్ అయ్యాయి. Login వచ్చాక మీ account లో కూడా ఉంటాయి.",
+    "emptyTitle": "ఇంకా ఏ ఆస్తీ సేవ్ చేయలేదు",
+    "emptyBody": "ఆస్తి పక్కన ఉన్న ♡ నొక్కితే అది ఇక్కడ కనిపిస్తుంది.",
+    "browse": "ఆస్తులు చూడండి",
+    "remove": "తీసేయండి"
+  },
+  "notFound": {
+    "title": "ఈ పేజీ దొరకలేదు",
+    "body": "లింక్ తప్పు కావచ్చు లేదా పేజీ తీసేయబడి ఉండవచ్చు.",
+    "home": "హోమ్‌కి వెళ్లండి"
   }
 }

@@ -5,3 +5,5 @@ export * from './property';
 export * from './leads';
 export * from './firestore';
 export * from './models';
+export * from './locations';
+export * from './pricing';

@@ -59,3 +59,7 @@ npm-debug.log*
 
 # Cloud Functions build output
 firebase/functions/lib/
+
+# Playwright
+apps/web/test-results/
+apps/web/playwright-report/

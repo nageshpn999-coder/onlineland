@@ -2,6 +2,7 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { whatsappLink } from '@/lib/whatsapp';
 import { ChatIcon, LogoMark, MenuIcon } from './icons';
+import { FavoritesLink } from './FavoritesLink';
 import { LanguageSwitch } from './LanguageSwitch';
 
 export function SiteHeader() {
@@ -42,6 +43,7 @@ export function SiteHeader() {
           >
             {t('sell')}
           </a>
+          <FavoritesLink />
           <LanguageSwitch />
           <a
             href={whatsappLink()}

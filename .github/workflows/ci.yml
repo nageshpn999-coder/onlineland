@@ -14,7 +14,7 @@ jobs:
   setup-check:
     name: Install, type-check, lint, build, Firebase tests
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
 
@@ -37,6 +37,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Unit tests
+        run: npm run test -w @onlineland/web
+
       - name: Build website
         run: npm run build:web
         env:
@@ -47,3 +50,19 @@ jobs:
 
       - name: Firebase rules + Cloud Functions tests
         run: npm run test:firebase
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+
+      - name: Website browser tests (emulators + seeded test data)
+        run: npm run test:e2e
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-screens
+          path: |
+            apps/web/test-results/
+          retention-days: 14
