@@ -188,6 +188,14 @@ describe('scripts/set-role.mjs (first-admin setup)', () => {
     expect((await adminAuth().getUser(uid)).customClaims?.role).toBe('admin');
     expect((await adminDb().doc(`users/${uid}`).get()).data()?.role).toBe('admin');
   });
+  it('refuses to touch any other Firebase project', () => {
+    const script = fileURLToPath(new URL('../../scripts/set-role.mjs', import.meta.url));
+    for (const project of ['onlineland-28234', 'vahan-3e329', 'ridekart-70332', 'scraplake']) {
+      expect(() =>
+        execFileSync('node', [script, '--project', project, '--uid', 'x', '--role', 'admin'], { env: process.env, stdio: 'pipe' }),
+      ).toThrow(/Refusing to run/);
+    }
+  });
   it('refuses an unknown role', () => {
     const script = fileURLToPath(new URL('../../scripts/set-role.mjs', import.meta.url));
     expect(() =>

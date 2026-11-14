@@ -32,6 +32,13 @@ function fail(message) {
 }
 
 if (!values.project) fail('--project is required (e.g. onlineland-dev).');
+
+// Safety: this platform must never touch other Firebase projects (onlineland-28234, Vahan, Ridekart, ScrapLake…).
+// Only the new platform projects and offline emulator projects are allowed.
+const ALLOWED_PROJECTS = ['onlineland-dev', 'onlineland-prod'];
+if (!ALLOWED_PROJECTS.includes(values.project) && !values.project.startsWith('demo-')) {
+  fail(`Refusing to run on "${values.project}". Allowed: ${ALLOWED_PROJECTS.join(', ')} (edit ALLOWED_PROJECTS only if the new projects got different IDs).`);
+}
 if (!ROLES.includes(values.role ?? '')) fail(`--role must be one of: ${ROLES.join(', ')}.`);
 if (!values.uid && !values.phone && !values.email) fail('Give --uid, --phone (+91…) or --email.');
 

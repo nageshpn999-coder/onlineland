@@ -4,6 +4,10 @@ Phase 4 was built and tested entirely on the Firebase emulators (`demo-onlinelan
 Do these steps once Google raises the project quota and `onlineland-dev` / `onlineland-prod` are created.
 Do **dev first**, check everything, then repeat for prod.
 
+> **Only `onlineland-dev` and `onlineland-prod` are used by this platform.** The existing projects
+> (onlineland-28234, vahan-3e329, ridekart-70332, scraplake) must never be selected, deployed to or modified.
+> `firebase/.firebaserc` lists only the new projects, and `scripts/set-role.mjs` refuses any other project ID.
+
 > Never paste service-account keys, passwords or billing IDs into chat or commit them to Git.
 
 ## 1. Create the project

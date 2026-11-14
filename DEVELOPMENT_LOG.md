@@ -87,6 +87,8 @@
 - `apps/web/src/lib/firebase/client.ts` (browser, emulator switch) and `admin.ts` (server-only).
 - `docs/FIREBASE_SETUP.md`: console steps for when the projects exist.
 
+**Rule from Nagesh (14 Nov 2026):** never touch the existing Firebase projects (onlineland-28234, Vahan, Ridekart, ScrapLake). Only `onlineland-dev` / `onlineland-prod` are used; `set-role.mjs` refuses other projects (tested).
+
 **Decision taken:** a buyer becomes an owner with one tap before posting; dealer role is given only by admin (linked to subscription).
 
 **Tests** — GitHub Actions run 43611898006, Firebase emulators — 72 tests passed:
