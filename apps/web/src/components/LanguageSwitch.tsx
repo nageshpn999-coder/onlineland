@@ -16,9 +16,10 @@ export function LanguageSwitch({ className = '' }: { className?: string }) {
       lang={other}
       hrefLang={other}
       aria-label={`${t('label')}: ${t('switchTo')}`}
-      className={`inline-flex h-10 items-center rounded-full border border-line px-4 text-sm font-medium text-ink hover:border-brand hover:text-brand ${className}`}
+      className={`inline-flex h-10 min-w-10 items-center justify-center rounded-full border border-line px-3 sm:px-4 text-sm font-medium text-ink hover:border-brand hover:text-brand ${className}`}
     >
-      {t('switchTo')}
+      <span className="sm:hidden">{other === 'en' ? 'EN' : 'తె'}</span>
+      <span className="hidden sm:inline">{t('switchTo')}</span>
     </Link>
   );
 }

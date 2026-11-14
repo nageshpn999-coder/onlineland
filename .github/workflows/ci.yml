@@ -58,6 +58,14 @@ jobs:
       - name: Website browser tests (emulators + seeded test data)
         run: npm run test:e2e
 
+      - name: Print screenshots (for review from the log)
+        if: always()
+        run: |
+          for f in apps/web/test-results/screens/*.png; do
+            [ -f "$f" ] || continue
+            echo "SCREEN-BEGIN $(basename "$f")"; base64 -w 0 "$f"; echo; echo "SCREEN-END"
+          done
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

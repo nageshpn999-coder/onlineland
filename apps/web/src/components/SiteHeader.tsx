@@ -17,7 +17,7 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-paper/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:gap-6 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5" aria-label={t('home')}>
           <LogoMark />
           <span className="font-display text-[1.35rem] font-semibold tracking-tight text-ink [font-stretch:92%]">
@@ -43,7 +43,7 @@ export function SiteHeader() {
           >
             {t('sell')}
           </a>
-          <FavoritesLink />
+          <FavoritesLink className="hidden sm:flex" />
           <LanguageSwitch />
           <a
             href={whatsappLink()}
@@ -72,6 +72,9 @@ export function SiteHeader() {
               <a href="https://onlineland.in/blog.html" className="block rounded px-3 py-2.5 text-ink hover:bg-mist">
                 {t('blog')}
               </a>
+              <Link href="/favorites" className="block rounded px-3 py-2.5 text-ink hover:bg-mist">
+                {t('favorites')}
+              </Link>
               <a href={whatsappLink(sellMessage)} className="block rounded px-3 py-2.5 font-medium text-brand hover:bg-mist">
                 {t('sell')}
               </a>

@@ -5,14 +5,14 @@ import { Link } from '@/i18n/navigation';
 import { useFavorites } from '@/lib/favorites';
 import { HeartIcon } from './FavoriteButton';
 
-export function FavoritesLink() {
+export function FavoritesLink({ className = '' }: { className?: string }) {
   const t = useTranslations('nav');
   const { items } = useFavorites();
   return (
     <Link
       href="/favorites"
       aria-label={`${t('favorites')}${items.length ? ` (${items.length})` : ''}`}
-      className="relative flex size-10 items-center justify-center rounded-full border border-line text-ink hover:border-brand hover:text-brand"
+      className={`relative size-10 items-center justify-center rounded-full border border-line text-ink hover:border-brand hover:text-brand ${className || 'flex'}`}
     >
       <HeartIcon filled={items.length > 0} className={`size-5 ${items.length ? 'text-field' : ''}`} />
       {items.length > 0 && (
