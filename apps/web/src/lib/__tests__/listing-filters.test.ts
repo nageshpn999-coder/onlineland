@@ -97,3 +97,12 @@ describe('mobile numbers', () => {
     expect(MOBILE_RE.test('98765')).toBe(false);
   });
 });
+
+describe('placeLabel', async () => {
+  const { placeLabel } = await import('../place');
+  it('does not repeat the mandal as the village', () => {
+    expect(placeLabel({ district: 'narayanpet', mandal: 'makthal', village: 'Makthal' }, 'te')).toBe('మక్తల్, నారాయణపేట');
+    expect(placeLabel({ district: 'narayanpet', mandal: 'makthal', village: 'Makthal town' }, 'en')).toBe('Makthal town, Makthal, Narayanpet');
+    expect(placeLabel({ district: 'rangareddy', mandal: 'Shadnagar', village: 'Shadnagar' }, 'te')).toBe('Shadnagar, రంగారెడ్డి');
+  });
+});

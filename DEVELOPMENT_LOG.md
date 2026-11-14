@@ -105,4 +105,33 @@
 - Limit of 20 photos per listing is enforced in the upload screen (Phase 5/6); Storage rules cannot count files.
 - Lead auto-assignment and notifications: Phase 7.
 
-## Phase 5 / 6 — awaiting approval
+## Phase 5 — Property Listings ✅ (15 Nov 2026, on emulators)
+
+**Completed**
+
+- `/[locale]/properties` — listings with filters (buy/rent, type, district → mandal, budget), sort (newest with featured first, price low/high), 12 per page. Plain GET form (works without JavaScript); changes apply at once. Mobile: filters fold under one button. Filtered/paged URLs are `noindex`; the main list is indexed.
+- `/[locale]/properties/OL-xxxx` — photo gallery (keyboard + thumbnails), total price and per-acre price, details grid, description, Google Maps embed when the listing has coordinates, JSON-LD (RealEstateListing), share-ready metadata. Pending, sold and unknown codes return 404.
+- Enquiries: WhatsApp and call clicks are recorded as leads (never block the click); enquiry form (name, mobile, message) with Indian mobile validation; site-visit booking (date tomorrow…+60 days, morning/afternoon/evening) saved as a lead + site visit. All written from the browser and checked by the Phase 4 security rules.
+- Mobile bottom bar with WhatsApp + Call on property pages.
+- Favorites saved on the device, header count, `/[locale]/favorites` page. Sync to the account comes with login.
+- Homepage "featured" now shows approved listings (featured first, then newest); hidden while there are none.
+- `@onlineland/shared`: 33 Telangana districts and 13 Narayanpet mandals (te/en), price helpers (per-acre totals, budget ranges).
+- Server reads use the Admin SDK over a 60-second cache of approved listings (private fields never leave the server); `/api/revalidate` refreshes it at once after approvals (secret header).
+- `scripts/seed-emulator.mjs` — locations + 12 test listings (incl. hidden pending/sold) + generated photos; refuses to run outside the emulators.
+- Removed the Phase 3 design samples.
+
+**Tests** — GitHub Actions, Firebase emulators:
+
+- Unit: 12 (filters, budgets, per-acre totals, pagination, mobile numbers, place names).
+- Firebase rules + functions: 73.
+- Browser (Playwright, Chromium): 14 — listings count, all filter combinations, live filter change + sort, empty state → WhatsApp, property page (gallery, prices, WhatsApp code, JSON-LD), English page, 404 for pending/sold/unknown, enquiry saved to Firestore, site visit + lead saved, favorites save/list/remove, homepage featured order, homepage search → filtered list, mobile layouts.
+- Found and fixed by the tests: header overflow on phones (23 px) after adding the favorites button; WhatsApp label wrapping; village repeating the mandal name. Checked at 360/390/414 px.
+
+**Pending**
+
+- Village lists and mandals for other districts (free text until added).
+- Favorites sync to the account and phone/Google login on the website (with the admin dashboard, Phase 7).
+- App Check enforcement and spam limits on enquiries — before launch (Phase 8).
+- Migration of the old site's `listings` from onlineland-28234 is **read-only and needs Nagesh's approval** (the old project is never modified).
+
+## Phase 6 — Android App ⏳ (awaiting approval)

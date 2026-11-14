@@ -4,6 +4,11 @@ import { getDistrict, getMandal, type Locale, type PropertyLocation } from '@onl
 export function placeLabel(loc: Pick<PropertyLocation, 'district' | 'mandal' | 'village'>, locale: Locale, withVillage = true): string {
   const district = getDistrict(loc.district)?.name[locale] ?? loc.district;
   const mandal = getMandal(loc.district, loc.mandal)?.name[locale] ?? loc.mandal;
-  const parts = [withVillage ? loc.village : '', mandal, district].filter((p, i, arr) => p && arr.indexOf(p) === i);
+  // Skip the village when it only repeats the mandal (e.g. "Makthal" in Makthal mandal).
+  const known = getMandal(loc.district, loc.mandal);
+  const same = (v: string) =>
+    !!v && [loc.mandal, known?.name.en, known?.name.te].some((n) => n && n.toLowerCase() === v.trim().toLowerCase());
+  const village = withVillage && !same(loc.village) ? loc.village : '';
+  const parts = [village, mandal, district].filter((p, i, arr) => p && arr.indexOf(p) === i);
   return parts.join(', ');
 }

@@ -19,8 +19,8 @@ export function ContactActions({ propertyId, code, title, variant = 'stacked' }:
   const locale = useLocale() as Locale;
   const wa = whatsappLink(t('whatsappMessage', { code, title }));
 
-  const waClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-field px-5 font-semibold text-white hover:bg-[#0b5532]';
-  const callClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white';
+  const waClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-field px-5 font-semibold text-white hover:bg-[#0b5532]';
+  const callClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white';
 
   const buttons = (
     <>
@@ -42,5 +42,5 @@ export function ContactActions({ propertyId, code, title, variant = 'stacked' }:
       </div>
     );
   }
-  return <div className="flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">{buttons}</div>;
+  return <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">{buttons}</div>;
 }
