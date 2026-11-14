@@ -1,5 +1,5 @@
 // Phase 2 setup check: confirms the Auth, Firestore and Storage emulators are running
-// and that the baseline deny-all rules block unauthenticated access.
+// and that the security rules block unauthenticated access.
 // Run with: npm run emulators:check
 
 const project = 'demo-onlineland';
@@ -38,9 +38,10 @@ await check('Firestore denies public write (deny-all rules)', async () => {
   if (res.status !== 403) throw new Error(`expected 403, got ${res.status}`);
 });
 
-await check('Storage denies public read (deny-all rules)', async () => {
+await check('Storage denies upload without login', async () => {
   const res = await fetch(
-    `http://127.0.0.1:9199/v0/b/${project}.appspot.com/o/${encodeURIComponent('properties/test.jpg')}`,
+    `http://127.0.0.1:9199/v0/b/${project}.appspot.com/o?name=${encodeURIComponent('properties/test.jpg')}`,
+    { method: 'POST', headers: { 'Content-Type': 'image/jpeg' }, body: new Uint8Array(16) },
   );
   if (res.status !== 403) throw new Error(`expected 403, got ${res.status}`);
 });

@@ -1,9 +1,35 @@
 rules_version = '2';
 
-// Phase 2 baseline: deny everything.
-// Upload rules (owner-only, images only, size limits) come in Phase 4.
+// OnlineLand — Cloud Storage rules (Phase 4). Tested in firebase/tests/storage.rules.test.ts.
 service firebase.storage {
   match /b/{bucket}/o {
+
+    function role() { return request.auth != null ? request.auth.token.get('role', '') : ''; }
+    function isImage() { return request.resource.contentType.matches('image/(jpeg|png|webp)'); }
+    function canManageProperty(propertyId) {
+      return request.auth != null && (
+        role() == 'admin'
+        || firestore.get(/databases/(default)/documents/properties/$(propertyId)).data.ownerId == request.auth.uid);
+    }
+
+    // Listing photos: public to read (random file names), only the listing owner or admin may upload.
+    // Resized copies made by the Resize Images extension are written with admin rights.
+    match /properties/{propertyId}/{allFiles=**} {
+      allow read: if true;
+      allow create, update: if canManageProperty(propertyId)
+        && isImage()
+        && request.resource.size < 5 * 1024 * 1024;
+      allow delete: if canManageProperty(propertyId);
+    }
+
+    // Profile photo.
+    match /users/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == userId
+        && isImage()
+        && request.resource.size < 2 * 1024 * 1024;
+    }
+
     match /{allPaths=**} {
       allow read, write: if false;
     }

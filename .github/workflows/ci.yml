@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   setup-check:
-    name: Install, type-check, emulator rules check
+    name: Install, type-check, lint, build, Firebase tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -42,5 +42,8 @@ jobs:
         env:
           NEXT_TELEMETRY_DISABLED: '1'
 
-      - name: Emulators + deny-all rules
+      - name: Emulators + basic rules check
         run: npm run emulators:check
+
+      - name: Firebase rules + Cloud Functions tests
+        run: npm run test:firebase

@@ -56,3 +56,6 @@ Thumbs.db
 .idea/
 *.swp
 npm-debug.log*
+
+# Cloud Functions build output
+firebase/functions/lib/

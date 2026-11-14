@@ -1,9 +1,245 @@
 rules_version = '2';
 
-// Phase 2 baseline: deny everything.
-// Real role-based rules are written and tested in Phase 4.
+// OnlineLand — Firestore security rules (Phase 4).
+// Roles come from Firebase Auth custom claims (request.auth.token.role), set only by Cloud Functions.
+// Every rule here has a matching test in firebase/tests/firestore.rules.test.ts.
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ---------- Helpers ----------
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function role() { return signedIn() ? request.auth.token.get('role', '') : ''; }
+    function isAdmin() { return role() == 'admin'; }
+    function isAgent() { return role() == 'agent'; }
+    function isStaff() { return role() in ['admin', 'agent']; }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function optString(v, max) { return v == null || (v is string && v.size() <= max); }
+    function indianMobile(v) { return v is string && v.matches('^[6-9][0-9]{9}$'); }
+
+    // ---------- Users ----------
+    match /users/{userId} {
+      // Profile documents are created by the onUserCreated Cloud Function.
+      allow read: if (signedIn() && uid() == userId) || isStaff();
+      allow update: if signedIn() && uid() == userId
+        && changed().hasOnly(['name', 'language', 'updatedAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 80
+        && request.resource.data.language in ['te', 'en']
+        && request.resource.data.updatedAt == request.time;
+      allow create, delete: if false;
+
+      match /favorites/{propertyId} {
+        allow read, delete: if signedIn() && uid() == userId;
+        allow create: if signedIn() && uid() == userId
+          && request.resource.data.keys().hasOnly(['savedAt'])
+          && request.resource.data.savedAt == request.time;
+        allow update: if false;
+      }
+    }
+
+    // ---------- Properties ----------
+    function editableFields() {
+      return ['category', 'purpose', 'title', 'description', 'price', 'priceBasis', 'area', 'areaUnit',
+              'location', 'facing', 'roadAccess', 'waterSource', 'rera', 'coverPath', 'photoCount'];
+    }
+
+    function localized(v, max) {
+      return v is map && v.keys().hasOnly(['te', 'en']) && v.keys().hasAll(['te', 'en'])
+        && v.te is string && v.en is string && v.te.size() <= max && v.en.size() <= max;
+    }
+
+    function validProperty(d) {
+      return d.category in ['agricultural', 'open-plot', 'flat', 'apartment', 'villa', 'luxury-home', 'commercial', 'farmhouse', 'rental']
+        && d.purpose in ['sale', 'rent']
+        && localized(d.title, 120) && (d.title.te.size() > 0 || d.title.en.size() > 0)
+        && localized(d.description, 4000)
+        && d.price is number && d.price > 0 && d.price < 100000000000
+        && d.priceBasis in ['total', 'per-unit', 'per-month']
+        && d.area is number && d.area > 0
+        && d.areaUnit in ['acre', 'gunta', 'sq-yd', 'sq-ft']
+        && d.location is map
+        && d.location.keys().hasOnly(['district', 'mandal', 'village', 'lat', 'lng'])
+        && d.location.district is string && d.location.district.size() > 0 && d.location.district.size() <= 60
+        && d.location.mandal is string && d.location.mandal.size() <= 60
+        && d.location.village is string && d.location.village.size() <= 80
+        && (d.location.lat == null || d.location.lat is number)
+        && (d.location.lng == null || d.location.lng is number)
+        && (d.facing == null || d.facing in ['east', 'west', 'north', 'south', 'north-east', 'north-west', 'south-east', 'south-west'])
+        && (d.roadAccess == null || d.roadAccess is bool)
+        && optString(d.waterSource, 80)
+        && optString(d.rera, 40)
+        && optString(d.coverPath, 300)
+        && d.photoCount is int && d.photoCount >= 0 && d.photoCount <= 20;
+    }
+
+    function ownsProperty(propertyId) {
+      return signedIn() && get(/databases/$(database)/documents/properties/$(propertyId)).data.ownerId == uid();
+    }
+
+    match /properties/{propertyId} {
+      allow read: if resource.data.status == 'approved'
+        || (signedIn() && resource.data.ownerId == uid())
+        || isStaff();
+
+      // Owners and dealers create listings that wait for admin review.
+      allow create: if role() in ['owner', 'dealer', 'admin']
+        && request.resource.data.keys().hasOnly(editableFields().concat(['code', 'ownerId', 'source', 'status', 'isFeatured',
+             'featuredUntil', 'docsVerified', 'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt', 'updatedAt']))
+        && request.resource.data.keys().hasAll(editableFields().concat(['code', 'ownerId', 'source', 'status', 'isFeatured',
+             'featuredUntil', 'docsVerified', 'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt', 'updatedAt']))
+        && request.resource.data.ownerId == uid()
+        && request.resource.data.code == null
+        && request.resource.data.status in ['draft', 'pending']
+        && request.resource.data.isFeatured == false
+        && request.resource.data.featuredUntil == null
+        && request.resource.data.docsVerified == false
+        && request.resource.data.rejectReason == null
+        && request.resource.data.reviewedBy == null
+        && request.resource.data.reviewedAt == null
+        && ((role() == 'owner' && request.resource.data.source == 'owner')
+            || (role() == 'dealer' && request.resource.data.source == 'dealer')
+            || (role() == 'admin' && request.resource.data.source in ['onlineland', 'owner', 'dealer']))
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && validProperty(request.resource.data);
+
+      // Owners edit their own listing; any edit sends it back to review.
+      // An approved listing may also be marked sold/rented without other changes.
+      allow update: if isAdmin()
+        || (signedIn() && resource.data.ownerId == uid()
+            && request.resource.data.ownerId == uid()
+            && request.resource.data.updatedAt == request.time
+            && validProperty(request.resource.data)
+            && ((changed().hasOnly(editableFields().concat(['status', 'updatedAt']))
+                 && request.resource.data.status in ['draft', 'pending'])
+                || (resource.data.status == 'approved'
+                    && changed().hasOnly(['status', 'updatedAt'])
+                    && request.resource.data.status in ['sold', 'rented'])));
+
+      allow delete: if isAdmin()
+        || (signedIn() && resource.data.ownerId == uid() && resource.data.status in ['draft', 'pending', 'rejected']);
+
+      match /media/{mediaId} {
+        allow read: if get(/databases/$(database)/documents/properties/$(propertyId)).data.status == 'approved'
+          || ownsProperty(propertyId) || isStaff();
+        allow create, update: if (ownsProperty(propertyId) || isAdmin())
+          && request.resource.data.keys().hasOnly(['storagePath', 'order', 'isCover', 'createdAt'])
+          && request.resource.data.storagePath is string
+          && request.resource.data.storagePath.matches('properties/' + propertyId + '/[^/]+')
+          && request.resource.data.order is int
+          && request.resource.data.isCover is bool;
+        allow delete: if ownsProperty(propertyId) || isAdmin();
+      }
+
+      // Owner's real phone and notes (decision D3): owner and admin only.
+      match /private/{docId} {
+        allow read: if docId == 'contact' && (ownsProperty(propertyId) || isAdmin());
+        allow create, update: if docId == 'contact' && (ownsProperty(propertyId) || isAdmin())
+          && request.resource.data.keys().hasOnly(['ownerName', 'ownerPhone', 'address', 'commissionTerms'])
+          && request.resource.data.ownerName is string && request.resource.data.ownerName.size() <= 80
+          && indianMobile(request.resource.data.ownerPhone)
+          && optString(request.resource.data.address, 300)
+          && optString(request.resource.data.commissionTerms, 300);
+        allow delete: if isAdmin();
+      }
+    }
+
+    // ---------- Leads (enquiries) — visitors may send without login ----------
+    match /leads/{leadId} {
+      allow create: if request.resource.data.keys().hasOnly(['propertyId', 'channel', 'name', 'phone', 'message', 'locale',
+             'userId', 'stage', 'assignedAgentId', 'notes', 'createdAt'])
+        && request.resource.data.keys().hasAll(['propertyId', 'channel', 'name', 'phone', 'message', 'locale',
+             'userId', 'stage', 'assignedAgentId', 'notes', 'createdAt'])
+        && request.resource.data.stage == 'new'
+        && request.resource.data.assignedAgentId == null
+        && request.resource.data.notes == null
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.channel in ['form', 'whatsapp', 'call', 'site-visit']
+        && request.resource.data.locale in ['te', 'en']
+        && optString(request.resource.data.propertyId, 64)
+        && optString(request.resource.data.name, 80)
+        && optString(request.resource.data.message, 1000)
+        && ((request.resource.data.phone == null && request.resource.data.channel in ['whatsapp', 'call'])
+            || indianMobile(request.resource.data.phone))
+        && ((signedIn() && request.resource.data.userId == uid())
+            || (!signedIn() && request.resource.data.userId == null));
+
+      allow read: if isAdmin()
+        || (isAgent() && resource.data.assignedAgentId == uid())
+        || (signedIn() && resource.data.userId == uid());
+
+      allow update: if isAdmin()
+        || (isAgent() && resource.data.assignedAgentId == uid()
+            && changed().hasOnly(['stage', 'notes', 'updatedAt'])
+            && request.resource.data.stage in ['new', 'contacted', 'site-visit', 'negotiation', 'won', 'lost']
+            && optString(request.resource.data.notes, 2000)
+            && request.resource.data.updatedAt == request.time);
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- Site visits ----------
+    match /siteVisits/{visitId} {
+      allow create: if request.resource.data.keys().hasOnly(['propertyId', 'leadId', 'name', 'phone', 'date', 'slot',
+             'status', 'userId', 'agentId', 'notes', 'createdAt'])
+        && request.resource.data.keys().hasAll(['propertyId', 'leadId', 'name', 'phone', 'date', 'slot',
+             'status', 'userId', 'agentId', 'notes', 'createdAt'])
+        && request.resource.data.status == 'requested'
+        && request.resource.data.agentId == null
+        && request.resource.data.notes == null
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.propertyId is string && request.resource.data.propertyId.size() <= 64
+        && optString(request.resource.data.leadId, 64)
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
+        && indianMobile(request.resource.data.phone)
+        && request.resource.data.date is string && request.resource.data.date.matches('^20[0-9]{2}-[01][0-9]-[0-3][0-9]$')
+        && request.resource.data.slot in ['morning', 'afternoon', 'evening']
+        && ((signedIn() && request.resource.data.userId == uid())
+            || (!signedIn() && request.resource.data.userId == null));
+
+      allow read: if isAdmin()
+        || (isAgent() && resource.data.agentId == uid())
+        || (signedIn() && resource.data.userId == uid());
+
+      allow update: if isAdmin()
+        || (isAgent() && resource.data.agentId == uid()
+            && changed().hasOnly(['status', 'date', 'slot', 'notes', 'updatedAt'])
+            && request.resource.data.status in ['requested', 'confirmed', 'completed', 'cancelled', 'no-show']
+            && request.resource.data.updatedAt == request.time);
+
+      allow delete: if isAdmin();
+    }
+
+    // ---------- Public reference data (admin-managed) ----------
+    match /locations/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+    match /plans/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // ---------- Written only by Cloud Functions (Admin SDK bypasses these rules) ----------
+    match /subscriptions/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.dealerId == uid());
+      allow write: if false;
+    }
+    match /notifications/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+    match /auditLogs/{id} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // Everything else (including counters/) is closed.
     match /{document=**} {
       allow read, write: if false;
     }

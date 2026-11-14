@@ -4,3 +4,4 @@ export * from './roles';
 export * from './property';
 export * from './leads';
 export * from './firestore';
+export * from './models';

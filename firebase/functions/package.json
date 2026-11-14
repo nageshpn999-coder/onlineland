@@ -1,0 +1,18 @@
+{
+  "name": "@onlineland/functions",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OnlineLand Cloud Functions (asia-south1).",
+  "main": "lib/index.js",
+  "engines": {
+    "node": "22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.1",
+    "firebase-functions": "^7.4.0"
+  }
+}
