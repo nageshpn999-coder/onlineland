@@ -40,6 +40,12 @@ jobs:
       - name: Unit tests
         run: npm run test -w @onlineland/web
 
+      - name: Build admin dashboard
+        run: npm run build:admin
+        env:
+          NEXT_PUBLIC_USE_FIREBASE_EMULATORS: 'true'
+          NEXT_TELEMETRY_DISABLED: '1'
+
       - name: Build website
         run: npm run build:web
         env:
@@ -58,10 +64,13 @@ jobs:
       - name: Website browser tests (emulators + seeded test data)
         run: npm run test:e2e
 
+      - name: Admin dashboard browser tests (all emulators incl. functions)
+        run: npm run test:e2e:admin
+
       - name: Print screenshots (for review from the log)
         if: always()
         run: |
-          for f in apps/web/test-results/screens/*.png; do
+          for f in apps/web/test-results/screens/*.png apps/admin/test-results/screens/*.png; do
             [ -f "$f" ] || continue
             echo "SCREEN-BEGIN $(basename "$f")"; base64 -w 120 "$f"; echo "SCREEN-END"
           done
@@ -73,4 +82,5 @@ jobs:
           name: e2e-screens
           path: |
             apps/web/test-results/
+            apps/admin/test-results/
           retention-days: 14

@@ -7,6 +7,7 @@
 
 import { deflateSync } from 'node:zlib';
 import { initializeApp } from 'firebase-admin/app';
+import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 
@@ -165,4 +166,49 @@ for (const { id, photos = 0, age, ...l } of listings) {
 }
 await db.doc('counters/properties').set({ seq: 1010 });
 
-console.log(`✔ Seeded ${TELANGANA_DISTRICTS.length} districts, ${Object.values(MANDALS).flat().length} mandals, ${listings.length} test listings (project ${PROJECT}).`);
+// ---------- admin dashboard test data (Phase 7): staff, a dealer, payments, leads, visits ----------
+const seededUsers = [];
+if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
+  const auth = getAuth(app);
+  // With the functions emulator running, onUserCreated fires for each new account; wait for it so it
+  // cannot overwrite the role we set below.
+  const withFunctions = process.env.SEED_WITH_FUNCTIONS === '1';
+  async function seedUser(uid, phone, name, role) {
+    await auth.createUser({ uid, phoneNumber: phone, displayName: name });
+    if (withFunctions) {
+      for (let i = 0; i < 60 && !(await db.doc(`users/${uid}`).get()).exists; i++) await new Promise((r) => setTimeout(r, 250));
+    }
+    await auth.setCustomUserClaims(uid, { role });
+    await db.doc(`users/${uid}`).set({ name, phone, email: null, role, language: 'te', status: 'active', createdAt: Timestamp.fromMillis(now - DAY) });
+    seededUsers.push(`${role} ${phone}`);
+  }
+  await seedUser('seed-admin', '+919000000009', 'Nagesh (admin)', 'admin');
+  await seedUser('seed-dealer', '+919000000101', 'Ravi Properties', 'dealer');
+  await seedUser('seed-buyer', '+919000000202', 'Suresh', 'buyer');
+  await seedUser('seed-agent', '+919000000303', 'Kiran (agent)', 'agent');
+
+  await db.doc('properties/seed-pending-2').set({
+    ...base, ownerId: 'seed-dealer', source: 'dealer', status: 'pending', code: null, reviewedBy: null, reviewedAt: null,
+    category: 'open-plot', purpose: 'sale', title: { te: 'డీలర్ ప్లాట్ (పెండింగ్)', en: 'Dealer plot (pending)' },
+    price: 800_000, priceBasis: 'total', area: 120, areaUnit: 'sq-yd', location: loc('narayanpet', 'makthal', 'Makthal'),
+    createdAt: Timestamp.fromMillis(now - DAY / 2), updatedAt: Timestamp.fromMillis(now - DAY / 2),
+  });
+  await db.doc('properties/seed-pending-2/private/contact').set({ ownerName: 'Ravi', ownerPhone: '9000000101', address: null, commissionTerms: '2%' });
+  await db.doc('paymentRequests/seed-pay-1').set({
+    userId: 'seed-dealer', kind: 'plan', planId: 'basic', propertyId: null, amountInr: 499, utr: '412345678901',
+    status: 'pending', rejectReason: null, reviewedBy: null, reviewedAt: null, createdAt: Timestamp.fromMillis(now - 3600_000),
+  });
+  const lead = (id, data, ageH) => db.doc(`leads/${id}`).set({
+    propertyId: 'seed-1001', channel: 'form', name: null, phone: null, message: null, locale: 'te', userId: null,
+    stage: 'new', assignedAgentId: null, notes: null, refId: null, createdAt: Timestamp.fromMillis(now - ageH * 3600_000), ...data,
+  });
+  await lead('seed-lead-1', { name: 'Ramesh', phone: '9876543210', message: 'ధర తగ్గుతుందా?' }, 2);
+  await lead('seed-lead-2', { name: 'Lakshmi', phone: '9876500000', message: 'Site visit kavali', propertyId: 'seed-pending-2', refId: 'seed-dealer' }, 5);
+  await lead('seed-lead-3', { name: 'Venkat', phone: '9876511111', stage: 'contacted', assignedAgentId: 'seed-agent' }, 30);
+  await db.doc('siteVisits/seed-visit-1').set({
+    propertyId: 'seed-1001', leadId: 'seed-lead-1', name: 'Ramesh', phone: '9876543210', date: '2026-12-01', slot: 'morning',
+    status: 'requested', userId: null, agentId: null, notes: null, createdAt: Timestamp.fromMillis(now - 3600_000),
+  });
+}
+
+console.log(`✔ Seeded ${TELANGANA_DISTRICTS.length} districts, ${Object.values(MANDALS).flat().length} mandals, ${listings.length} test listings, ${seededUsers.length} test users (project ${PROJECT}).`);

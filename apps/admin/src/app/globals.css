@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-brand: #1456c8;
+  --color-brand-deep: #0e3f96;
+  --color-field: #0f6b3f;
+  --color-field-soft: #e4f1e9;
+  --color-ink: #102347;
+  --color-ink-soft: #4a5a78;
+  --color-mist: #eef3fa;
+  --color-line: #cfdaec;
+
+  --font-display: 'Anek Telugu Variable', 'Noto Sans Telugu Variable', system-ui, sans-serif;
+  --font-sans: 'Noto Sans Telugu Variable', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--font-sans);
+    line-height: 1.6;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-brand);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+}

@@ -25,7 +25,10 @@
     "test:firebase": "npm run build:functions && firebase emulators:exec --config firebase/firebase.json --project demo-onlineland \"npm test -w @onlineland/firebase-tests\"",
     "test": "npm run test -w @onlineland/web",
     "test:e2e": "firebase emulators:exec --config firebase/firebase.json --project demo-onlineland --only auth,firestore,storage \"node scripts/seed-emulator.mjs && cd apps/web && NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true NEXT_TELEMETRY_DISABLED=1 npx next build && npx playwright test\"",
-    "seed:emulator": "node scripts/seed-emulator.mjs"
+    "seed:emulator": "node scripts/seed-emulator.mjs",
+    "dev:admin": "npm run dev -w @onlineland/admin",
+    "build:admin": "npm run build -w @onlineland/admin",
+    "test:e2e:admin": "npm run build:functions && firebase emulators:exec --config firebase/firebase.json --project demo-onlineland \"SEED_WITH_FUNCTIONS=1 node scripts/seed-emulator.mjs && cd apps/admin && NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true NEXT_TELEMETRY_DISABLED=1 npx next build && npx playwright test\""
   },
   "devDependencies": {
     "firebase-tools": "^15.35.0",
