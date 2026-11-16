@@ -1,0 +1,23 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:onlineland/app.dart';
+import 'package:onlineland/data/demo_repository.dart';
+import 'package:onlineland/state.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// Starts the app with demo data. Phone size 412×915 (common Android).
+Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, String locale = 'te'}) async {
+  tester.view.physicalSize = const Size(412 * 3, 915 * 3);
+  tester.view.devicePixelRatio = 3;
+  addTearDown(tester.view.reset);
+  SharedPreferences.setMockInitialValues({'onboarded': onboarded, 'locale': locale});
+  final prefs = await SharedPreferences.getInstance();
+  final repo = DemoRepository(now: DateTime(2026, 11, 17));
+  await tester.pumpWidget(ProviderScope(
+    overrides: [prefsProvider.overrideWithValue(prefs), repositoryProvider.overrideWithValue(repo)],
+    child: const OnlineLandApp(),
+  ));
+  await tester.pumpAndSettle();
+  return repo;
+}
