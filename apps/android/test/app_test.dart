@@ -101,7 +101,7 @@ void main() {
     await openFirstListing(tester);
     await tester.tap(find.byKey(const Key('favorite-toggle')));
     await tester.pumpAndSettle();
-    await tester.pageBack();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     await tapTab(tester, 2);
     expect(find.byKey(const Key('favorites-list')), findsOneWidget);
