@@ -24,7 +24,7 @@ Full document with diagram: https://claude.ai/artifact/Lgt3U9iqripwCjgxcK27v2
 | Basic | ₹499 / month | 15 listings; shared links show the dealer's own name + number; Verified Dealer badge; views/enquiries stats |
 | Pro | ₹1,499 / month | Unlimited listings; 2 featured listings a month; own dealer page (onlineland.in/dealer/…); area leads shared |
 
-Add-ons: featured listing ₹199 / week. Owners: 1 listing free, small fee after that.
+Add-ons: featured listing ₹199 / week. Owners: 1 listing free; each further listing ₹199 (live until sold or 90 days).
 Payment: UPI QR in the app → user enters UTR → admin approves → plan active 30 days → renewal reminder 3 days before expiry.
 
 ## Architecture
