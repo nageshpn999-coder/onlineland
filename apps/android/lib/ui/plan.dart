@@ -105,7 +105,7 @@ class _PlanCard extends ConsumerWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Row(children: [
             Expanded(child: Text(plan.name(s.te), style: Theme.of(context).textTheme.titleLarge)),
-            Text(s.perMonth('₹${groupIndian(plan.priceInr)}'), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            Text(s.pricePerMonth('₹${groupIndian(plan.priceInr)}'), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
           ]),
           const SizedBox(height: 8),
           for (final f in features)

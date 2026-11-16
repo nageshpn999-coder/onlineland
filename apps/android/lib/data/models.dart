@@ -277,6 +277,6 @@ class ListingStats {
 /// 12-digit UPI transaction reference.
 final utrPattern = RegExp(r'^\d{12}$');
 
-/// Link to share a listing. The owner's own link carries ?ref=<uid> so enquiries are credited to them.
+/// Link to share a listing. The owner's own link carries `?ref=<uid>` so enquiries are credited to them.
 String shareLink(String code, String locale, {String? refId}) =>
     'https://onlineland.in/$locale/properties/$code${refId != null ? '?ref=${Uri.encodeQueryComponent(refId)}' : ''}';

@@ -214,7 +214,7 @@ class S {
   String validTill(String date) => _('$date వరకు active', 'Active until $date');
   String get choosePlan => _('ఈ ప్లాన్ తీసుకోండి', 'Choose this plan');
   String get renewPlan => _('Renew చేయండి', 'Renew');
-  String perMonth(String price) => _('$price / నెల', '$price / month');
+  String pricePerMonth(String price) => _('$price / నెల', '$price / month');
   String listingsN(int n) => n == 0 ? _('అపరిమిత listings', 'Unlimited listings') : _('$n listings', '$n listings');
   String get featOwnNumber => _('షేర్ లింక్‌లో మీ సొంత నంబర్', 'Your own number on shared links');
   String get featBadge => _('✓ Verified బ్యాడ్జ్', '✓ Verified badge');
