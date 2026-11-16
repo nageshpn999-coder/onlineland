@@ -13,6 +13,10 @@ export const COLLECTIONS = {
   notifications: 'notifications',
   auditLogs: 'auditLogs',
   settings: 'settings',
+  paymentRequests: 'paymentRequests',
+  dealers: 'dealers',
+  propertyStats: 'propertyStats',
+  devices: 'devices', // sub-collection of users/{uid}
 } as const;
 
 export type CollectionName = (typeof COLLECTIONS)[keyof typeof COLLECTIONS];

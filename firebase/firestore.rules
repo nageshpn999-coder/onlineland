@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// OnlineLand — Firestore security rules (Phase 4).
+// OnlineLand — Firestore security rules (Phase 4, extended in Phase 6–7).
 // Roles come from Firebase Auth custom claims (request.auth.token.role), set only by Cloud Functions.
 // Every rule here has a matching test in firebase/tests/firestore.rules.test.ts.
 service cloud.firestore {
@@ -157,9 +157,24 @@ service cloud.firestore {
     }
 
     // ---------- Leads (enquiries) — visitors may send without login ----------
+    // A dealer sees leads from their own share links only while their paid plan includes it (D7).
+    function dealerContactActive(dealerId) {
+      return exists(/databases/$(database)/documents/dealers/$(dealerId))
+        && get(/databases/$(database)/documents/dealers/$(dealerId)).data.ownContact == true
+        && get(/databases/$(database)/documents/dealers/$(dealerId)).data.validUntil > request.time;
+    }
+
+    // refId (optional) = whose share link brought the visitor; it must be the listing's owner.
+    function validRef(d) {
+      return d.get('refId', null) == null
+        || (d.refId is string && d.propertyId is string
+            && get(/databases/$(database)/documents/properties/$(d.propertyId)).data.ownerId == d.refId);
+    }
+
     match /leads/{leadId} {
       allow create: if request.resource.data.keys().hasOnly(['propertyId', 'channel', 'name', 'phone', 'message', 'locale',
-             'userId', 'stage', 'assignedAgentId', 'notes', 'createdAt'])
+             'userId', 'stage', 'assignedAgentId', 'notes', 'refId', 'createdAt'])
+        && validRef(request.resource.data)
         && request.resource.data.keys().hasAll(['propertyId', 'channel', 'name', 'phone', 'message', 'locale',
              'userId', 'stage', 'assignedAgentId', 'notes', 'createdAt'])
         && request.resource.data.stage == 'new'
@@ -178,7 +193,8 @@ service cloud.firestore {
 
       allow read: if isAdmin()
         || (isAgent() && resource.data.assignedAgentId == uid())
-        || (signedIn() && resource.data.userId == uid());
+        || (signedIn() && resource.data.userId == uid())
+        || (signedIn() && resource.data.get('refId', null) == uid() && dealerContactActive(uid()));
 
       allow update: if isAdmin()
         || (isAgent() && resource.data.assignedAgentId == uid()
@@ -234,6 +250,44 @@ service cloud.firestore {
     match /plans/{id} {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    // ---------- Payments (manual UPI, D6/D7) ----------
+    // The customer records their UTR; only the reviewPayment Cloud Function changes it afterwards.
+    match /paymentRequests/{id} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['userId', 'kind', 'planId', 'propertyId', 'amountInr', 'utr', 'status',
+             'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt'])
+        && request.resource.data.keys().hasAll(['userId', 'kind', 'planId', 'propertyId', 'amountInr', 'utr', 'status',
+             'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt'])
+        && request.resource.data.userId == uid()
+        && request.resource.data.status == 'pending'
+        && request.resource.data.rejectReason == null
+        && request.resource.data.reviewedBy == null
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.utr is string && request.resource.data.utr.matches('^[0-9]{12}$')
+        && request.resource.data.amountInr is number && request.resource.data.amountInr > 0
+        && request.resource.data.amountInr <= 100000
+        && ((request.resource.data.kind == 'plan' && request.resource.data.planId in ['basic', 'pro']
+             && request.resource.data.propertyId == null)
+            || (request.resource.data.kind in ['featured', 'listing'] && request.resource.data.planId == null
+                && request.resource.data.propertyId is string
+                && ownsProperty(request.resource.data.propertyId)));
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == uid());
+      allow update, delete: if false;
+    }
+
+    // Public dealer card (name, ✓ badge, number only on paid plans). Written by Cloud Functions.
+    match /dealers/{dealerId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Views / shares / leads per listing. Written by Cloud Functions.
+    match /propertyStats/{propertyId} {
+      allow read: if ownsProperty(propertyId) || isStaff();
+      allow write: if false;
     }
 
     // ---------- Written only by Cloud Functions (Admin SDK bypasses these rules) ----------

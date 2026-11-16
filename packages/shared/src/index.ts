@@ -7,3 +7,4 @@ export * from './firestore';
 export * from './models';
 export * from './locations';
 export * from './pricing';
+export * from './plans';

@@ -7,6 +7,7 @@ import type { Locale, LocalizedText } from './i18n';
 import type { Role } from './roles';
 import type { AreaUnit, PriceBasis, PropertyCategory, PropertyPurpose, PropertySource, PropertyStatus } from './property';
 import type { LeadChannel, LeadStage, PaymentMethod, SiteVisitStatus } from './leads';
+import type { PaymentKind, PaymentStatus, PlanConfig, PlanId } from './plans';
 
 export interface TimestampLike {
   toMillis(): number;
@@ -86,6 +87,8 @@ export interface Property<T = TimestampLike> {
   reviewedAt: T | null;
   createdAt: T;
   updatedAt: T;
+  /** Set by Cloud Functions when an owner paid for an extra listing (D7); it expires after this. */
+  listingPaidUntil?: T | null;
 }
 
 /** properties/{id}/media/{mediaId} */
@@ -123,6 +126,8 @@ export interface Lead<T = TimestampLike> {
   stage: LeadStage;
   assignedAgentId: string | null;
   notes: string | null;
+  /** Dealer/owner whose share link brought this enquiry (D7). Must be the property's owner. */
+  refId?: string | null;
   createdAt: T;
   updatedAt?: T;
 }
@@ -143,15 +148,8 @@ export interface SiteVisit<T = TimestampLike> {
   updatedAt?: T;
 }
 
-/** plans/{id} */
-export interface Plan {
-  name: LocalizedText;
-  priceInr: number;
-  durationDays: number;
-  listingLimit: number;
-  featuredSlots: number;
-  active: boolean;
-}
+/** plans/{id} — see plans.ts for the defaults. */
+export type Plan = PlanConfig;
 
 /** subscriptions/{id} — written only by Cloud Functions after admin confirms the UPI payment (D6). */
 export interface Subscription<T = TimestampLike> {
@@ -163,6 +161,42 @@ export interface Subscription<T = TimestampLike> {
   validUntil: T | null;
   confirmedBy: string | null;
   createdAt: T;
+}
+
+/** paymentRequests/{id} — the customer paid by UPI and entered the UTR; admin approves (D6, D7). */
+export interface PaymentRequest<T = TimestampLike> {
+  userId: string;
+  kind: PaymentKind;
+  planId: PlanId | null; // kind "plan"
+  propertyId: string | null; // kind "featured" / "listing"
+  amountInr: number;
+  utr: string; // 12-digit UPI reference
+  status: PaymentStatus;
+  rejectReason: string | null;
+  reviewedBy: string | null;
+  reviewedAt: T | null;
+  createdAt: T;
+}
+
+/** dealers/{uid} — public card for a dealer/owner, written only by Cloud Functions. */
+export interface DealerPublic<T = TimestampLike> {
+  name: string;
+  phone: string | null; // only while the plan includes ownContact
+  verified: boolean;
+  planId: PlanId;
+  validUntil: T | null;
+  ownContact: boolean;
+  dealerPage: boolean;
+  featuredSlots: number;
+  featuredUsed: number;
+  updatedAt: T;
+}
+
+/** propertyStats/{propertyId} — owner and admin can read; written only by Cloud Functions. */
+export interface PropertyStats {
+  views: number;
+  shares: number;
+  leads: number;
 }
 
 /** auditLogs/{id} — written only by Cloud Functions. */

@@ -7,7 +7,8 @@ import { getFirestore as getAdminDb, Timestamp } from 'firebase-admin/firestore'
 import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, signInWithCustomToken, signOut, type Auth } from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions, httpsCallable, type Functions } from 'firebase/functions';
-import { ROLES as SHARED_ROLES } from '@onlineland/shared';
+import { DEFAULT_PLANS as SHARED_PLANS, DEFAULT_PRICING as SHARED_PRICING, ROLES as SHARED_ROLES } from '@onlineland/shared';
+import { DEFAULT_PLANS as FN_PLANS, DEFAULT_PRICING as FN_PRICING } from '../functions/src/plans';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PROJECT_ID, storedListing } from './helpers';
 
@@ -74,7 +75,7 @@ const run = Date.now().toString(36);
 
 describe('roles are defined once', () => {
   it('functions ROLES matches @onlineland/shared ROLES', () => {
-    const src = readFileSync(fileURLToPath(new URL('../functions/src/index.ts', import.meta.url)), 'utf8');
+    const src = readFileSync(fileURLToPath(new URL('../functions/src/common.ts', import.meta.url)), 'utf8');
     const match = src.match(/export const ROLES = \[([^\]]+)\]/);
     const fnRoles = match![1]!.split(',').map((s) => s.trim().replace(/'/g, ''));
     expect(fnRoles).toEqual([...SHARED_ROLES]);
@@ -153,7 +154,7 @@ describe('reviewProperty', () => {
   });
   it('codes increase for each new approval', async () => {
     const id = `prop-b-${run}`;
-    await adminDb().doc(`properties/${id}`).set(storedListing('owner1', { createdAt: Timestamp.now(), updatedAt: Timestamp.now() }));
+    await adminDb().doc(`properties/${id}`).set(storedListing('owner-b', { createdAt: Timestamp.now(), updatedAt: Timestamp.now() }));
     await signInAs(`admin-${run}`);
     const first = (await adminDb().doc(`properties/prop-a-${run}`).get()).data()!.code as string;
     const res = await httpsCallable(functions, 'reviewProperty')({ propertyId: id, decision: 'approve' });
@@ -175,6 +176,182 @@ describe('reviewProperty', () => {
     expect(await callError('reviewProperty', { propertyId: 'does-not-exist', decision: 'approve' })).toBe('functions/not-found');
     await signInAs(`seller-${run}`);
     expect(await callError('reviewProperty', { propertyId: `prop-c-${run}`, decision: 'approve' })).toBe('functions/permission-denied');
+  });
+});
+
+describe('revenue (D7)', () => {
+  const DAY = 86_400_000;
+  const call = (name: string, data: unknown) => httpsCallable(functions, name)(data);
+  async function payment(id: string, data: Record<string, unknown>) {
+    await adminDb().doc(`paymentRequests/${id}`).set({
+      planId: null, propertyId: null, utr: '412345678901', status: 'pending', rejectReason: null,
+      reviewedBy: null, reviewedAt: null, createdAt: Timestamp.now(), ...data,
+    });
+  }
+  const notesFor = async (userId: string, type: string) =>
+    (await adminDb().collection('notifications').where('userId', '==', userId).where('type', '==', type).get()).size;
+
+  it('plan defaults are the same in functions and @onlineland/shared', () => {
+    expect(FN_PLANS).toEqual(SHARED_PLANS);
+    expect(FN_PRICING).toEqual(SHARED_PRICING);
+  });
+
+  it('approving a Basic payment activates the plan for 30 days and makes the user a dealer', async () => {
+    const uid = `dealer-${run}`;
+    await createAccount(uid, '+919000000101');
+    await adminDb().doc(`users/${uid}`).update({ name: 'Ravi Properties' });
+    await payment(`pay-basic-${run}`, { userId: uid, kind: 'plan', planId: 'basic', amountInr: 499 });
+    await signInAs(`admin-${run}`);
+    const res = (await call('reviewPayment', { paymentId: `pay-basic-${run}`, decision: 'approve' })).data as { status: string; validUntil: number };
+    expect(res.status).toBe('approved');
+    expect(res.validUntil).toBeGreaterThan(Date.now() + 29 * DAY);
+    const dealer = (await adminDb().doc(`dealers/${uid}`).get()).data()!;
+    expect(dealer).toMatchObject({ name: 'Ravi Properties', phone: '9000000101', planId: 'basic', ownContact: true, dealerPage: false, verified: false });
+    expect((await adminAuth().getUser(uid)).customClaims?.role).toBe('dealer');
+    expect((await adminDb().doc(`paymentRequests/pay-basic-${run}`).get()).data()!.status).toBe('approved');
+    const subs = await adminDb().collection('subscriptions').where('dealerId', '==', uid).get();
+    expect(subs.size).toBe(1);
+    expect(await notesFor(uid, 'payment.approved')).toBe(1);
+    // the same payment cannot be approved twice
+    expect(await callError('reviewPayment', { paymentId: `pay-basic-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
+  });
+
+  it('early renewal of the same plan adds 30 days to what is left', async () => {
+    const uid = `dealer-${run}`;
+    const before = (await adminDb().doc(`dealers/${uid}`).get()).data()!.validUntil.toMillis();
+    await payment(`pay-renew-${run}`, { userId: uid, kind: 'plan', planId: 'basic', amountInr: 499 });
+    await signInAs(`admin-${run}`);
+    await call('reviewPayment', { paymentId: `pay-renew-${run}`, decision: 'approve' });
+    const after = (await adminDb().doc(`dealers/${uid}`).get()).data()!.validUntil.toMillis();
+    expect(after - before).toBe(30 * DAY);
+  });
+
+  it('refuses an amount below the price; rejection stores the reason', async () => {
+    const uid = `dealer-${run}`;
+    await payment(`pay-low-${run}`, { userId: uid, kind: 'plan', planId: 'pro', amountInr: 499 });
+    await signInAs(`admin-${run}`);
+    expect(await callError('reviewPayment', { paymentId: `pay-low-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
+    expect(await callError('reviewPayment', { paymentId: `pay-low-${run}`, decision: 'reject' })).toBe('functions/invalid-argument');
+    await call('reviewPayment', { paymentId: `pay-low-${run}`, decision: 'reject', reason: 'UTR not found in bank statement' });
+    const p = (await adminDb().doc(`paymentRequests/pay-low-${run}`).get()).data()!;
+    expect(p).toMatchObject({ status: 'rejected', rejectReason: 'UTR not found in bank statement' });
+    expect(await notesFor(uid, 'payment.rejected')).toBe(1);
+  });
+
+  it('only admins review payments', async () => {
+    await signInAs(`dealer-${run}`);
+    expect(await callError('reviewPayment', { paymentId: `pay-low-${run}`, decision: 'approve' })).toBe('functions/permission-denied');
+  });
+
+  it('featured payment puts a listing on top for 7 days; listing payment keeps it live 90 days', async () => {
+    const uid = `owner-pay-${run}`;
+    await adminDb().doc(`properties/feat-${run}`).set(storedListing(uid, { status: 'approved', code: 'OL-9001' }));
+    await adminDb().doc(`properties/paid-${run}`).set(storedListing(uid));
+    await payment(`pay-feat-${run}`, { userId: uid, kind: 'featured', propertyId: `feat-${run}`, amountInr: 199 });
+    await payment(`pay-list-${run}`, { userId: uid, kind: 'listing', propertyId: `paid-${run}`, amountInr: 199 });
+    await signInAs(`admin-${run}`);
+    await call('reviewPayment', { paymentId: `pay-feat-${run}`, decision: 'approve' });
+    await call('reviewPayment', { paymentId: `pay-list-${run}`, decision: 'approve' });
+    const feat = (await adminDb().doc(`properties/feat-${run}`).get()).data()!;
+    expect(feat.isFeatured).toBe(true);
+    expect(Math.round((feat.featuredUntil.toMillis() - Date.now()) / DAY)).toBe(7);
+    const paid = (await adminDb().doc(`properties/paid-${run}`).get()).data()!;
+    expect(Math.round((paid.listingPaidUntil.toMillis() - Date.now()) / DAY)).toBe(90);
+  });
+
+  it('owner: 1 free listing; the 2nd needs payment; a paid one is approved', async () => {
+    const uid = `owner-limit-${run}`;
+    for (const n of [1, 2]) {
+      await adminDb().doc(`properties/lim${n}-${run}`).set(storedListing(uid));
+    }
+    await signInAs(`admin-${run}`);
+    await call('reviewProperty', { propertyId: `lim1-${run}`, decision: 'approve' });
+    expect(await callError('reviewProperty', { propertyId: `lim2-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
+    await adminDb().doc(`properties/lim2-${run}`).update({ listingPaidUntil: Timestamp.fromMillis(Date.now() + 90 * DAY) });
+    await call('reviewProperty', { propertyId: `lim2-${run}`, decision: 'approve' });
+    expect((await adminDb().doc(`properties/lim2-${run}`).get()).data()!.status).toBe('approved');
+  });
+
+  it('dealer without a plan: 2 listings; OnlineLand listings have no limit', async () => {
+    const uid = `free-dealer-${run}`;
+    for (const n of [1, 2, 3]) {
+      await adminDb().doc(`properties/fd${n}-${run}`).set(storedListing(uid, { source: 'dealer' }));
+    }
+    await signInAs(`admin-${run}`);
+    await call('reviewProperty', { propertyId: `fd1-${run}`, decision: 'approve' });
+    await call('reviewProperty', { propertyId: `fd2-${run}`, decision: 'approve' });
+    expect(await callError('reviewProperty', { propertyId: `fd3-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
+    for (const n of [1, 2, 3]) {
+      await adminDb().doc(`properties/ol${n}-${run}`).set(storedListing('admin-own', { source: 'onlineland' }));
+      await call('reviewProperty', { propertyId: `ol${n}-${run}`, decision: 'approve' });
+    }
+  });
+
+  it('admin gives the ✓ Verified badge', async () => {
+    const uid = `dealer-${run}`;
+    await signInAs(`dealer-${run}`);
+    expect(await callError('setVerified', { uid, verified: true })).toBe('functions/permission-denied');
+    await signInAs(`admin-${run}`);
+    await call('setVerified', { uid, verified: true });
+    const d = (await adminDb().doc(`dealers/${uid}`).get()).data()!;
+    expect(d.verified).toBe(true);
+    expect(d.planId).toBe('basic'); // plan untouched
+    expect(d.phone).toBe('9000000101');
+  });
+
+  it('Pro dealer uses featured slots (2 per period)', async () => {
+    const uid = `pro-${run}`;
+    await createAccount(uid, '+919000000102');
+    await payment(`pay-pro-${run}`, { userId: uid, kind: 'plan', planId: 'pro', amountInr: 1499 });
+    await signInAs(`admin-${run}`);
+    await call('reviewPayment', { paymentId: `pay-pro-${run}`, decision: 'approve' });
+    for (const n of [1, 2, 3]) {
+      await adminDb().doc(`properties/pro${n}-${run}`).set(storedListing(uid, { source: 'dealer', status: 'approved', code: `OL-80${n}` }));
+    }
+    await signInAs(uid);
+    expect(((await call('useFeaturedSlot', { propertyId: `pro1-${run}` })).data as { slotsLeft: number }).slotsLeft).toBe(1);
+    await call('useFeaturedSlot', { propertyId: `pro2-${run}` });
+    expect(await callError('useFeaturedSlot', { propertyId: `pro3-${run}` })).toBe('functions/resource-exhausted');
+    expect(await callError('useFeaturedSlot', { propertyId: `feat-${run}` })).toBe('functions/permission-denied');
+    expect((await adminDb().doc(`properties/pro1-${run}`).get()).data()!.isFeatured).toBe(true);
+  });
+
+  it('counts views and shares of live listings only', async () => {
+    await signOut(auth);
+    await call('trackEvent', { propertyId: `feat-${run}`, type: 'view' });
+    await call('trackEvent', { propertyId: `feat-${run}`, type: 'view' });
+    await call('trackEvent', { propertyId: `feat-${run}`, type: 'share' });
+    expect(((await call('trackEvent', { propertyId: `paid-${run}`, type: 'view' })).data as { ok: boolean }).ok).toBe(false);
+    expect(await callError('trackEvent', { propertyId: `feat-${run}`, type: 'like' })).toBe('functions/invalid-argument');
+    const stats = (await adminDb().doc(`propertyStats/feat-${run}`).get()).data()!;
+    expect(stats).toMatchObject({ views: 2, shares: 1 });
+  });
+
+  it('a lead from a dealer link is counted and the dealer is notified', async () => {
+    const uid = `dealer-${run}`;
+    await adminDb().doc(`properties/dl-${run}`).set(storedListing(uid, { source: 'dealer', status: 'approved', code: 'OL-7001' }));
+    await adminDb().collection('leads').add({
+      propertyId: `dl-${run}`, channel: 'form', name: 'Suresh', phone: '9876543210', message: null, locale: 'te',
+      userId: null, stage: 'new', assignedAgentId: null, notes: null, refId: uid, createdAt: Timestamp.now(),
+    });
+    await waitFor(async () => (await notesFor(uid, 'lead.new')) === 1 || null);
+    await waitFor(async () => (await adminDb().doc(`propertyStats/dl-${run}`).get()).data()?.leads === 1 || null);
+  });
+
+  it('daily job: reminds 3 days before, ends featured weeks, expires paid listings', async () => {
+    await signInAs(`admin-${run}`);
+    // Pretend it is 28 days later: the Basic plan (30 days + 30 renewed) is not due; featured (7 d) is over;
+    // pretend 92 days later: the paid listing (90 d) expires.
+    const r1 = (await call('runMaintenance', { nowMs: Date.now() + 8 * DAY })).data as { unfeatured: number };
+    expect(r1.unfeatured).toBeGreaterThanOrEqual(1);
+    expect((await adminDb().doc(`properties/feat-${run}`).get()).data()!.isFeatured).toBe(false);
+    const r2 = (await call('runMaintenance', { nowMs: Date.now() + 58 * DAY })).data as { reminded: number };
+    expect(r2.reminded).toBeGreaterThanOrEqual(1);
+    expect(await notesFor(`dealer-${run}`, 'plan.renew')).toBe(1);
+    await call('runMaintenance', { nowMs: Date.now() + 58 * DAY });
+    expect(await notesFor(`dealer-${run}`, 'plan.renew')).toBe(1); // only once per period
+    await call('runMaintenance', { nowMs: Date.now() + 92 * DAY });
+    expect((await adminDb().doc(`properties/paid-${run}`).get()).data()!.status).toBe('expired');
   });
 });
 

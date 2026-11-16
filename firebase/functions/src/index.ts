@@ -1,66 +1,26 @@
 /**
- * OnlineLand Cloud Functions — Phase 4.
+ * OnlineLand Cloud Functions.
  *
  * Every privileged action runs here, never in a browser or app:
  *  - onUserCreated   new sign-in → users/{uid} profile + "buyer" role
  *  - becomeOwner     a buyer who wants to post a property becomes an "owner"
  *  - setUserRole     admin assigns any role (dealer, agent, admin…)
  *  - reviewProperty  admin approves or rejects a pending listing (+ audit log, property code,
- *                    + a push notification to the owner's phones)
+ *                    listing limits of the owner's plan, push notification to the owner)
+ *  - revenue.ts      payments, plans, verified badge, featured slots, stats, dealer leads, daily jobs (Phase 7)
  *
  * This package is deployed on its own, so it does not import @onlineland/shared;
- * tests check that ROLES below matches the shared list.
+ * tests check that ROLES and the plan defaults match the shared lists.
  */
-import { initializeApp } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
-import { FieldValue, getFirestore, type Transaction } from 'firebase-admin/firestore';
-import { setGlobalOptions } from 'firebase-functions/v2';
-import { HttpsError, onCall, type CallableRequest } from 'firebase-functions/v2/https';
+import { FieldValue, type Transaction } from 'firebase-admin/firestore';
+import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import * as functionsV1 from 'firebase-functions/v1';
 import { logger } from 'firebase-functions';
-import { getMessaging } from 'firebase-admin/messaging';
+import { applyRole, audit, auth, db, isRole, ms, REGION, requireAdmin, requireSignedIn, ROLES, safeNotify, type Role } from './common';
+import { loadConfig } from './config';
 
-export const REGION = 'asia-south1';
-export const ROLES = ['buyer', 'owner', 'dealer', 'agent', 'admin'] as const;
-type Role = (typeof ROLES)[number];
-
-initializeApp();
-setGlobalOptions({ region: REGION, maxInstances: 10 });
-
-const db = getFirestore();
-const auth = getAuth();
-
-// ---------- helpers ----------
-
-function isRole(v: unknown): v is Role {
-  return typeof v === 'string' && (ROLES as readonly string[]).includes(v);
-}
-
-function requireSignedIn(req: CallableRequest<unknown>) {
-  if (!req.auth) throw new HttpsError('unauthenticated', 'Sign in first.');
-  return req.auth;
-}
-
-function requireAdmin(req: CallableRequest<unknown>) {
-  const a = requireSignedIn(req);
-  if (a.token.role !== 'admin') throw new HttpsError('permission-denied', 'Admin only.');
-  return a;
-}
-
-function audit(
-  tx: Transaction | null,
-  entry: { actorId: string; action: string; target: string; before: unknown; after: unknown },
-) {
-  const ref = db.collection('auditLogs').doc();
-  const data = { ...entry, at: FieldValue.serverTimestamp() };
-  return tx ? tx.set(ref, data) : ref.set(data);
-}
-
-async function applyRole(uid: string, role: Role) {
-  const user = await auth.getUser(uid);
-  await auth.setCustomUserClaims(uid, { ...(user.customClaims ?? {}), role });
-  await db.doc(`users/${uid}`).set({ role, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
-}
+export { REGION, ROLES } from './common';
+export * from './revenue';
 
 // ---------- triggers ----------
 
@@ -142,6 +102,7 @@ export const reviewProperty = onCall(async (req) => {
   const propertyRef = db.doc(`properties/${propertyId}`);
   const counterRef = db.doc('counters/properties');
 
+  const config = await loadConfig();
   const result = await db.runTransaction(async (tx) => {
     const snap = await tx.get(propertyRef);
     if (!snap.exists) throw new HttpsError('not-found', 'Property not found.');
@@ -150,7 +111,10 @@ export const reviewProperty = onCall(async (req) => {
       throw new HttpsError('failed-precondition', `Only pending listings can be reviewed (status is "${property.status}").`);
     }
 
+    const ownerId = typeof property.ownerId === 'string' ? property.ownerId : null;
+
     if (decision === 'approve') {
+      if (ownerId) await checkListingLimit(tx, propertyId, property, ownerId, config);
       let code: string | null = typeof property.code === 'string' ? property.code : null;
       if (!code) {
         const counter = await tx.get(counterRef);
@@ -161,50 +125,77 @@ export const reviewProperty = onCall(async (req) => {
       const after = { status: 'approved', code, rejectReason: null };
       tx.update(propertyRef, { ...after, reviewedBy: a.uid, reviewedAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
       audit(tx, { actorId: a.uid, action: 'property.approve', target: `properties/${propertyId}`, before: { status: property.status }, after });
-      return { status: 'approved', code };
+      return { status: 'approved', code, ownerId };
     }
 
     const after = { status: 'rejected', rejectReason: (reason as string).trim() };
     tx.update(propertyRef, { ...after, reviewedBy: a.uid, reviewedAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
     audit(tx, { actorId: a.uid, action: 'property.reject', target: `properties/${propertyId}`, before: { status: property.status }, after });
-    return { status: 'rejected', code: property.code ?? null };
+    return { status: 'rejected', code: (property.code as string | null) ?? null, ownerId };
   });
 
-  await notifyOwner(propertyId, result.status, result.code).catch((err) =>
-    logger.warn('reviewProperty: notification failed', { propertyId, err: String(err) }),
-  );
-  return result;
+  if (result.ownerId) {
+    const approved = result.status === 'approved';
+    await safeNotify(result.ownerId, {
+      type: `property.${result.status}`,
+      title: approved ? 'మీ ప్రాపర్టీ ఆమోదించబడింది' : 'మీ ప్రాపర్టీ తిరస్కరించబడింది',
+      body: approved
+        ? `${result.code ?? ''} ఇప్పుడు OnlineLand లో అందరికీ కనిపిస్తుంది.`.trim()
+        : 'కారణం చూడటానికి యాప్‌లో "నా ప్రాపర్టీలు" తెరవండి.',
+      data: { propertyId, status: result.status, code: result.code ?? '' },
+    });
+  }
+  return { status: result.status, code: result.code };
 });
 
 /**
- * Best effort: record a notification and push it to the owner's registered devices.
- * A failure here never undoes the review. Skipped in the emulator (no FCM there).
+ * Plan limits (decision D7), checked when a listing is approved:
+ *  - OnlineLand's own listings and admins: no limit.
+ *  - Dealer with an active plan: plan.listingLimit approved listings at a time (0 = unlimited).
+ *  - Dealer without a plan: the Free plan's limit.
+ *  - Owner: ownerFreeListings free listings; a listing the owner paid for (listingPaidUntil) does not count.
  */
-async function notifyOwner(propertyId: string, status: string, code: string | null): Promise<void> {
-  const snap = await db.doc(`properties/${propertyId}`).get();
-  const ownerId = snap.get('ownerId');
-  if (typeof ownerId !== 'string') return;
-  const approved = status === 'approved';
-  const title = approved ? 'మీ ప్రాపర్టీ ఆమోదించబడింది' : 'మీ ప్రాపర్టీ తిరస్కరించబడింది';
-  const body = approved
-    ? `${code ?? ''} ఇప్పుడు OnlineLand లో అందరికీ కనిపిస్తుంది.`.trim()
-    : 'కారణం చూడటానికి యాప్‌లో "నా ప్రాపర్టీలు" తెరవండి.';
-  await db.collection('notifications').add({
-    userId: ownerId, type: `property.${status}`, propertyId, code, title, body,
-    createdAt: FieldValue.serverTimestamp(),
-  });
-  if (process.env.FUNCTIONS_EMULATOR === 'true') return;
-  const devices = await db.collection(`users/${ownerId}/devices`).get();
-  const tokens = devices.docs.map((d) => d.id);
-  if (tokens.length === 0) return;
-  const res = await getMessaging().sendEachForMulticast({
-    tokens, notification: { title, body }, data: { propertyId, status, code: code ?? '' },
-    android: { priority: 'high' },
-  });
-  // Remove tokens FCM says are no longer valid.
-  await Promise.all(res.responses.map((r, i) => {
-    const c = r.error?.code;
-    return c === 'messaging/registration-token-not-registered' || c === 'messaging/invalid-registration-token'
-      ? devices.docs[i]?.ref.delete() : null;
-  }));
+async function checkListingLimit(
+  tx: Transaction,
+  propertyId: string,
+  property: FirebaseFirestore.DocumentData,
+  ownerId: string,
+  config: Awaited<ReturnType<typeof loadConfig>>,
+): Promise<void> {
+  if (property.source === 'onlineland') return;
+  const now = Date.now();
+  if ((ms(property.listingPaidUntil) ?? 0) > now) return;
+  const [ownerUser, dealerSnap] = await Promise.all([
+    auth.getUser(ownerId).catch(() => null),
+    tx.get(db.doc(`dealers/${ownerId}`)),
+  ]);
+  if (ownerUser?.customClaims?.role === 'admin') return;
+
+  const dealer = dealerSnap.data();
+  const planActive = (ms(dealer?.validUntil) ?? 0) > now;
+  let limit: number;
+  if (planActive && dealer?.planId && dealer.planId in config.plans) {
+    limit = config.plans[dealer.planId as keyof typeof config.plans].listingLimit;
+  } else if (property.source === 'dealer') {
+    limit = config.plans.free.listingLimit;
+  } else {
+    limit = config.pricing.ownerFreeListings;
+  }
+  if (limit === 0) return;
+
+  const approved = await tx.get(db.collection('properties').where('ownerId', '==', ownerId).where('status', '==', 'approved'));
+  const counted = approved.docs.filter((d) => d.id !== propertyId && !planActiveOrPaid(d.get('listingPaidUntil'), now, planActive));
+  if (counted.length >= limit) {
+    throw new HttpsError(
+      'failed-precondition',
+      `Listing limit reached: this account has ${counted.length} live listing(s) and its plan allows ${limit}. ` +
+        'Ask them to pay for this listing or take a plan.',
+      { reason: 'limit-reached', live: counted.length, limit },
+    );
+  }
+}
+
+/** Paid owner listings do not use a free slot; for dealers on a plan every live listing counts. */
+function planActiveOrPaid(paidUntil: unknown, now: number, dealerPlan: boolean): boolean {
+  return !dealerPlan && (ms(paidUntil) ?? 0) > now;
 }

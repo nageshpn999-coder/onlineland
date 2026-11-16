@@ -13,7 +13,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
-import { createTestEnv, newLead, newListing, newSiteVisit, storedListing } from './helpers';
+import { createTestEnv, newLead, newListing, newPayment, newSiteVisit, storedListing } from './helpers';
 
 let env: RulesTestEnvironment;
 
@@ -41,6 +41,15 @@ beforeEach(async () => {
     await setDoc(doc(db, 'siteVisits/v1'), { ...newSiteVisit(), createdAt: Timestamp.now(), agentId: 'agent1' });
     await setDoc(doc(db, 'locations/narayanpet'), { name: { te: 'నారాయణపేట', en: 'Narayanpet' }, level: 'district', parentId: null });
     await setDoc(doc(db, 'subscriptions/s1'), { dealerId: 'dealer1', planId: 'basic', status: 'active' });
+    const future = Timestamp.fromMillis(Date.now() + 10 * 86_400_000);
+    const past = Timestamp.fromMillis(Date.now() - 86_400_000);
+    await setDoc(doc(db, 'dealers/owner1'), { name: 'Ravi', phone: '9123456780', verified: true, planId: 'basic', validUntil: future, ownContact: true, dealerPage: false, featuredSlots: 0, featuredUsed: 0, updatedAt: Timestamp.now() });
+    await setDoc(doc(db, 'dealers/lapsed1'), { name: 'Old', phone: null, verified: false, planId: 'basic', validUntil: past, ownContact: true, dealerPage: false, featuredSlots: 0, featuredUsed: 0, updatedAt: Timestamp.now() });
+    await setDoc(doc(db, 'properties/p-lapsed'), storedListing('lapsed1', { status: 'approved', code: 'OL-1002' }));
+    await setDoc(doc(db, 'leads/ref1'), { ...newLead(), createdAt: Timestamp.now(), refId: 'owner1' });
+    await setDoc(doc(db, 'leads/ref2'), { ...newLead({ propertyId: 'p-lapsed' }), createdAt: Timestamp.now(), refId: 'lapsed1' });
+    await setDoc(doc(db, 'propertyStats/p-approved'), { views: 3, shares: 1, leads: 1 });
+    await setDoc(doc(db, 'paymentRequests/pay1'), { ...newPayment('buyer1'), createdAt: Timestamp.now() });
     await setDoc(doc(db, 'auditLogs/a1'), { actorId: 'admin1', action: 'test', target: 'x', before: null, after: null, at: Timestamp.now() });
   });
 });
@@ -216,6 +225,61 @@ describe('site visits', () => {
     await assertSucceeds(updateDoc(doc(as('agent1', 'agent'), 'siteVisits/v1'), { status: 'confirmed', updatedAt: serverTimestamp() }));
     await assertFails(getDoc(doc(as('agent2', 'agent'), 'siteVisits/v1')));
     await assertFails(getDoc(doc(visitor(), 'siteVisits/v1')));
+  });
+});
+
+describe('dealer share links and leads (D7)', () => {
+  it('visitor sends an enquiry tagged with the listing owner', () =>
+    assertSucceeds(setDoc(doc(visitor(), 'leads/n-ref'), newLead({ refId: 'owner1' }))));
+  it('refId must be the owner of that listing', async () => {
+    await assertFails(setDoc(doc(visitor(), 'leads/n-ref'), newLead({ refId: 'someone-else' })));
+    await assertFails(setDoc(doc(visitor(), 'leads/n-ref'), newLead({ propertyId: null, refId: 'owner1' })));
+  });
+  it('dealer with an active plan reads leads from their own links', () =>
+    assertSucceeds(getDoc(doc(as('owner1', 'owner'), 'leads/ref1'))));
+  it('dealer cannot read other leads, or after the plan ends', async () => {
+    await assertFails(getDoc(doc(as('owner1', 'owner'), 'leads/lead1')));
+    await assertFails(getDoc(doc(as('lapsed1', 'dealer'), 'leads/ref2')));
+  });
+  it('dealer lists their own leads', () =>
+    assertSucceeds(getDocs(query(collection(as('owner1', 'dealer'), 'leads'), where('refId', '==', 'owner1')))));
+  it('dealer cannot edit a lead', () =>
+    assertFails(updateDoc(doc(as('owner1', 'dealer'), 'leads/ref1'), { stage: 'won' })));
+  it('dealer cards are public and read-only', async () => {
+    await assertSucceeds(getDoc(doc(visitor(), 'dealers/owner1')));
+    await assertFails(setDoc(doc(as('owner1', 'dealer'), 'dealers/owner1'), { verified: true }));
+  });
+  it('listing stats: owner and staff only, never written by clients', async () => {
+    await assertSucceeds(getDoc(doc(as('owner1', 'owner'), 'propertyStats/p-approved')));
+    await assertSucceeds(getDoc(doc(as('agent1', 'agent'), 'propertyStats/p-approved')));
+    await assertFails(getDoc(doc(as('owner2', 'owner'), 'propertyStats/p-approved')));
+    await assertFails(setDoc(doc(as('owner1', 'owner'), 'propertyStats/p-approved'), { views: 9999 }));
+  });
+});
+
+describe('payments (manual UPI)', () => {
+  it('user records a plan payment with their UTR', () =>
+    assertSucceeds(setDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/n1'), newPayment('buyer1'))));
+  it('owner pays for featured / an extra listing of their own property', async () => {
+    await assertSucceeds(setDoc(doc(as('owner1', 'owner'), 'paymentRequests/n2'), newPayment('owner1', { kind: 'featured', planId: null, propertyId: 'p-approved', amountInr: 199 })));
+    await assertSucceeds(setDoc(doc(as('owner1', 'owner'), 'paymentRequests/n3'), newPayment('owner1', { kind: 'listing', planId: null, propertyId: 'p-pending', amountInr: 199 })));
+  });
+  it('cannot pay for someone else’s property', () =>
+    assertFails(setDoc(doc(as('owner2', 'owner'), 'paymentRequests/n4'), newPayment('owner2', { kind: 'featured', planId: null, propertyId: 'p-approved', amountInr: 199 }))));
+  it('rejects bad UTR, other user, pre-approved status, unknown plan', async () => {
+    const me = as('buyer1', 'buyer');
+    await assertFails(setDoc(doc(me, 'paymentRequests/b1'), newPayment('buyer1', { utr: '12345' })));
+    await assertFails(setDoc(doc(me, 'paymentRequests/b2'), newPayment('buyer2')));
+    await assertFails(setDoc(doc(me, 'paymentRequests/b3'), newPayment('buyer1', { status: 'approved' })));
+    await assertFails(setDoc(doc(me, 'paymentRequests/b4'), newPayment('buyer1', { planId: 'free' })));
+    await assertFails(setDoc(doc(visitor(), 'paymentRequests/b5'), newPayment('buyer1')));
+  });
+  it('user reads own payments; cannot change them; admin reads all', async () => {
+    await assertSucceeds(getDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/pay1')));
+    await assertFails(getDoc(doc(as('buyer2', 'buyer'), 'paymentRequests/pay1')));
+    await assertFails(updateDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/pay1'), { status: 'approved' }));
+    await assertSucceeds(getDoc(doc(as('admin1', 'admin'), 'paymentRequests/pay1')));
+    await assertFails(updateDoc(doc(as('admin1', 'admin'), 'paymentRequests/pay1'), { status: 'approved' }));
   });
 });
 

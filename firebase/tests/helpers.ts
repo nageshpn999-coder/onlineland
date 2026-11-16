@@ -88,3 +88,20 @@ export function newSiteVisit(overrides: Record<string, unknown> = {}) {
     ...overrides,
   };
 }
+
+export function newPayment(userId: string, overrides: Record<string, unknown> = {}) {
+  return {
+    userId,
+    kind: 'plan',
+    planId: 'basic',
+    propertyId: null,
+    amountInr: 499,
+    utr: '412345678901',
+    status: 'pending',
+    rejectReason: null,
+    reviewedBy: null,
+    reviewedAt: null,
+    createdAt: serverTimestamp(),
+    ...overrides,
+  };
+}
