@@ -25,6 +25,7 @@ Full document with diagram: https://claude.ai/artifact/Lgt3U9iqripwCjgxcK27v2
 | Pro | ₹1,499 / month | Unlimited listings; 2 featured listings a month; own dealer page (onlineland.in/dealer/…); area leads shared |
 
 Add-ons: featured listing ₹199 / week. Owners: 1 listing free; each further listing ₹199 (live until sold or 90 days).
+Lead ownership: enquiries from a dealer's own share link (Basic/Pro) are the dealer's — shown in the app under "My leads" with a push notification; the form tells the customer their details go to the dealer and OnlineLand. Enquiries from OnlineLand's site/app search, ads or SEO stay with OnlineLand (D3); admin may forward them to Pro dealers. Admin sees all leads, tagged by dealer.
 Payment: UPI QR in the app → user enters UTR → admin approves → plan active 30 days → renewal reminder 3 days before expiry.
 
 ## Architecture
