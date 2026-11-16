@@ -59,8 +59,10 @@ void _registerForNotifications(Repository repo) {
     try {
       final messaging = FirebaseMessaging.instance;
       await messaging.requestPermission();
+      // ignore: deprecated_member_use
       final token = await messaging.getToken();
       if (token != null) await repo.registerDevice(token);
+      // ignore: deprecated_member_use
       messaging.onTokenRefresh.listen((t) => repo.registerDevice(t));
     } catch (_) {
       // Notifications are optional; the app works without them.
