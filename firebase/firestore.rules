@@ -36,6 +36,17 @@ service cloud.firestore {
           && request.resource.data.savedAt == request.time;
         allow update: if false;
       }
+
+      // Push-notification tokens for the Android app (one doc per device token).
+      match /devices/{token} {
+        allow read, delete: if signedIn() && uid() == userId;
+        allow create, update: if signedIn() && uid() == userId
+          && request.resource.data.keys().hasOnly(['token', 'platform', 'updatedAt'])
+          && request.resource.data.token == token
+          && token.size() <= 400
+          && request.resource.data.platform in ['android', 'ios', 'web']
+          && request.resource.data.updatedAt == request.time;
+      }
     }
 
     // ---------- Properties ----------

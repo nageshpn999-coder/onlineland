@@ -147,6 +147,9 @@ describe('reviewProperty', () => {
     expect(saved.reviewedBy).toBe(`admin-${run}`);
     const logs = await adminDb().collection('auditLogs').where('target', '==', `properties/${id}`).get();
     expect(logs.docs.map((d) => d.data().action)).toEqual(['property.approve']);
+    const notes = await adminDb().collection('notifications').where('propertyId', '==', id).get();
+    expect(notes.size).toBe(1);
+    expect(notes.docs[0]!.data()).toMatchObject({ userId: 'owner1', type: 'property.approved', code: data.code });
   });
   it('codes increase for each new approval', async () => {
     const id = `prop-b-${run}`;

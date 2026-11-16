@@ -155,6 +155,19 @@ describe('users', () => {
     await assertFails(getDoc(doc(as('buyer2', 'buyer'), 'users/buyer1/favorites/p-approved')));
     await assertFails(setDoc(doc(as('buyer2', 'buyer'), 'users/buyer1/favorites/x'), { savedAt: serverTimestamp() }));
   });
+  it('lets a user register only their own device tokens', async () => {
+    const me = as('buyer1', 'buyer');
+    const good = { token: 'tok-abc', platform: 'android', updatedAt: serverTimestamp() };
+    await assertSucceeds(setDoc(doc(me, 'users/buyer1/devices/tok-abc'), good));
+    await assertSucceeds(getDoc(doc(me, 'users/buyer1/devices/tok-abc')));
+    await assertSucceeds(deleteDoc(doc(me, 'users/buyer1/devices/tok-abc')));
+    await assertFails(setDoc(doc(as('buyer2', 'buyer'), 'users/buyer1/devices/tok-x'), { ...good, token: 'tok-x' }));
+    await assertFails(getDoc(doc(as('buyer2', 'buyer'), 'users/buyer1/devices/tok-abc')));
+    await assertFails(setDoc(doc(me, 'users/buyer1/devices/tok-abc'), { ...good, token: 'other' }));
+    await assertFails(setDoc(doc(me, 'users/buyer1/devices/tok-abc'), { ...good, role: 'admin' }));
+    await assertFails(setDoc(doc(me, 'users/buyer1/devices/tok-abc'), { ...good, platform: 'pc' }));
+    await assertFails(setDoc(doc(visitor(), 'users/buyer1/devices/tok-abc'), good));
+  });
 });
 
 describe('leads (enquiries)', () => {

@@ -5,7 +5,8 @@
  *  - onUserCreated   new sign-in → users/{uid} profile + "buyer" role
  *  - becomeOwner     a buyer who wants to post a property becomes an "owner"
  *  - setUserRole     admin assigns any role (dealer, agent, admin…)
- *  - reviewProperty  admin approves or rejects a pending listing (+ audit log, property code)
+ *  - reviewProperty  admin approves or rejects a pending listing (+ audit log, property code,
+ *                    + a push notification to the owner's phones)
  *
  * This package is deployed on its own, so it does not import @onlineland/shared;
  * tests check that ROLES below matches the shared list.
@@ -17,6 +18,7 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 import { HttpsError, onCall, type CallableRequest } from 'firebase-functions/v2/https';
 import * as functionsV1 from 'firebase-functions/v1';
 import { logger } from 'firebase-functions';
+import { getMessaging } from 'firebase-admin/messaging';
 
 export const REGION = 'asia-south1';
 export const ROLES = ['buyer', 'owner', 'dealer', 'agent', 'admin'] as const;
@@ -140,7 +142,7 @@ export const reviewProperty = onCall(async (req) => {
   const propertyRef = db.doc(`properties/${propertyId}`);
   const counterRef = db.doc('counters/properties');
 
-  return db.runTransaction(async (tx) => {
+  const result = await db.runTransaction(async (tx) => {
     const snap = await tx.get(propertyRef);
     if (!snap.exists) throw new HttpsError('not-found', 'Property not found.');
     const property = snap.data()!;
@@ -167,4 +169,42 @@ export const reviewProperty = onCall(async (req) => {
     audit(tx, { actorId: a.uid, action: 'property.reject', target: `properties/${propertyId}`, before: { status: property.status }, after });
     return { status: 'rejected', code: property.code ?? null };
   });
+
+  await notifyOwner(propertyId, result.status, result.code).catch((err) =>
+    logger.warn('reviewProperty: notification failed', { propertyId, err: String(err) }),
+  );
+  return result;
 });
+
+/**
+ * Best effort: record a notification and push it to the owner's registered devices.
+ * A failure here never undoes the review. Skipped in the emulator (no FCM there).
+ */
+async function notifyOwner(propertyId: string, status: string, code: string | null): Promise<void> {
+  const snap = await db.doc(`properties/${propertyId}`).get();
+  const ownerId = snap.get('ownerId');
+  if (typeof ownerId !== 'string') return;
+  const approved = status === 'approved';
+  const title = approved ? 'మీ ప్రాపర్టీ ఆమోదించబడింది' : 'మీ ప్రాపర్టీ తిరస్కరించబడింది';
+  const body = approved
+    ? `${code ?? ''} ఇప్పుడు OnlineLand లో అందరికీ కనిపిస్తుంది.`.trim()
+    : 'కారణం చూడటానికి యాప్‌లో "నా ప్రాపర్టీలు" తెరవండి.';
+  await db.collection('notifications').add({
+    userId: ownerId, type: `property.${status}`, propertyId, code, title, body,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+  if (process.env.FUNCTIONS_EMULATOR === 'true') return;
+  const devices = await db.collection(`users/${ownerId}/devices`).get();
+  const tokens = devices.docs.map((d) => d.id);
+  if (tokens.length === 0) return;
+  const res = await getMessaging().sendEachForMulticast({
+    tokens, notification: { title, body }, data: { propertyId, status, code: code ?? '' },
+    android: { priority: 'high' },
+  });
+  // Remove tokens FCM says are no longer valid.
+  await Promise.all(res.responses.map((r, i) => {
+    const c = r.error?.code;
+    return c === 'messaging/registration-token-not-registered' || c === 'messaging/invalid-registration-token'
+      ? devices.docs[i].ref.delete() : null;
+  }));
+}
