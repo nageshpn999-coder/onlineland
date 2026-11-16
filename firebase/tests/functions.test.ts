@@ -354,6 +354,7 @@ describe('revenue (D7)', () => {
     expect(await notesFor(`dealer-${run}`, 'plan.renew')).toBe(1);
     await call('runMaintenance', { nowMs: Date.now() + 58 * DAY });
     expect(await notesFor(`dealer-${run}`, 'plan.renew')).toBe(1); // only once per period
+    await adminDb().doc(`properties/paid-${run}`).update({ status: 'approved' }); // the paid listing went live
     await call('runMaintenance', { nowMs: Date.now() + 92 * DAY });
     expect((await adminDb().doc(`properties/paid-${run}`).get()).data()!.status).toBe('expired');
   });
