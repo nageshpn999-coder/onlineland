@@ -134,7 +134,7 @@
 - App Check enforcement and spam limits on enquiries — before launch (Phase 8).
 - Migration of the old site's `listings` from onlineland-28234 is **read-only and needs Nagesh's approval** (the old project is never modified).
 
-## Phase 6 — Android App ✅ (2026-11-17, awaiting review)
+## Phase 6 — Android App ✅ (17 Nov 2026, awaiting review)
 
 **Built** — Flutter app in `apps/android` (package `in.onlineland.onlineland`), Telugu default + English, brand colours.
 
