@@ -21,3 +21,21 @@ Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, Stri
   await tester.pumpAndSettle();
   return repo;
 }
+
+/// The home/listing list is the first scrollable on screen (tabs are kept alive in an IndexedStack).
+Future<void> scrollTo(WidgetTester tester, Finder target) async {
+  await tester.scrollUntilVisible(target, 300, scrollable: find.byType(Scrollable).first);
+  await tester.pumpAndSettle();
+}
+
+/// Bottom navigation: 0 Home, 1 Properties, 2 Saved, 3 Sell, 4 Profile.
+Future<void> tapTab(WidgetTester tester, int index) async {
+  await tester.tap(find.byType(NavigationDestination).at(index));
+  await tester.pumpAndSettle();
+}
+
+Future<void> openFirstListing(WidgetTester tester) async {
+  await scrollTo(tester, find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
+  await tester.tap(find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
+  await tester.pumpAndSettle();
+}

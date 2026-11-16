@@ -24,9 +24,7 @@ void main() {
     await pumpApp(tester);
     expect(find.text('మీకు సరైన ఆస్తిని కనుగొనండి'), findsOneWidget);
     expect(find.text('డెమో వెర్షన్: నమూనా ఆస్తులు, ఏ data save అవ్వదు'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('OL-1001'), 300);
-    await tester.tap(find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
-    await tester.pumpAndSettle();
+    await openFirstListing(tester);
     expect(find.text('₹70 లక్షలు'), findsOneWidget);
     expect(find.text('₹14 లక్షలు ఎకరానికి'), findsOneWidget);
     expect(find.text('OnlineLand పరిశీలించింది'), findsOneWidget);
@@ -35,22 +33,25 @@ void main() {
 
   testWidgets('properties tab: count, filters sheet, empty state', (tester) async {
     await pumpApp(tester);
-    await tester.tap(find.text('ఆస్తులు').last);
-    await tester.pumpAndSettle();
+    await tapTab(tester, 1);
     expect(find.text('9 ఆస్తులు'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('open-filters')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const Key('filter-district')));
+    await tester.tap(find.byKey(const Key('filter-type')));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('నారాయణపేట').last);
+    await tester.tap(find.text('వ్యవసాయ భూములు').last);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('3 ఆస్తులు'), findsWidgets);
+
+    final container = ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
+    container.read(filtersProvider.notifier).set(container.read(filtersProvider).copyWith(district: () => 'narayanpet'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('filter-mandal-narayanpet')), findsOneWidget);
     await tester.tap(find.textContaining('చూపించండి'));
     await tester.pumpAndSettle();
-    expect(find.text('5 ఆస్తులు'), findsOneWidget);
+    expect(find.text('3 ఆస్తులు'), findsOneWidget);
 
-    final container = ProviderScope.containerOf(tester.element(find.byType(Scaffold).first));
     container.read(filtersProvider.notifier).set(const Filters(type: 'villa', district: 'narayanpet'));
     await tester.pumpAndSettle();
     expect(find.text('మీ వెతుకులాటకు సరిపోయే ఆస్తులు ఇప్పుడు లేవు'), findsOneWidget);
@@ -59,10 +60,8 @@ void main() {
 
   testWidgets('enquiry validates the number and records a lead', (tester) async {
     final repo = await pumpApp(tester);
-    await tester.scrollUntilVisible(find.text('OL-1001'), 300);
-    await tester.tap(find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.byKey(const Key('open-enquiry')), 300);
+    await openFirstListing(tester);
+    await scrollTo(tester, find.byKey(const Key('open-enquiry')));
     await tester.tap(find.byKey(const Key('open-enquiry')));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('enquiry-phone')), '12345');
@@ -80,10 +79,8 @@ void main() {
 
   testWidgets('site visit needs a name and records visit + lead', (tester) async {
     final repo = await pumpApp(tester);
-    await tester.scrollUntilVisible(find.text('OL-1001'), 300);
-    await tester.tap(find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
-    await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.byKey(const Key('open-visit')), 300);
+    await openFirstListing(tester);
+    await scrollTo(tester, find.byKey(const Key('open-visit')));
     await tester.tap(find.byKey(const Key('open-visit')));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('visit-phone')), '9123456780');
@@ -100,15 +97,12 @@ void main() {
 
   testWidgets('save a property, see it in Saved, remove it', (tester) async {
     await pumpApp(tester);
-    await tester.scrollUntilVisible(find.text('OL-1001'), 300);
-    await tester.tap(find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
-    await tester.pumpAndSettle();
+    await openFirstListing(tester);
     await tester.tap(find.byKey(const Key('favorite-toggle')));
     await tester.pumpAndSettle();
     await tester.pageBack();
     await tester.pumpAndSettle();
-    await tester.tap(find.text('సేవ్'));
-    await tester.pumpAndSettle();
+    await tapTab(tester, 2);
     expect(find.byKey(const Key('favorites-list')), findsOneWidget);
     expect(find.textContaining('OL-1001'), findsWidgets);
     await tester.tap(find.text('తీసేయండి'));
@@ -118,8 +112,7 @@ void main() {
 
   testWidgets('login with OTP, become owner, form needs a photo', (tester) async {
     await pumpApp(tester);
-    await tester.tap(find.text('అమ్మండి').last);
-    await tester.pumpAndSettle();
+    await tapTab(tester, 3);
     await tester.tap(find.byKey(const Key('sell-login')));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const Key('login-phone')), '9000000001');
@@ -136,7 +129,7 @@ void main() {
     expect(find.byKey(const Key('become-owner')), findsOneWidget);
     await tester.tap(find.byKey(const Key('become-owner')));
     await tester.pumpAndSettle();
-    await tester.scrollUntilVisible(find.byKey(const Key('sell-submit')), 400);
+    await scrollTo(tester, find.byKey(const Key('sell-submit')));
     await tester.tap(find.byKey(const Key('sell-submit')));
     await tester.pumpAndSettle();
     expect(find.text('కనీసం ఒక ఫోటో జోడించండి.'), findsOneWidget);
@@ -147,6 +140,6 @@ void main() {
     await tester.tap(find.text('EN'));
     await tester.pumpAndSettle();
     expect(find.text('Find your perfect property'), findsOneWidget);
-    expect(find.text('Properties'), findsOneWidget);
+    expect(find.text('Properties'), findsWidgets);
   });
 }

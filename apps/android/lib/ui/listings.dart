@@ -30,13 +30,15 @@ class ListingsTab extends ConsumerWidget {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
         child: Row(children: [
-          SegmentedButton<String>(
-            segments: [ButtonSegment(value: 'sale', label: Text(s.buy)), ButtonSegment(value: 'rent', label: Text(s.rent))],
-            selected: {f.purpose},
-            showSelectedIcon: false,
-            onSelectionChanged: (v) => notifier.set(f.copyWith(purpose: v.first)),
+          Expanded(
+            child: SegmentedButton<String>(
+              segments: [ButtonSegment(value: 'sale', label: Text(s.buy)), ButtonSegment(value: 'rent', label: Text(s.rent))],
+              selected: {f.purpose},
+              showSelectedIcon: false,
+              onSelectionChanged: (v) => notifier.set(f.copyWith(purpose: v.first)),
+            ),
           ),
-          const Spacer(),
+          const SizedBox(width: 10),
           Badge(
             isLabelVisible: f.activeCount > 0,
             label: Text('${f.activeCount}'),
