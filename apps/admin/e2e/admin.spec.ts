@@ -23,13 +23,15 @@ async function otpFor(phone: string): Promise<string> {
   throw new Error(`No OTP for ${phone}`);
 }
 
-async function login(page: Page, mobile = '9000000009', english = true) {
+async function login(page: Page, mobile = '9000000009', english = true, staff = true) {
   await page.goto('/login/');
   if (english) await page.getByRole('button', { name: 'English' }).click();
   await page.getByLabel(english ? 'Mobile number' : 'మొబైల్ నంబర్').fill(mobile);
   await page.getByRole('button', { name: english ? 'Send OTP' : 'OTP పంపండి' }).click();
   await page.getByLabel('OTP').fill(await otpFor(`+91${mobile}`));
   await page.getByRole('button', { name: english ? 'Sign in' : 'లాగిన్ అవ్వండి' }).click();
+  // Wait until sign-in has finished and the dashboard opened (staff only).
+  if (staff) await page.waitForURL((u) => !u.pathname.startsWith('/login'), { timeout: 20_000 });
 }
 
 test('signing in with OTP shows the overview with today’s numbers (Telugu)', async ({ page }) => {
@@ -44,7 +46,7 @@ test('signing in with OTP shows the overview with today’s numbers (Telugu)', a
 });
 
 test('a buyer cannot enter the dashboard', async ({ page }) => {
-  await login(page, '9000000202');
+  await login(page, '9000000202', true, false);
   await expect(page.getByText('This number does not have admin access.')).toBeVisible();
   await page.goto('/listings/');
   await expect(page).toHaveURL(/\/login\/$/);

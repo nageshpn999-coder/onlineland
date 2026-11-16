@@ -178,6 +178,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.descendant(of: find.byKey(const Key('current-plan')), matching: find.text('బేసిక్')), findsOneWidget);
+    await scrollTo(tester, find.textContaining('UTR 412345678901'));
     expect(find.textContaining('UTR 412345678901'), findsOneWidget);
     expect((await repo.myPayments()).single.amountInr, 499);
     expect(repo.currentUser!.role, 'dealer');
