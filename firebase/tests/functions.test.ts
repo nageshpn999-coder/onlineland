@@ -73,6 +73,10 @@ async function callError(name: string, data: unknown): Promise<string> {
 
 const run = Date.now().toString(36);
 
+/** A stored listing with admin-SDK timestamps (for writing through firebase-admin). */
+const adminListing = (ownerId: string, overrides: Record<string, unknown> = {}) =>
+  storedListing(ownerId, { createdAt: Timestamp.now(), updatedAt: Timestamp.now(), ...overrides });
+
 describe('roles are defined once', () => {
   it('functions ROLES matches @onlineland/shared ROLES', () => {
     const src = readFileSync(fileURLToPath(new URL('../functions/src/common.ts', import.meta.url)), 'utf8');
@@ -245,8 +249,8 @@ describe('revenue (D7)', () => {
 
   it('featured payment puts a listing on top for 7 days; listing payment keeps it live 90 days', async () => {
     const uid = `owner-pay-${run}`;
-    await adminDb().doc(`properties/feat-${run}`).set(storedListing(uid, { status: 'approved', code: 'OL-9001' }));
-    await adminDb().doc(`properties/paid-${run}`).set(storedListing(uid));
+    await adminDb().doc(`properties/feat-${run}`).set(adminListing(uid, { status: 'approved', code: 'OL-9001' }));
+    await adminDb().doc(`properties/paid-${run}`).set(adminListing(uid));
     await payment(`pay-feat-${run}`, { userId: uid, kind: 'featured', propertyId: `feat-${run}`, amountInr: 199 });
     await payment(`pay-list-${run}`, { userId: uid, kind: 'listing', propertyId: `paid-${run}`, amountInr: 199 });
     await signInAs(`admin-${run}`);
@@ -262,7 +266,7 @@ describe('revenue (D7)', () => {
   it('owner: 1 free listing; the 2nd needs payment; a paid one is approved', async () => {
     const uid = `owner-limit-${run}`;
     for (const n of [1, 2]) {
-      await adminDb().doc(`properties/lim${n}-${run}`).set(storedListing(uid));
+      await adminDb().doc(`properties/lim${n}-${run}`).set(adminListing(uid));
     }
     await signInAs(`admin-${run}`);
     await call('reviewProperty', { propertyId: `lim1-${run}`, decision: 'approve' });
@@ -275,14 +279,14 @@ describe('revenue (D7)', () => {
   it('dealer without a plan: 2 listings; OnlineLand listings have no limit', async () => {
     const uid = `free-dealer-${run}`;
     for (const n of [1, 2, 3]) {
-      await adminDb().doc(`properties/fd${n}-${run}`).set(storedListing(uid, { source: 'dealer' }));
+      await adminDb().doc(`properties/fd${n}-${run}`).set(adminListing(uid, { source: 'dealer' }));
     }
     await signInAs(`admin-${run}`);
     await call('reviewProperty', { propertyId: `fd1-${run}`, decision: 'approve' });
     await call('reviewProperty', { propertyId: `fd2-${run}`, decision: 'approve' });
     expect(await callError('reviewProperty', { propertyId: `fd3-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
     for (const n of [1, 2, 3]) {
-      await adminDb().doc(`properties/ol${n}-${run}`).set(storedListing('admin-own', { source: 'onlineland' }));
+      await adminDb().doc(`properties/ol${n}-${run}`).set(adminListing('admin-own', { source: 'onlineland' }));
       await call('reviewProperty', { propertyId: `ol${n}-${run}`, decision: 'approve' });
     }
   });
@@ -306,7 +310,7 @@ describe('revenue (D7)', () => {
     await signInAs(`admin-${run}`);
     await call('reviewPayment', { paymentId: `pay-pro-${run}`, decision: 'approve' });
     for (const n of [1, 2, 3]) {
-      await adminDb().doc(`properties/pro${n}-${run}`).set(storedListing(uid, { source: 'dealer', status: 'approved', code: `OL-80${n}` }));
+      await adminDb().doc(`properties/pro${n}-${run}`).set(adminListing(uid, { source: 'dealer', status: 'approved', code: `OL-80${n}` }));
     }
     await signInAs(uid);
     expect(((await call('useFeaturedSlot', { propertyId: `pro1-${run}` })).data as { slotsLeft: number }).slotsLeft).toBe(1);
@@ -329,7 +333,7 @@ describe('revenue (D7)', () => {
 
   it('a lead from a dealer link is counted and the dealer is notified', async () => {
     const uid = `dealer-${run}`;
-    await adminDb().doc(`properties/dl-${run}`).set(storedListing(uid, { source: 'dealer', status: 'approved', code: 'OL-7001' }));
+    await adminDb().doc(`properties/dl-${run}`).set(adminListing(uid, { source: 'dealer', status: 'approved', code: 'OL-7001' }));
     await adminDb().collection('leads').add({
       propertyId: `dl-${run}`, channel: 'form', name: 'Suresh', phone: '9876543210', message: null, locale: 'te',
       userId: null, stage: 'new', assignedAgentId: null, notes: null, refId: uid, createdAt: Timestamp.now(),
