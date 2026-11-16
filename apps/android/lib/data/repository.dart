@@ -35,6 +35,27 @@ abstract class Repository {
   Future<String> submitListing(ListingDraft draft, List<Uint8List> photos, {void Function(int done, int total)? onProgress});
   Future<List<Property>> myListings();
 
+  // ---- revenue (D7) ----
+  /// Plans and prices (Firestore values over the defaults).
+  Future<RevenueConfig> revenueConfig();
+
+  /// The signed-in user's plan and badge, or null if they never had one.
+  Future<DealerInfo?> myDealer();
+
+  /// Records a UPI payment for admin to check. kind: plan | featured | listing.
+  Future<void> submitPayment({required String kind, String? planId, String? propertyId, required int amountInr, required String utr});
+  Future<List<PaymentInfo>> myPayments();
+
+  /// Enquiries from the user's own share links (needs an active paid plan).
+  Future<List<LeadInfo>> myLeads();
+  Future<ListingStats> listingStats(String propertyId);
+
+  /// Pro plan: put one live listing on top (uses a featured slot).
+  Future<void> useFeaturedSlot(String propertyId);
+
+  /// Counts a view / share for the owner's stats. Never throws.
+  Future<void> track(String propertyId, String type);
+
   // ---- favorites sync + notifications (no-ops in demo) ----
   Future<void> syncFavorite(String propertyId, bool saved);
   Future<void> registerDevice(String token);

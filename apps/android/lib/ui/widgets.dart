@@ -201,3 +201,10 @@ void showSnack(BuildContext context, String text) {
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(text)));
 }
+
+/// Opens WhatsApp with a ready message and link (the user picks the chat or group).
+Future<void> shareOnWhatsApp(String text, String link) =>
+    launchUrl(Uri.parse('https://wa.me/?text=${Uri.encodeComponent('$text\n$link')}'), mode: LaunchMode.externalApplication);
+
+/// dd/mm/yyyy
+String shortDate(DateTime d) => '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';

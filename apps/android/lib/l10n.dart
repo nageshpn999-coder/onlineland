@@ -205,4 +205,57 @@ class S {
         'admin' => _('అడ్మిన్', 'Admin'),
         _ => _('కొనుగోలుదారు', 'Buyer'),
       };
+
+  // plans, payments, dealer leads (Phase 7, decision D7)
+  String get myPlan => _('నా ప్లాన్', 'My plan');
+  String get myLeads => _('నా Leads', 'My leads');
+  String get currentPlan => _('ప్రస్తుత ప్లాన్', 'Current plan');
+  String get freePlanNow => _('మీరు ఉచిత ప్లాన్‌లో ఉన్నారు.', 'You are on the free plan.');
+  String validTill(String date) => _('$date వరకు active', 'Active until $date');
+  String get choosePlan => _('ఈ ప్లాన్ తీసుకోండి', 'Choose this plan');
+  String get renewPlan => _('Renew చేయండి', 'Renew');
+  String perMonth(String price) => _('$price / నెల', '$price / month');
+  String listingsN(int n) => n == 0 ? _('అపరిమిత listings', 'Unlimited listings') : _('$n listings', '$n listings');
+  String get featOwnNumber => _('షేర్ లింక్‌లో మీ సొంత నంబర్', 'Your own number on shared links');
+  String get featBadge => _('✓ Verified బ్యాడ్జ్', '✓ Verified badge');
+  String get featStats => _('Views, enquiries లెక్కలు', 'Views and enquiry stats');
+  String get featLeads => _('మీ లింక్ ద్వారా వచ్చిన leads', 'Leads from your links');
+  String featFeatured(int n) => _('నెలకు $n featured listings', '$n featured listings a month');
+  String get featDealerPage => _('సొంత dealer పేజీ', 'Your own dealer page');
+  String get featAreaLeads => _('మీ ఏరియా leads కూడా', 'Leads in your area too');
+  String payFor(String what, String amount) => _('$what — $amount', '$what — $amount');
+  String get payStep1 => _('1. UPI తో చెల్లించండి', '1. Pay by UPI');
+  String get payStep2 => _('2. UTR నంబర్ ఇవ్వండి', '2. Enter the UTR number');
+  String get payWithUpi => _('UPI యాప్‌తో చెల్లించండి', 'Pay with a UPI app');
+  String get upiCopied => _('UPI ID కాపీ అయింది', 'UPI ID copied');
+  String get noUpiYet => _('చెల్లింపు వివరాల కోసం WhatsApp చేయండి.', 'WhatsApp us for payment details.');
+  String get utrLabel => _('UTR / Reference నంబర్ (12 అంకెలు)', 'UTR / reference number (12 digits)');
+  String get utrHelp => _('చెల్లించిన తర్వాత GPay/PhonePe లో "UPI Ref No" చూడండి.', 'After paying, find "UPI Ref No" in GPay/PhonePe.');
+  String get utrInvalid => _('12 అంకెల UTR నంబర్ ఇవ్వండి.', 'Enter the 12-digit UTR number.');
+  String get sendPayment => _('చెల్లింపు వివరాలు పంపండి', 'Send payment details');
+  String get paymentSent => _('అందింది! OnlineLand చెక్ చేసి ఆమోదించగానే notification వస్తుంది.', "Received! You'll get a notification once OnlineLand confirms it.");
+  String get paymentSentDemo => _('డెమో: చెల్లింపు వెంటనే ఆమోదించబడింది.', 'Demo: payment approved at once.');
+  String get paymentHistory => _('చెల్లింపులు', 'Payments');
+  String payStatus(String st) => switch (st) {
+        'approved' => _('ఆమోదించారు', 'Approved'),
+        'rejected' => _('తిరస్కరించారు', 'Rejected'),
+        _ => _('చెక్ చేస్తున్నాం', 'Being checked'),
+      };
+  String payKind(String k) => switch (k) {
+        'featured' => _('Featured వారం', 'Featured week'),
+        'listing' => _('అదనపు listing', 'Extra listing'),
+        _ => _('ప్లాన్', 'Plan'),
+      };
+  String get share => _('WhatsApp లో షేర్', 'Share on WhatsApp');
+  String shareText(String title, String price, String code) =>
+      _('$title — $price ($code), OnlineLand లో చూడండి:', '$title — $price ($code), see it on OnlineLand:');
+  String stats(int v, int sh, int l) => _('👁 $v · షేర్లు $sh · enquiries $l', '👁 $v · shares $sh · enquiries $l');
+  String get feature => _('పైన చూపించు (Featured)', 'Feature on top');
+  String featureFree(int left) => _('Featured slot వాడండి ($left మిగిలాయి)', 'Use a featured slot ($left left)');
+  String get featuredDone => _('ఈ ప్రాపర్టీ 7 రోజులు పైన కనిపిస్తుంది.', 'This property will show on top for 7 days.');
+  String get payListing => _('Live చేయడానికి చెల్లించండి', 'Pay to go live');
+  String payListingNote(int free) => _('ఓనర్‌కు $free listing ఉచితం. తర్వాతి వాటికి చిన్న ఫీజు.', 'Owners get $free listing free; a small fee after that.');
+  String get leadsNeedPlan => _('మీ షేర్ లింక్ ద్వారా వచ్చిన leads చూడటానికి Basic లేదా Pro ప్లాన్ కావాలి.', 'You need the Basic or Pro plan to see leads from your shared links.');
+  String get leadsEmpty => _('ఇంకా leads రాలేదు. మీ ప్రాపర్టీలను WhatsApp లో షేర్ చేయండి.', 'No leads yet. Share your properties on WhatsApp.');
+  String get seePlans => _('ప్లాన్‌లు చూడండి', 'See plans');
 }

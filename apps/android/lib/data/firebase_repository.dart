@@ -271,6 +271,127 @@ class FirebaseRepository implements Repository {
     return snap.docs.map((d) => fromDoc(d)).toList();
   }
 
+  // ---------- revenue (D7) ----------
+
+  static DateTime? _date(Object? v) => v is Timestamp ? v.toDate() : null;
+
+  @override
+  Future<RevenueConfig> revenueConfig() async {
+    final results = await Future.wait([_db.collection('plans').get(), _db.doc('settings/pricing').get()]);
+    final planSnap = results[0] as QuerySnapshot<Map<String, dynamic>>;
+    final pricingSnap = results[1] as DocumentSnapshot<Map<String, dynamic>>;
+    final plans = Map<String, PlanConfig>.of(defaultPlans);
+    for (final d in planSnap.docs) {
+      final base = defaultPlans[d.id];
+      if (base != null) plans[d.id] = base.merge(d.data());
+    }
+    return RevenueConfig(plans: plans, pricing: Pricing.fromMap(pricingSnap.data() ?? const {}));
+  }
+
+  @override
+  Future<DealerInfo?> myDealer() async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+    final d = (await _db.doc('dealers/${user.uid}').get()).data();
+    if (d == null) return null;
+    return DealerInfo(
+      planId: (d['planId'] as String?) ?? 'free',
+      validUntil: _date(d['validUntil']),
+      verified: d['verified'] == true,
+      featuredSlots: (d['featuredSlots'] as num?)?.toInt() ?? 0,
+      featuredUsed: (d['featuredUsed'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  @override
+  Future<void> submitPayment({required String kind, String? planId, String? propertyId, required int amountInr, required String utr}) async {
+    final user = _auth.currentUser;
+    if (user == null) throw RepoException('unauthenticated', 'Sign in first');
+    if (!utrPattern.hasMatch(utr)) throw RepoException('invalid-argument', 'UTR must be 12 digits');
+    await _db.collection('paymentRequests').add({
+      'userId': user.uid,
+      'kind': kind,
+      'planId': kind == 'plan' ? planId : null,
+      'propertyId': kind == 'plan' ? null : propertyId,
+      'amountInr': amountInr,
+      'utr': utr,
+      'status': 'pending',
+      'rejectReason': null,
+      'reviewedBy': null,
+      'reviewedAt': null,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Future<List<PaymentInfo>> myPayments() async {
+    final user = _auth.currentUser;
+    if (user == null) return [];
+    final snap = await _db.collection('paymentRequests').where('userId', isEqualTo: user.uid).orderBy('createdAt', descending: true).limit(30).get();
+    return snap.docs.map((doc) {
+      final d = doc.data();
+      return PaymentInfo(
+        id: doc.id,
+        kind: (d['kind'] as String?) ?? 'plan',
+        planId: d['planId'] as String?,
+        propertyId: d['propertyId'] as String?,
+        amountInr: (d['amountInr'] as num?)?.toInt() ?? 0,
+        utr: (d['utr'] as String?) ?? '',
+        status: (d['status'] as String?) ?? 'pending',
+        rejectReason: d['rejectReason'] as String?,
+        createdAt: _date(d['createdAt']) ?? DateTime.now(),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<List<LeadInfo>> myLeads() async {
+    final user = _auth.currentUser;
+    if (user == null) return [];
+    try {
+      final snap = await _db.collection('leads').where('refId', isEqualTo: user.uid).orderBy('createdAt', descending: true).limit(100).get();
+      return snap.docs.map((doc) {
+        final d = doc.data();
+        return LeadInfo(
+          id: doc.id,
+          propertyId: d['propertyId'] as String?,
+          channel: (d['channel'] as String?) ?? 'form',
+          name: d['name'] as String?,
+          phone: d['phone'] as String?,
+          message: d['message'] as String?,
+          createdAt: _date(d['createdAt']) ?? DateTime.now(),
+        );
+      }).toList();
+    } on FirebaseException catch (e) {
+      throw RepoException(e.code, e.message ?? e.code);
+    }
+  }
+
+  @override
+  Future<ListingStats> listingStats(String propertyId) async {
+    final d = (await _db.doc('propertyStats/$propertyId').get()).data() ?? const {};
+    int n(String k) => (d[k] as num?)?.toInt() ?? 0;
+    return ListingStats(views: n('views'), shares: n('shares'), leads: n('leads'));
+  }
+
+  @override
+  Future<void> useFeaturedSlot(String propertyId) async {
+    try {
+      await _functions.httpsCallable('useFeaturedSlot').call({'propertyId': propertyId});
+    } on FirebaseFunctionsException catch (e) {
+      throw RepoException(e.code, e.message ?? e.code);
+    }
+  }
+
+  @override
+  Future<void> track(String propertyId, String type) async {
+    try {
+      await _functions.httpsCallable('trackEvent').call({'propertyId': propertyId, 'type': type});
+    } catch (_) {
+      // stats are best effort
+    }
+  }
+
   @override
   Future<void> syncFavorite(String propertyId, bool saved) async {
     final user = _auth.currentUser;

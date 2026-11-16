@@ -7,6 +7,7 @@ import '../data/format.dart';
 import '../data/models.dart';
 import '../state.dart';
 import '../theme.dart';
+import 'plan.dart';
 import 'widgets.dart';
 
 class ProfileTab extends ConsumerWidget {
@@ -51,6 +52,29 @@ class ProfileTab extends ConsumerWidget {
         selected: {locale},
         onSelectionChanged: (v) => ref.read(localeProvider.notifier).set(v.first),
       ),
+      if (user != null) ...[
+        const SizedBox(height: 16),
+        Card(
+          child: Column(children: [
+            ListTile(
+              key: const Key('open-plan'),
+              leading: const Icon(Icons.workspace_premium, color: Brand.green),
+              title: Text(s.myPlan),
+              subtitle: _PlanSummary(),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/plan'),
+            ),
+            if (user.canPost)
+              ListTile(
+                key: const Key('open-leads'),
+                leading: const Icon(Icons.inbox, color: Brand.blue),
+                title: Text(s.myLeads),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/leads'),
+              ),
+          ]),
+        ),
+      ],
       if (user != null && user.canPost) ...[
         const SizedBox(height: 22),
         Text(s.myListings, style: Theme.of(context).textTheme.titleMedium),
@@ -94,14 +118,63 @@ class _MyListings extends ConsumerWidget {
   }
 }
 
+class _PlanSummary extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = ref.watch(stringsProvider);
+    final d = ref.watch(myDealerProvider).value;
+    final plans = ref.watch(revenueConfigProvider).value?.plans ?? defaultPlans;
+    if (d == null || !d.active(DateTime.now())) return Text(s.freePlanNow);
+    return Text('${plans[d.planId]?.name(s.te) ?? d.planId} · ${s.validTill(shortDate(d.validUntil!))}');
+  }
+}
+
 class _MyListingTile extends ConsumerWidget {
   const _MyListingTile({required this.property});
   final Property property;
+
+  Future<void> _feature(BuildContext context, WidgetRef ref) async {
+    final s = ref.read(stringsProvider);
+    final dealer = ref.read(myDealerProvider).value;
+    final config = await ref.read(revenueConfigProvider.future);
+    if (!context.mounted) return;
+    if (dealer != null && dealer.active(DateTime.now()) && dealer.slotsLeft > 0) {
+      try {
+        await ref.read(repositoryProvider).useFeaturedSlot(property.id);
+        refreshRevenue(ref);
+        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.featuredDone)));
+      } catch (_) {
+        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.submitError)));
+      }
+      return;
+    }
+    await showPaySheet(context, ref,
+        kind: 'featured', propertyId: property.id, title: '${s.payKind('featured')} ${property.code ?? ''}'.trim(),
+        amountInr: config.pricing.featuredWeekInr, pricing: config.pricing);
+  }
+
+  Future<void> _payListing(BuildContext context, WidgetRef ref) async {
+    final s = ref.read(stringsProvider);
+    final config = await ref.read(revenueConfigProvider.future);
+    if (!context.mounted) return;
+    await showPaySheet(context, ref,
+        kind: 'listing', propertyId: property.id, title: s.payKind('listing'), amountInr: config.pricing.ownerListingInr, pricing: config.pricing);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(stringsProvider);
     final p = property;
+    final user = ref.watch(authProvider).value;
+    final dealer = ref.watch(myDealerProvider).value;
+    final mine = ref.watch(myListingsProvider).value ?? const <Property>[];
+    final pricing = ref.watch(revenueConfigProvider).value?.pricing ?? const Pricing();
+    final live = p.status == 'approved' && p.code != null;
+    final planActive = dealer != null && dealer.active(DateTime.now());
+    // An owner without a plan who already has their free listing(s) live pays for the next one.
+    final liveCount = mine.where((m) => m.status == 'approved').length;
+    final needsPayment = p.status == 'pending' && user?.role == 'owner' && !planActive && liveCount >= pricing.ownerFreeListings;
+    final stats = live ? ref.watch(listingStatsProvider(p.id)).value : null;
     final color = switch (p.status) {
       'approved' => Brand.green,
       'rejected' => Colors.red.shade700,
@@ -109,18 +182,54 @@ class _MyListingTile extends ConsumerWidget {
     };
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
-      child: ListTile(
-        key: Key('my-listing-${p.id}'),
-        leading: Icon(categoryIcon(p.category), color: Brand.blue),
-        title: Text(p.title(s.te), style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('${byId(categories, p.category)?.label(s.te) ?? ''} · ${formatPrice(p.total, s.te)}'),
-          Text(s.statusName(p.status), style: TextStyle(color: color, fontWeight: FontWeight.w700)),
-          if (p.status == 'rejected' && p.rejectReason != null) Text(s.rejectReason(p.rejectReason!)),
-        ]),
-        isThreeLine: true,
-        onTap: p.status == 'approved' && p.code != null ? () => context.push('/property/${p.code}') : null,
-      ),
+      child: Column(children: [
+        ListTile(
+          key: Key('my-listing-${p.id}'),
+          leading: Icon(categoryIcon(p.category), color: Brand.blue),
+          title: Text(p.title(s.te), style: const TextStyle(fontWeight: FontWeight.w600)),
+          subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('${byId(categories, p.category)?.label(s.te) ?? ''} · ${formatPrice(p.total, s.te)}'),
+            Text('${s.statusName(p.status)}${p.isFeatured ? ' · ★' : ''}', style: TextStyle(color: color, fontWeight: FontWeight.w700)),
+            if (p.status == 'rejected' && p.rejectReason != null) Text(s.rejectReason(p.rejectReason!)),
+            if (stats != null) Text(s.stats(stats.views, stats.shares, stats.leads), key: Key('stats-${p.id}'), style: const TextStyle(color: Brand.inkSoft)),
+            if (needsPayment) Text(s.payListingNote(pricing.ownerFreeListings), style: const TextStyle(color: Brand.inkSoft)),
+          ]),
+          isThreeLine: true,
+          onTap: live ? () => context.push('/property/${p.code}') : null,
+        ),
+        if (live || needsPayment)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+            child: Wrap(spacing: 8, runSpacing: 4, children: [
+              if (live)
+                OutlinedButton.icon(
+                  key: Key('share-${p.id}'),
+                  onPressed: () {
+                    ref.read(repositoryProvider).track(p.id, 'share');
+                    shareOnWhatsApp(
+                      s.shareText(p.title(s.te), formatPrice(p.total, s.te), p.code!),
+                      shareLink(p.code!, ref.read(localeProvider), refId: user?.uid),
+                    );
+                  },
+                  icon: const Icon(Icons.share, size: 18),
+                  label: Text(s.share),
+                ),
+              if (live && !p.isFeatured)
+                OutlinedButton.icon(
+                  key: Key('feature-${p.id}'),
+                  onPressed: () => _feature(context, ref),
+                  icon: const Icon(Icons.star_outline, size: 18),
+                  label: Text(planActive && dealer.slotsLeft > 0 ? s.featureFree(dealer.slotsLeft) : '${s.feature} · ₹${pricing.featuredWeekInr}'),
+                ),
+              if (needsPayment)
+                FilledButton(
+                  key: Key('pay-listing-${p.id}'),
+                  onPressed: () => _payListing(context, ref),
+                  child: Text('${s.payListing} · ₹${pricing.ownerListingInr}'),
+                ),
+            ]),
+          ),
+      ]),
     );
   }
 }

@@ -120,6 +120,69 @@ class DemoRepository implements Repository {
     return _items.where((p) => p.ownerId == u.uid).toList()..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
+  // ---------- revenue (demo: payments are approved at once so every screen can be tried) ----------
+
+  final _payments = <PaymentInfo>[];
+  DealerInfo? _dealer;
+  int _pay = 0;
+
+  @override
+  Future<RevenueConfig> revenueConfig() async => const RevenueConfig(pricing: Pricing(upiId: 'onlineland@demo'));
+
+  @override
+  Future<DealerInfo?> myDealer() async => _user == null ? null : _dealer;
+
+  @override
+  Future<void> submitPayment({required String kind, String? planId, String? propertyId, required int amountInr, required String utr}) async {
+    final u = _user;
+    if (u == null) throw RepoException('unauthenticated', 'Sign in first');
+    if (!utrPattern.hasMatch(utr)) throw RepoException('invalid-argument', 'UTR must be 12 digits');
+    _payments.insert(0, PaymentInfo(
+      id: 'demo-pay-${++_pay}', kind: kind, planId: planId, propertyId: propertyId, amountInr: amountInr, utr: utr,
+      status: 'approved', createdAt: DateTime.now(),
+    ));
+    if (kind == 'plan' && planId != null) {
+      final plan = defaultPlans[planId]!;
+      _dealer = DealerInfo(planId: planId, validUntil: DateTime.now().add(Duration(days: plan.durationDays)), featuredSlots: plan.featuredSlots);
+      if (u.role == 'buyer' || u.role == 'owner') {
+        _user = AppUser(uid: u.uid, phone: u.phone, role: 'dealer');
+        _auth.add(_user);
+      }
+    }
+  }
+
+  @override
+  Future<List<PaymentInfo>> myPayments() async => List.of(_payments);
+
+  @override
+  Future<List<LeadInfo>> myLeads() async {
+    final d = _dealer;
+    if (_user == null || d == null || !d.active(DateTime.now()) || !defaultPlans[d.planId]!.ownContact) {
+      throw RepoException('permission-denied', 'Needs an active plan');
+    }
+    return [
+      LeadInfo(id: 'demo-lead-1', propertyId: 'seed-1001', channel: 'form', name: 'Lakshmi', phone: '9876500000', message: 'ధర తగ్గుతుందా?', createdAt: _now.subtract(const Duration(hours: 3))),
+      LeadInfo(id: 'demo-lead-2', propertyId: 'seed-1002', channel: 'whatsapp', createdAt: _now.subtract(const Duration(days: 1))),
+    ];
+  }
+
+  @override
+  Future<ListingStats> listingStats(String propertyId) async {
+    final h = propertyId.codeUnits.fold<int>(7, (a, c) => (a * 31 + c) % 997);
+    return ListingStats(views: 20 + h % 80, shares: h % 9, leads: h % 4);
+  }
+
+  @override
+  Future<void> useFeaturedSlot(String propertyId) async {
+    final d = _dealer;
+    if (d == null || !d.active(DateTime.now())) throw RepoException('failed-precondition', 'Plan not active');
+    if (d.slotsLeft <= 0) throw RepoException('resource-exhausted', 'No featured slots left');
+    _dealer = DealerInfo(planId: d.planId, validUntil: d.validUntil, verified: d.verified, featuredSlots: d.featuredSlots, featuredUsed: d.featuredUsed + 1);
+  }
+
+  @override
+  Future<void> track(String propertyId, String type) async {}
+
   @override
   Future<void> syncFavorite(String propertyId, bool saved) async {}
 

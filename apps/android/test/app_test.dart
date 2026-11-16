@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/data/filters.dart';
 import 'package:onlineland/state.dart';
+import 'package:onlineland/ui/profile.dart';
 import 'package:onlineland/ui/sell.dart';
 
 import 'helpers.dart';
@@ -142,5 +143,62 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Find your perfect property'), findsOneWidget);
     expect(find.text('Properties'), findsWidgets);
+  });
+
+  testWidgets('plan: pay by UPI with UTR, plan becomes active, dealer leads open', (tester) async {
+    final repo = await pumpApp(tester);
+    await tapTab(tester, 4);
+    await tester.tap(find.byKey(const Key('profile-login')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('login-phone')), '9000000001');
+    await tester.tap(find.byKey(const Key('login-send')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('login-otp')), '123456');
+    await tester.tap(find.byKey(const Key('login-verify')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('open-plan')));
+    await tester.pumpAndSettle();
+    expect(find.text('మీరు ఉచిత ప్లాన్‌లో ఉన్నారు.'), findsOneWidget);
+    expect(find.text('₹499 / నెల'), findsOneWidget);
+    expect(find.text('₹1,499 / నెల'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('choose-basic')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('pay-upi')), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('utr-field')), '12345');
+    await tester.tap(find.byKey(const Key('send-payment')));
+    await tester.pumpAndSettle();
+    expect(find.text('12 అంకెల UTR నంబర్ ఇవ్వండి.'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('utr-field')), '412345678901');
+    await tester.tap(find.byKey(const Key('send-payment')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('payment-sent')), findsOneWidget);
+    await tester.tap(find.text('మూసివేయండి'));
+    await tester.pumpAndSettle();
+
+    expect(find.descendant(of: find.byKey(const Key('current-plan')), matching: find.text('బేసిక్')), findsOneWidget);
+    expect(find.textContaining('UTR 412345678901'), findsOneWidget);
+    expect((await repo.myPayments()).single.amountInr, 499);
+    expect(repo.currentUser!.role, 'dealer');
+
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, find.byKey(const Key('open-leads')), within: find.byType(ProfileTab));
+    await tester.tap(find.byKey(const Key('open-leads')));
+    await tester.pumpAndSettle();
+    expect(find.text('Lakshmi'), findsOneWidget);
+  });
+
+  testWidgets('a buyer without a plan sees why leads are locked', (tester) async {
+    final repo = await pumpApp(tester);
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await repo.becomeOwner();
+    await tester.pumpAndSettle();
+    await tapTab(tester, 4);
+    await scrollTo(tester, find.byKey(const Key('open-leads')), within: find.byType(ProfileTab));
+    await tester.tap(find.byKey(const Key('open-leads')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('leads-need-plan')), findsOneWidget);
   });
 }

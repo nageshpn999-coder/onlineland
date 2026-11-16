@@ -123,3 +123,32 @@ class FavoritesNotifier extends Notifier<List<FavoriteItem>> {
 }
 
 final favoritesProvider = NotifierProvider<FavoritesNotifier, List<FavoriteItem>>(FavoritesNotifier.new);
+
+// ---------- revenue (D7) ----------
+
+final revenueConfigProvider = FutureProvider<RevenueConfig>((ref) => ref.watch(repositoryProvider).revenueConfig());
+
+final myDealerProvider = FutureProvider<DealerInfo?>((ref) {
+  ref.watch(authProvider);
+  return ref.watch(repositoryProvider).myDealer();
+});
+
+final myPaymentsProvider = FutureProvider<List<PaymentInfo>>((ref) {
+  ref.watch(authProvider);
+  return ref.watch(repositoryProvider).myPayments();
+});
+
+final myLeadsProvider = FutureProvider<List<LeadInfo>>((ref) {
+  ref.watch(authProvider);
+  return ref.watch(repositoryProvider).myLeads();
+});
+
+final listingStatsProvider = FutureProvider.family<ListingStats, String>((ref, id) => ref.watch(repositoryProvider).listingStats(id));
+
+/// Refresh everything that a payment or plan change affects.
+void refreshRevenue(WidgetRef ref) {
+  ref.invalidate(myDealerProvider);
+  ref.invalidate(myPaymentsProvider);
+  ref.invalidate(myLeadsProvider);
+  ref.invalidate(myListingsProvider);
+}

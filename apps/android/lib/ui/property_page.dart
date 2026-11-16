@@ -63,6 +63,20 @@ class _PropertyView extends ConsumerWidget {
         title: Text(p.code ?? ''),
         actions: [
           IconButton(
+            key: const Key('share-property'),
+            tooltip: s.share,
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              final user = ref.read(authProvider).value;
+              final own = user != null && user.uid == p.ownerId;
+              ref.read(repositoryProvider).track(p.id, 'share');
+              shareOnWhatsApp(
+                s.shareText(title, formatPrice(p.total, te), p.code ?? ''),
+                shareLink(p.code ?? '', ref.read(localeProvider), refId: own ? user.uid : null),
+              );
+            },
+          ),
+          IconButton(
             key: const Key('favorite-toggle'),
             tooltip: saved ? s.saved : s.save,
             icon: Icon(saved ? Icons.favorite : Icons.favorite_border, color: saved ? Brand.green : null),
@@ -71,6 +85,7 @@ class _PropertyView extends ConsumerWidget {
         ],
       ),
       body: ListView(padding: const EdgeInsets.only(bottom: 24), children: [
+        _TrackView(propertyId: p.id),
         _Gallery(property: p),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -215,4 +230,23 @@ class _GalleryState extends ConsumerState<_Gallery> {
       ]),
     );
   }
+}
+
+/// Counts one view for the owner's stats when the page opens.
+class _TrackView extends ConsumerStatefulWidget {
+  const _TrackView({required this.propertyId});
+  final String propertyId;
+  @override
+  ConsumerState<_TrackView> createState() => _TrackViewState();
+}
+
+class _TrackViewState extends ConsumerState<_TrackView> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(repositoryProvider).track(widget.propertyId, 'view');
+  }
+
+  @override
+  Widget build(BuildContext context) => const SizedBox.shrink();
 }
