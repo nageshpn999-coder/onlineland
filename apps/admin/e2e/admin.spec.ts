@@ -45,7 +45,7 @@ test('signing in with OTP shows the overview with today’s numbers (Telugu)', a
 
 test('a buyer cannot enter the dashboard', async ({ page }) => {
   await login(page, '9000000202');
-  await expect(page.getByRole('alert')).toContainText('does not have admin access');
+  await expect(page.getByText('This number does not have admin access.')).toBeVisible();
   await page.goto('/listings/');
   await expect(page).toHaveURL(/\/login\/$/);
 });
