@@ -134,4 +134,28 @@
 - App Check enforcement and spam limits on enquiries — before launch (Phase 8).
 - Migration of the old site's `listings` from onlineland-28234 is **read-only and needs Nagesh's approval** (the old project is never modified).
 
-## Phase 6 — Android App ⏳ (awaiting approval)
+## Phase 6 — Android App ✅ (2026-11-17, awaiting review)
+
+**Built** — Flutter app in `apps/android` (package `in.onlineland.onlineland`), Telugu default + English, brand colours.
+
+- Onboarding (language choice), home with search + categories + featured, listings with the same filters/sort as the website, property page (gallery, price per unit and total, location), enquiry and site-visit forms (go to OnlineLand's CRM — owner numbers stay hidden), WhatsApp/call OnlineLand, favourites.
+- Phone OTP login (Firebase Auth), "Sell" tab: post a listing with up to 20 photos → saved as pending for admin review; "My listings" with status and reject reason.
+- Push notifications: the app registers its FCM token in `users/{uid}/devices/{token}`; when an admin approves/rejects a listing, `reviewProperty` records a `notifications` doc and pushes to the owner's phones (invalid tokens removed; skipped in emulators; a failure never undoes the review).
+- Two data modes via `--dart-define`: `DATA_MODE=demo` (built-in sample data, OTP 123456, nothing saved) and `DATA_MODE=firebase` (only onlineland-dev, onlineland-prod or demo-* projects are accepted — `AppConfig.assertSafeProject`).
+- Splash and launcher icon from the logo.
+- CI (`.github/workflows/android.yml`): analyze, tests, release APK, published to the `android-demo` pre-release on every push to `develop`.
+
+**Tests**
+
+- App: 19 (logic, Dart catalog matches the shared TypeScript lists, 8 widget flows: onboarding, filters, property page, enquiry, login, favourites, sell form, language switch).
+- Firebase rules + functions: 74 (added device-token rules and the approval notification).
+- Fixed along the way: listings header overflow (44 px), Material localizations import clash, Android release lint crash (needs Java 21 in CI).
+
+**Pending**
+
+- Real Firebase build of the APK once `onlineland-dev` exists (needs `google-services` values as GitHub secrets).
+- Play Store: signing key, privacy policy, Play Console organisation account (D-U-N-S for OnlineLand Infra Private Limited).
+- Image compression before upload (the plugin was dropped for build compatibility; photos are capped at 5 MB by Storage rules).
+
+## Phase 7 — Admin Dashboard ⏳ (awaiting approval)
+

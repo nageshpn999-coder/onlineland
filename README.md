@@ -37,6 +37,18 @@ npm run emulators:check  # verify emulators + deny-all rules
 
 Emulators use the offline project `demo-onlineland`, so nothing touches real data.
 
+## Android app (demo)
+
+Download the latest test APK: https://github.com/nageshpn999-coder/onlineland/releases/tag/android-demo
+(Android → allow "Install unknown apps" for your browser.) Demo login: any 10-digit number, OTP `123456`. Sample data only; nothing is saved.
+
+Build locally from `apps/android`:
+
+```bash
+flutter test
+flutter build apk --release --dart-define=DATA_MODE=demo
+```
+
 ## Environments
 
 | Alias | Firebase project | Use |
