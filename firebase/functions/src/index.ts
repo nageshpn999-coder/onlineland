@@ -205,6 +205,6 @@ async function notifyOwner(propertyId: string, status: string, code: string | nu
   await Promise.all(res.responses.map((r, i) => {
     const c = r.error?.code;
     return c === 'messaging/registration-token-not-registered' || c === 'messaging/invalid-registration-token'
-      ? devices.docs[i].ref.delete() : null;
+      ? devices.docs[i]?.ref.delete() : null;
   }));
 }
