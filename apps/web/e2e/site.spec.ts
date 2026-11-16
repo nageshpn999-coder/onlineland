@@ -196,6 +196,10 @@ test.describe('share links and dealers (D7)', () => {
     await expect(page.getByTestId('whatsapp-link').first()).toHaveAttribute('href', /wa\.me\/919000000404/);
     await expect(page.getByTestId('call-link').first()).toHaveAttribute('href', 'tel:+919000000404');
     await expect(page.getByTestId('enquiry-privacy')).toContainText('Sai Estates');
+    await expect(page.getByText('మీ enquiry Sai Estates కు మరియు OnlineLand team కు వెళ్తుంది.')).toBeVisible();
+    // Contact buttons keep their full height in the side panel (they were squashed before).
+    const box = await page.getByTestId('whatsapp-link').first().boundingBox();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
     await page.screenshot({ path: `${SHOTS}/property-dealer-link.png`, fullPage: true });
 
     const form = page.locator('form').filter({ has: page.getByTestId('enquiry-privacy') });

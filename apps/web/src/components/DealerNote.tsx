@@ -15,3 +15,10 @@ export function DealerNote() {
     </p>
   );
 }
+
+/** "Your enquiry goes to OnlineLand" — or to the dealer and OnlineLand on a paid dealer's link. */
+export function ContactNote() {
+  const t = useTranslations('property');
+  const { dealer } = useDealerRef();
+  return <p className="mb-4 mt-1 text-sm text-ink-soft">{dealer ? t('contactNoteDealer', { name: dealer.name }) : t('contactNote')}</p>;
+}

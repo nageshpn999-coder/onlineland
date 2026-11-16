@@ -183,7 +183,8 @@
     "listedBy": "Listed by {name}",
     "verifiedDealer": "Verified dealer",
     "seller": "Seller",
-    "whatsappMessageDealer": "Hello {name}, I saw {code} on OnlineLand: {title}. Please share details."
+    "whatsappMessageDealer": "Hello {name}, I saw {code} on OnlineLand: {title}. Please share details.",
+    "contactNoteDealer": "Your enquiry goes to {name} and the OnlineLand team."
   },
   "enquiry": {
     "title": "Ask for details",

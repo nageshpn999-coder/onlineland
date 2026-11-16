@@ -25,8 +25,9 @@ export function ContactActions({ propertyId, code, title, variant = 'stacked' }:
     : whatsappLink(t('whatsappMessage', { code, title }));
   const tel = dealer ? `tel:+91${dealer.phone}` : PHONE_TEL;
 
-  const waClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-field px-5 font-semibold text-white hover:bg-[#0b5532]';
-  const callClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white';
+  const size = variant === 'bar' ? 'flex-1' : 'w-full sm:w-auto sm:flex-1 lg:w-full lg:flex-none';
+  const waClass = `inline-flex h-12 ${size} items-center justify-center gap-2 whitespace-nowrap rounded-full bg-field px-5 font-semibold text-white hover:bg-[#0b5532]`;
+  const callClass = `inline-flex h-12 ${size} items-center justify-center gap-2 whitespace-nowrap rounded-full border border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white`;
 
   const buttons = (
     <>

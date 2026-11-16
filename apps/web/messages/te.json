@@ -183,7 +183,8 @@
     "listedBy": "ఈ ప్రాపర్టీ: {name}",
     "verifiedDealer": "Verified dealer",
     "seller": "అమ్మకందారు",
-    "whatsappMessageDealer": "నమస్తే {name}, OnlineLand లో {code}: {title} గురించి వివరాలు కావాలి"
+    "whatsappMessageDealer": "నమస్తే {name}, OnlineLand లో {code}: {title} గురించి వివరాలు కావాలి",
+    "contactNoteDealer": "మీ enquiry {name} కు మరియు OnlineLand team కు వెళ్తుంది."
   },
   "enquiry": {
     "title": "వివరాలు అడగండి",

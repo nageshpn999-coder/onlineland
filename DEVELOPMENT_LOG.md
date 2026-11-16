@@ -157,5 +157,36 @@
 - Play Store: signing key, privacy policy, Play Console organisation account (D-U-N-S for OnlineLand Infra Private Limited).
 - Image compression before upload (the plugin was dropped for build compatibility; photos are capped at 5 MB by Storage rules).
 
-## Phase 7 — Admin Dashboard ⏳ (awaiting approval)
+## Phase 7 — Admin Dashboard + revenue (D7) ✅ (17 Nov 2026, awaiting review)
+
+**Built**
+
+- `apps/admin` — admin.onlineland.in, Next.js static export, Telugu/English, phone OTP, admin/agent roles only:
+  overview counts; listing review (approve → OL-code, reject with reason, featured 7 days, documents checked, sold, owner's private number);
+  Leads CRM (stage, notes, assign agent, WhatsApp/call, OnlineLand vs dealer-link filter); site visits; UPI payments (UTR check → approve/reject);
+  users (roles, ✓ Verified badge, plan, live listings); prices & plan limits & UPI ID; audit log. Agents see only their own leads/visits.
+- Revenue (D7) backend: `packages/shared/src/plans.ts` (Free/Basic/Pro, ₹199 featured week, owner 1 free + ₹199 per extra listing);
+  rules for `paymentRequests`, `dealers`, `propertyStats`, `leads.refId`; Cloud Functions `reviewPayment`, `setVerified`, `useFeaturedSlot`,
+  `trackEvent`, `onLeadCreated` (push to dealer), `dailyMaintenance` 09:00 IST (renewal reminder 3 days before, end featured weeks,
+  expire paid listings) + `runMaintenance`; plan limits checked in `reviewProperty`. Common helpers split into `common.ts` / `config.ts`.
+- Website: WhatsApp share button; dealer share links `?ref=` (paid dealer's own name + number, enquiries tagged to the dealer);
+  ✓ Verified dealer on the property page; view/share counting; Pro dealer page `/te/dealer/{id}`.
+- Android: My plan (Basic/Pro, UPI app button with amount, UTR entry, payment history), My leads, share with own ref link,
+  listing stats, featured slot / pay ₹199 featured, pay ₹199 for an extra owner listing, view tracking.
+
+**Tests** — all in GitHub Actions:
+
+- Firebase rules + functions: 100 (payments, plans, renewals, limits, badge, slots, stats, dealer leads, daily job).
+- Website: 12 unit + 19 browser (share, dealer link + lead credit, wrong ref ignored, dealer page, contact button height).
+- Admin: 11 browser tests on all emulators (OTP login, buyer refused, approve/reject, payment → plan → badge, CRM, visits, agent view, settings, audit, phone layout).
+- App: 23 (plan purchase with UTR, leads lock/unlock, plan defaults match the shared file, share/UPI links).
+- Fixed along the way: squashed WhatsApp/Call buttons in the property side panel (Phase 5 bug), duplicate string name, test races.
+
+**Pending**
+
+- Deploy needs `onlineland-dev` / `onlineland-prod` (Nagesh): rules, indexes, functions (Blaze), Vercel projects for website + admin.
+- UPI ID to be entered in admin → Prices & settings.
+- Area-leads forwarding for Pro dealers is manual for now (admin assigns); automatic rules later if needed.
+
+## Phase 8 — Testing, launch ⏳ (awaiting approval)
 

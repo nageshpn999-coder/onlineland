@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { BRAND, getCategory, getDistrict, type Locale } from '@onlineland/shared';
 import { ContactActions } from '@/components/ContactActions';
-import { DealerNote } from '@/components/DealerNote';
+import { ContactNote, DealerNote } from '@/components/DealerNote';
 import { ShareButton } from '@/components/ShareButton';
 import { TrackView } from '@/components/TrackView';
 import { DealerRefProvider } from '@/lib/dealer-ref';
@@ -218,7 +218,7 @@ export default async function PropertyPage({ params }: { params: Params }) {
 
                 <div className="mt-6 border-t border-line pt-5">
                   <h2 className="text-lg font-semibold text-ink">{t('contactTitle')}</h2>
-                  <p className="mb-4 mt-1 text-sm text-ink-soft">{t('contactNote')}</p>
+                  <ContactNote />
                   <EnquiryForm propertyId={p.id} />
                 </div>
               </div>
