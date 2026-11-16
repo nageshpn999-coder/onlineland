@@ -59,7 +59,7 @@ test('admin approves a pending listing and it gets the next code', async ({ page
   await expect(page.getByRole('dialog')).toContainText('Makthal');
   await shot(page, 'listing-review');
   await page.getByRole('button', { name: 'Approve' }).click();
-  await expect(page.getByRole('dialog')).toContainText('approved');
+  await expect.poll(async () => (await db().doc('properties/seed-pending').get()).data()!.status).toBe('approved');
   const saved = (await db().doc('properties/seed-pending').get()).data()!;
   expect(saved.status).toBe('approved');
   expect(saved.code).toBe('OL-1011');
@@ -74,8 +74,9 @@ test('admin rejects a listing with a reason (sees private commission terms)', as
   await dialog.getByRole('button', { name: 'Reject' }).click();
   await dialog.getByLabel('Reason for rejection').fill('Survey number missing');
   await dialog.getByRole('button', { name: 'Reject' }).click();
-  await expect(dialog).toContainText('Survey number missing');
-  expect((await db().doc('properties/seed-pending-2').get()).data()!.status).toBe('rejected');
+  await expect.poll(async () => (await db().doc('properties/seed-pending-2').get()).data()!.status).toBe('rejected');
+  await expect(dialog.getByText('Survey number missing')).toBeVisible();
+  expect((await db().doc('properties/seed-pending-2').get()).data()!.rejectReason).toBe('Survey number missing');
 });
 
 test('admin approves a UPI payment → Basic plan active, dealer gets the ✓ badge', async ({ page }) => {
@@ -87,7 +88,7 @@ test('admin approves a UPI payment → Basic plan active, dealer gets the ✓ ba
   await expect(dialog).toContainText('Ravi Properties');
   await shot(page, 'payment-review');
   await dialog.getByRole('button', { name: 'Approve' }).click();
-  await expect(dialog).toContainText('approved');
+  await expect.poll(async () => (await db().doc('paymentRequests/seed-pay-1').get()).data()!.status).toBe('approved');
   const dealer = (await db().doc('dealers/seed-dealer').get()).data()!;
   expect(dealer).toMatchObject({ planId: 'basic', ownContact: true, phone: '9000000101' });
 
@@ -97,7 +98,7 @@ test('admin approves a UPI payment → Basic plan active, dealer gets the ✓ ba
   await expect(page.getByRole('dialog')).toContainText('basic');
   await page.getByRole('button', { name: 'Give ✓ badge' }).click();
   await expect(page.getByRole('button', { name: 'Remove badge' })).toBeVisible();
-  expect((await db().doc('dealers/seed-dealer').get()).data()!.verified).toBe(true);
+  await expect.poll(async () => (await db().doc('dealers/seed-dealer').get()).data()!.verified).toBe(true);
   await shot(page, 'user-dealer');
 });
 

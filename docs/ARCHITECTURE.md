@@ -47,17 +47,26 @@ Privileged work (approvals, role changes, payment activation, lead assignment, a
 
 | Collection | Holds |
 | --- | --- |
-| `users/{uid}` (+ `favorites/`) | Profiles; role set only by Cloud Function |
+| `users/{uid}` (+ `favorites/`, `devices/`) | Profiles; role set only by Cloud Function; FCM tokens for push |
 | `properties/{id}` (+ `media/`, `private/contact`) | Listings; owner contact in a private sub-document |
 | `locations/{id}` | District → mandal → village (te/en) |
-| `leads/{id}` | Every enquiry, stage, assigned agent |
+| `leads/{id}` | Every enquiry, stage, assigned agent, `refId` = dealer whose share link brought it |
 | `siteVisits/{id}` | Visit bookings |
-| `plans/{id}`, `subscriptions/{id}` | Dealer plans and purchases |
+| `plans/{free,basic,pro}`, `settings/pricing` | Plan limits and prices, UPI ID (admin edits; defaults in `packages/shared/src/plans.ts`) |
+| `paymentRequests/{id}` | UPI payments with UTR, waiting for admin (D6) |
+| `subscriptions/{id}` | Approved plan purchases (Functions only) |
+| `dealers/{uid}` | Public dealer card: name, ✓ badge, plan, validity, phone only on paid plans (Functions only) |
+| `propertyStats/{id}` | Views, shares, enquiries per listing (Functions only; owner + staff read) |
 | `notifications/{id}` | Push messages sent |
 | `auditLogs/{id}` | Who changed what (Functions only) |
 | `settings/site` | Banners, contact number, category order |
 
 Listing lifecycle: draft → pending → approved / rejected → sold / rented / expired.
+
+Cloud Functions (asia-south1): `onUserCreated`, `becomeOwner`, `setUserRole`, `reviewProperty` (codes, plan limits, push),
+`reviewPayment`, `setVerified`, `useFeaturedSlot`, `trackEvent`, `onLeadCreated`, `dailyMaintenance` (09:00 IST) / `runMaintenance`.
+
+Share links: `onlineland.in/te/properties/OL-1001?ref=<ownerId>`. The ref counts only when it is the listing's owner (rules check it).
 
 ## Roles
 
