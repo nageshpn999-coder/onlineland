@@ -14,6 +14,18 @@ Full document with diagram: https://claude.ai/artifact/Lgt3U9iqripwCjgxcK27v2
 | D4 | Built-in OnlineLand CRM replaces Privyr (Phase 7). |
 | D5 | Firebase phone OTP as the main login, plus Google sign-in. Login optional for browsing. |
 | D6 | Manual UPI first: dealer pays, admin confirms, a Cloud Function activates the plan. Gateway later. |
+| D7 | Revenue (17 Nov 2026): commission on deals via OnlineLand + dealer/agent subscriptions + paid featured listings. Prices and limits are editable in admin. |
+
+### Subscription plans (D7)
+
+| Plan | Price | Includes |
+| --- | --- | --- |
+| Free | ₹0 | 2 listings; WhatsApp share — enquiries go to OnlineLand (lead tagged with the dealer) |
+| Basic | ₹499 / month | 15 listings; shared links show the dealer's own name + number; Verified Dealer badge; views/enquiries stats |
+| Pro | ₹1,499 / month | Unlimited listings; 2 featured listings a month; own dealer page (onlineland.in/dealer/…); area leads shared |
+
+Add-ons: featured listing ₹199 / week. Owners: 1 listing free, small fee after that.
+Payment: UPI QR in the app → user enters UTR → admin approves → plan active 30 days → renewal reminder 3 days before expiry.
 
 ## Architecture
 
