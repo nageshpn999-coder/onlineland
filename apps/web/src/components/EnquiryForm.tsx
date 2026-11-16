@@ -3,6 +3,7 @@
 import { useId, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@onlineland/shared';
+import { useDealerRef } from '@/lib/dealer-ref';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -16,6 +17,7 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
   const id = useId();
   const [status, setStatus] = useState<Status>('idle');
   const [phoneError, setPhoneError] = useState(false);
+  const { refId, dealer } = useDealerRef();
 
   if (status === 'sent') {
     return (
@@ -48,6 +50,7 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
             name: String(data.get('name') ?? '').slice(0, 80),
             phone,
             message: String(data.get('message') ?? '').slice(0, 1000),
+            refId,
           });
           setStatus('sent');
         } catch (err) {
@@ -101,7 +104,9 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
       >
         {status === 'sending' ? t('sending') : t('submit')}
       </button>
-      <p className="text-xs text-ink-soft">{t('privacy')}</p>
+      <p className="text-xs text-ink-soft" data-testid="enquiry-privacy">
+        {dealer ? t('privacyDealer', { name: dealer.name }) : t('privacy')}
+      </p>
     </form>
   );
 }

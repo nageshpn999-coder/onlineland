@@ -6,7 +6,7 @@ import type { PublicProperty } from '../property-types';
 
 function prop(o: Partial<PublicProperty>): PublicProperty {
   return {
-    id: 'x', code: 'OL-1', category: 'agricultural', purpose: 'sale',
+    id: 'x', ownerId: 'o', code: 'OL-1', category: 'agricultural', purpose: 'sale',
     title: { te: 't', en: 't' }, description: { te: '', en: '' },
     price: 100, priceBasis: 'total', total: 100, area: 1, areaUnit: 'acre',
     location: { district: 'narayanpet', mandal: 'makthal', village: '', lat: null, lng: null },

@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@onlineland/shared';
+import { useDealerRef } from '@/lib/dealer-ref';
 import { inputClass, labelClass } from './EnquiryForm';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
@@ -20,6 +21,7 @@ export function SiteVisitForm({ propertyId }: { propertyId: string }) {
   const locale = useLocale() as Locale;
   const id = useId();
   const [status, setStatus] = useState<Status>('idle');
+  const { refId } = useDealerRef();
   const [errors, setErrors] = useState<{ name?: boolean; phone?: boolean; date?: boolean }>({});
   const { min, max } = useMemo(() => ({ min: istDate(1), max: istDate(60) }), []);
 
@@ -48,7 +50,7 @@ export function SiteVisitForm({ propertyId }: { propertyId: string }) {
         if (next.name || next.phone || next.date) return;
         setStatus('sending');
         try {
-          await createSiteVisit({ propertyId, name, phone, date, slot, locale });
+          await createSiteVisit({ propertyId, name, phone, date, slot, locale, refId });
           setStatus('sent');
         } catch (err) {
           console.error('[site visit]', err);

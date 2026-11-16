@@ -176,7 +176,14 @@
     "saved": "సేవ్ అయ్యింది",
     "notFoundTitle": "ఈ ఆస్తి ఇప్పుడు అందుబాటులో లేదు",
     "notFoundBody": "ఇది అమ్ముడై ఉండవచ్చు లేదా లింక్ తప్పు కావచ్చు.",
-    "browse": "ఇతర ఆస్తులు చూడండి"
+    "browse": "ఇతర ఆస్తులు చూడండి",
+    "share": "WhatsApp లో షేర్",
+    "linkCopied": "లింక్ కాపీ అయింది",
+    "shareText": "{title} — {price} ({code}), OnlineLand లో చూడండి:",
+    "listedBy": "ఈ ప్రాపర్టీ: {name}",
+    "verifiedDealer": "Verified dealer",
+    "seller": "అమ్మకందారు",
+    "whatsappMessageDealer": "నమస్తే {name}, OnlineLand లో {code}: {title} గురించి వివరాలు కావాలి"
   },
   "enquiry": {
     "title": "వివరాలు అడగండి",
@@ -188,7 +195,8 @@
     "sent": "మీ enquiry అందింది. మా team త్వరలో మీకు కాల్ చేస్తుంది.",
     "invalidPhone": "సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి (6, 7, 8 లేదా 9 తో మొదలయ్యేది).",
     "error": "పంపడం కుదరలేదు. Internet చెక్ చేసి మళ్ళీ ప్రయత్నించండి, లేదా WhatsApp చేయండి.",
-    "privacy": "మీ నంబర్ OnlineLand team కి మాత్రమే కనిపిస్తుంది."
+    "privacy": "మీ నంబర్ OnlineLand team కి మాత్రమే కనిపిస్తుంది.",
+    "privacyDealer": "మీ వివరాలు {name} కు మరియు OnlineLand team కు వెళ్తాయి."
   },
   "visit": {
     "title": "సైట్ విజిట్ బుక్ చేయండి",
@@ -220,5 +228,10 @@
     "title": "ఈ పేజీ దొరకలేదు",
     "body": "లింక్ తప్పు కావచ్చు లేదా పేజీ తీసేయబడి ఉండవచ్చు.",
     "home": "హోమ్‌కి వెళ్లండి"
+  },
+  "dealer": {
+    "title": "OnlineLand డీలర్",
+    "count": "{n} ప్రాపర్టీలు అందుబాటులో ఉన్నాయి",
+    "empty": "ప్రస్తుతం ప్రాపర్టీలు లేవు."
   }
 }

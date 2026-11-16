@@ -140,7 +140,8 @@ const listings = [
   { id: 'seed-1009', code: 'OL-1009', category: 'commercial', purpose: 'sale', title: { te: 'మెయిన్ రోడ్డు పై వాణిజ్య స్థలం', en: 'Commercial plot on the main road' },
     price: 9_000_000, priceBasis: 'total', area: 400, areaUnit: 'sq-yd', location: loc('mahabubnagar', 'Mahabubnagar', 'Mahabubnagar town'), roadAccess: true, age: 9 },
   { id: 'seed-1010', code: 'OL-1010', category: 'open-plot', purpose: 'sale', title: { te: 'నారాయణపేట టౌన్‌లో ప్లాట్', en: 'Plot in Narayanpet town' },
-    price: 900_000, priceBasis: 'total', area: 150, areaUnit: 'sq-yd', location: loc('narayanpet', 'narayanpet', 'Narayanpet town'), age: 10 },
+    price: 900_000, priceBasis: 'total', area: 150, areaUnit: 'sq-yd', location: loc('narayanpet', 'narayanpet', 'Narayanpet town'), age: 10,
+    ownerId: 'seed-pro', source: 'dealer' }, // a Pro dealer's listing (share links, dealer page)
   // Must never appear on the website:
   { id: 'seed-pending', code: null, status: 'pending', category: 'agricultural', purpose: 'sale', title: { te: 'పెండింగ్ ఆస్తి', en: 'Pending listing (hidden)' },
     price: 500_000, priceBasis: 'per-unit', area: 3, areaUnit: 'acre', location: loc('narayanpet', 'makthal', 'Makthal'), reviewedBy: null, age: 0 },
@@ -186,6 +187,11 @@ if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
   await seedUser('seed-dealer', '+919000000101', 'Ravi Properties', 'dealer');
   await seedUser('seed-buyer', '+919000000202', 'Suresh', 'buyer');
   await seedUser('seed-agent', '+919000000303', 'Kiran (agent)', 'agent');
+  await seedUser('seed-pro', '+919000000404', 'Sai Estates', 'dealer');
+  await db.doc('dealers/seed-pro').set({
+    name: 'Sai Estates', phone: '9000000404', verified: true, planId: 'pro', validUntil: Timestamp.fromMillis(now + 20 * DAY),
+    ownContact: true, dealerPage: true, featuredSlots: 2, featuredUsed: 0, updatedAt: Timestamp.fromMillis(now),
+  });
 
   await db.doc('properties/seed-pending-2').set({
     ...base, ownerId: 'seed-dealer', source: 'dealer', status: 'pending', code: null, reviewedBy: null, reviewedAt: null,

@@ -9,11 +9,13 @@ import type {
 
 /**
  * What the public website may show about an approved listing.
- * Owner id, contact and review details are never included.
+ * Owner contact and review details are never included. `ownerId` is an opaque account id, used only to
+ * check that a ?ref= share link belongs to the listing's dealer (D7).
  * Plain JSON (timestamps as milliseconds) so it can be cached and sent to client components.
  */
 export interface PublicProperty {
   id: string;
+  ownerId: string;
   code: string;
   category: PropertyCategory;
   purpose: PropertyPurpose;

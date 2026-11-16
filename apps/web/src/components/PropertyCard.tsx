@@ -16,7 +16,7 @@ export function areaText(p: Pick<PublicProperty, 'area' | 'areaUnit'>, locale: L
   return `${p.area.toLocaleString('en-IN')} ${label}`;
 }
 
-export function PropertyCard({ property: p, priority = false }: { property: PublicProperty; priority?: boolean }) {
+export function PropertyCard({ property: p, priority = false, refId }: { property: PublicProperty; priority?: boolean; refId?: string }) {
   const t = useTranslations('featured');
   const locale = useLocale() as Locale;
   const title = p.title[locale] || p.title.te || p.title.en;
@@ -61,7 +61,7 @@ export function PropertyCard({ property: p, priority = false }: { property: Publ
           {getCategory(p.category)?.label[locale]}, {p.purpose === 'rent' ? t('forRent') : t('forSale')}
         </p>
         <h3 className="mt-1 text-[1.2rem] font-semibold leading-snug text-ink">
-          <Link href={`/properties/${p.code}`} className="after:absolute after:inset-0 hover:text-brand">
+          <Link href={refId ? { pathname: `/properties/${p.code}`, query: { ref: refId } } : `/properties/${p.code}`} className="after:absolute after:inset-0 hover:text-brand">
             {title}
           </Link>
         </h3>

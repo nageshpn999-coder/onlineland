@@ -177,3 +177,57 @@ test.describe('favorites and homepage', () => {
     await expect(page.locator('#results-count')).toHaveText('3 ఆస్తులు');
   });
 });
+
+test.describe('share links and dealers (D7)', () => {
+  test('share button opens WhatsApp with the listing link', async ({ page, context }) => {
+    await page.goto('/te/properties/OL-1001');
+    const popup = context.waitForEvent('page');
+    await page.getByTestId('share-button').click();
+    const wa = await popup;
+    const url = decodeURIComponent(wa.url());
+    expect(url).toContain('OL-1001');
+    expect(url).toMatch(/\/te\/properties\/OL-1001/);
+    await wa.close();
+  });
+
+  test('a Pro dealer’s own link shows the dealer’s number and credits the enquiry', async ({ page }) => {
+    await page.goto('/te/properties/OL-1010?ref=seed-pro');
+    await expect(page.getByTestId('dealer-note').first()).toContainText('Sai Estates');
+    await expect(page.getByTestId('whatsapp-link').first()).toHaveAttribute('href', /wa\.me\/919000000404/);
+    await expect(page.getByTestId('call-link').first()).toHaveAttribute('href', 'tel:+919000000404');
+    await expect(page.getByTestId('enquiry-privacy')).toContainText('Sai Estates');
+    await page.screenshot({ path: `${SHOTS}/property-dealer-link.png`, fullPage: true });
+
+    const form = page.locator('form').filter({ has: page.getByTestId('enquiry-privacy') });
+    await form.getByLabel(/పేరు/).fill('Dealer Lead Test');
+    await form.getByLabel(/మొబైల్|ఫోన్/).fill('9876501234');
+    await form.getByRole('button').click();
+    await expect(page.getByTestId('enquiry-sent')).toBeVisible();
+    const lead = await waitFor(async () => {
+      const q = await db.collection('leads').where('name', '==', 'Dealer Lead Test').get();
+      return q.docs[0]?.data();
+    });
+    expect(lead.refId).toBe('seed-pro');
+  });
+
+  test('without a ref (or a wrong ref) everything goes to OnlineLand; the ✓ badge still shows', async ({ page }) => {
+    for (const url of ['/te/properties/OL-1010', '/te/properties/OL-1010?ref=someone-else', '/te/properties/OL-1001?ref=seed-pro']) {
+      await page.goto(url);
+      await expect(page.getByTestId('whatsapp-link').first()).toHaveAttribute('href', /wa\.me\/919959731120/);
+      await expect(page.getByTestId('dealer-note')).toHaveCount(0);
+    }
+    await page.goto('/en/properties/OL-1010');
+    await expect(page.getByText('Sai Estates ✓ Verified dealer')).toBeVisible();
+  });
+
+  test('Pro dealer page lists their properties with their contact', async ({ page }) => {
+    await page.goto('/te/dealer/seed-pro');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Sai Estates');
+    await expect(page.locator('a[href="tel:+919000000404"]')).toBeVisible();
+    const card = page.locator('article').filter({ hasText: 'OL-1010' });
+    await expect(card.getByRole('link').first()).toHaveAttribute('href', /OL-1010\?ref=seed-pro/);
+    await page.screenshot({ path: `${SHOTS}/dealer-page.png`, fullPage: true });
+    const res = await page.goto('/te/dealer/seed-dealer');
+    expect(res?.status()).toBe(404);
+  });
+});

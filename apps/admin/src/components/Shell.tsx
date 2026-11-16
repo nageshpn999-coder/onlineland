@@ -94,10 +94,10 @@ export function Shell({ children, adminOnly = true }: { children: ReactNode; adm
 function Brand() {
   return (
     <Link href="/" className="flex items-center gap-2 font-display text-lg font-bold">
-      <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden>
-        <rect x="2" y="2" width="24" height="24" rx="5" fill="#1456C8" />
-        <path d="M7 19 L14 9 L21 19 Z" fill="#fff" />
-        <rect x="7" y="19" width="14" height="3" fill="#0F6B3F" />
+      <svg width={30} height={30} viewBox="0 0 32 32" aria-hidden>
+        <path d="M4 6 L27 3 L29 27 L5 29 Z" fill="#fff" stroke="#1456C8" strokeWidth="2.2" strokeLinejoin="round" />
+        <path d="M15.5 4.5 L17 28 M4.5 17.5 L28 15" stroke="#1456C8" strokeWidth="1.6" />
+        <path d="M16.3 15.8 L28 15 L29 27 L17 28 Z" fill="#0F6B3F" />
       </svg>
       <span>
         Online<span className="text-field">Land</span>

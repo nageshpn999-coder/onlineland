@@ -29,6 +29,7 @@ export function toPublicProperty(doc: Doc): PublicProperty | null {
   const loc = (d.location ?? {}) as Record<string, unknown>;
   return {
     id: doc.id,
+    ownerId: typeof d.ownerId === 'string' ? d.ownerId : '',
     code: d.code,
     category: d.category,
     purpose: d.purpose,
@@ -69,7 +70,7 @@ const loadApproved = unstable_cache(
       .get();
     return snap.docs.map(toPublicProperty).filter((p): p is PublicProperty => p !== null);
   },
-  ['approved-properties-v1'],
+  ['approved-properties-v2'],
   { revalidate: 60, tags: [PROPERTIES_TAG] },
 );
 
@@ -117,4 +118,10 @@ export async function getPropertyPhotos(propertyId: string): Promise<PropertyPho
     console.error('[properties] could not load photos:', (err as Error).message);
     return [];
   }
+}
+
+/** Approved listings of one owner/dealer (dealer page). */
+export async function getPropertiesByOwner(ownerId: string): Promise<PublicProperty[]> {
+  const all = await getApprovedProperties();
+  return all.filter((p) => p.ownerId === ownerId);
 }

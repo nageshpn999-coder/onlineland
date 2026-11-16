@@ -176,7 +176,14 @@
     "saved": "Saved",
     "notFoundTitle": "This property is no longer available",
     "notFoundBody": "It may have been sold, or the link may be wrong.",
-    "browse": "Browse other properties"
+    "browse": "Browse other properties",
+    "share": "Share on WhatsApp",
+    "linkCopied": "Link copied",
+    "shareText": "{title} — {price} ({code}), see it on OnlineLand:",
+    "listedBy": "Listed by {name}",
+    "verifiedDealer": "Verified dealer",
+    "seller": "Seller",
+    "whatsappMessageDealer": "Hello {name}, I saw {code} on OnlineLand: {title}. Please share details."
   },
   "enquiry": {
     "title": "Ask for details",
@@ -188,7 +195,8 @@
     "sent": "Enquiry received. Our team will call you shortly.",
     "invalidPhone": "Enter a valid 10-digit mobile number (starting with 6, 7, 8 or 9).",
     "error": "Couldn't send. Check your internet and try again, or message us on WhatsApp.",
-    "privacy": "Only the OnlineLand team sees your number."
+    "privacy": "Only the OnlineLand team sees your number.",
+    "privacyDealer": "Your details go to {name} and the OnlineLand team."
   },
   "visit": {
     "title": "Book a site visit",
@@ -220,5 +228,10 @@
     "title": "Page not found",
     "body": "The link may be wrong, or the page was removed.",
     "home": "Go to home"
+  },
+  "dealer": {
+    "title": "OnlineLand dealer",
+    "count": "{n} properties available",
+    "empty": "No properties right now."
   }
 }

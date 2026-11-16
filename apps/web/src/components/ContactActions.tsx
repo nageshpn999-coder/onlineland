@@ -2,13 +2,14 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import type { LeadChannel, Locale } from '@onlineland/shared';
+import { useDealerRef } from '@/lib/dealer-ref';
 import { PHONE_TEL, whatsappLink } from '@/lib/whatsapp';
 import { ChatIcon, PhoneIcon } from './icons';
 
 /** Records a WhatsApp/call click as a lead for the CRM. Never blocks or breaks the click itself. */
-function logClick(propertyId: string, channel: LeadChannel, locale: Locale) {
+function logClick(propertyId: string, channel: LeadChannel, locale: Locale, refId: string | null) {
   import('@/lib/leads')
-    .then(({ createLead }) => createLead({ propertyId, channel, locale }))
+    .then(({ createLead }) => createLead({ propertyId, channel, locale, refId }))
     .catch((err) => console.warn('[lead] click not recorded:', err?.message));
 }
 
@@ -17,18 +18,23 @@ type Props = { propertyId: string; code: string; title: string; variant?: 'stack
 export function ContactActions({ propertyId, code, title, variant = 'stacked' }: Props) {
   const t = useTranslations('property');
   const locale = useLocale() as Locale;
-  const wa = whatsappLink(t('whatsappMessage', { code, title }));
+  const { refId, dealer } = useDealerRef();
+  // A paid dealer's own share link shows the dealer's number (D7); otherwise OnlineLand's.
+  const wa = dealer
+    ? `https://wa.me/91${dealer.phone}?text=${encodeURIComponent(t('whatsappMessageDealer', { name: dealer.name, code, title }))}`
+    : whatsappLink(t('whatsappMessage', { code, title }));
+  const tel = dealer ? `tel:+91${dealer.phone}` : PHONE_TEL;
 
   const waClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-field px-5 font-semibold text-white hover:bg-[#0b5532]';
   const callClass = 'inline-flex h-12 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white';
 
   const buttons = (
     <>
-      <a href={wa} target="_blank" rel="noopener" className={waClass} onClick={() => logClick(propertyId, 'whatsapp', locale)} data-testid="whatsapp-link">
+      <a href={wa} target="_blank" rel="noopener" className={waClass} onClick={() => logClick(propertyId, 'whatsapp', locale, refId)} data-testid="whatsapp-link">
         <ChatIcon className="size-5" />
         {t('whatsapp')}
       </a>
-      <a href={PHONE_TEL} className={callClass} onClick={() => logClick(propertyId, 'call', locale)}>
+      <a href={tel} className={callClass} onClick={() => logClick(propertyId, 'call', locale, refId)} data-testid="call-link">
         <PhoneIcon className="size-5" />
         {t('call')}
       </a>

@@ -13,6 +13,8 @@ export interface LeadInput {
   name?: string | null;
   phone?: string | null;
   message?: string | null;
+  /** Owner of the listing whose share link brought the visitor (?ref=), see lib/dealer-ref. */
+  refId?: string | null;
 }
 
 export { MOBILE_RE, normalizeMobile } from './phone';
@@ -30,6 +32,7 @@ export async function createLead(input: LeadInput): Promise<string> {
     stage: 'new',
     assignedAgentId: null,
     notes: null,
+    refId: input.refId ?? null,
     createdAt: serverTimestamp(),
   });
   return ref.id;
@@ -42,6 +45,7 @@ export interface SiteVisitInput {
   date: string;
   slot: 'morning' | 'afternoon' | 'evening';
   locale: Locale;
+  refId?: string | null;
 }
 
 /** Records the booking as a lead (so it reaches the CRM) and as a site visit linked to it. */
@@ -54,6 +58,7 @@ export async function createSiteVisit(input: SiteVisitInput): Promise<string> {
     name: input.name,
     phone: input.phone,
     message: `${input.date} ${input.slot}`,
+    refId: input.refId ?? null,
   });
   const ref = await addDoc(collection(db, 'siteVisits'), {
     propertyId: input.propertyId,
