@@ -177,7 +177,7 @@
 **Tests** — all in GitHub Actions:
 
 - Firebase rules + functions: 100 (payments, plans, renewals, limits, badge, slots, stats, dealer leads, daily job).
-- Website: 12 unit + 19 browser (share, dealer link + lead credit, wrong ref ignored, dealer page, contact button height).
+- Website: 12 unit + 18 browser (share, dealer link + lead credit, wrong ref ignored, dealer page, contact button height).
 - Admin: 11 browser tests on all emulators (OTP login, buyer refused, approve/reject, payment → plan → badge, CRM, visits, agent view, settings, audit, phone layout).
 - App: 23 (plan purchase with UTR, leads lock/unlock, plan defaults match the shared file, share/UPI links).
 - Fixed along the way: squashed WhatsApp/Call buttons in the property side panel (Phase 5 bug), duplicate string name, test races.
