@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/data/filters.dart';
 import 'package:onlineland/state.dart';
+import 'package:onlineland/ui/sell.dart';
 
 import 'helpers.dart';
 
@@ -129,7 +130,7 @@ void main() {
     expect(find.byKey(const Key('become-owner')), findsOneWidget);
     await tester.tap(find.byKey(const Key('become-owner')));
     await tester.pumpAndSettle();
-    await scrollTo(tester, find.byKey(const Key('sell-submit')));
+    await scrollTo(tester, find.byKey(const Key('sell-submit')), within: find.byType(SellTab));
     await tester.tap(find.byKey(const Key('sell-submit')));
     await tester.pumpAndSettle();
     expect(find.text('కనీసం ఒక ఫోటో జోడించండి.'), findsOneWidget);

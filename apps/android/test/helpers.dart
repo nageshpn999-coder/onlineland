@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/app.dart';
 import 'package:onlineland/data/demo_repository.dart';
 import 'package:onlineland/state.dart';
+import 'package:onlineland/ui/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Starts the app with demo data. Phone size 412×915 (common Android).
@@ -22,9 +23,12 @@ Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, Stri
   return repo;
 }
 
-/// The home/listing list is the first scrollable on screen (tabs are kept alive in an IndexedStack).
-Future<void> scrollTo(WidgetTester tester, Finder target) async {
-  await tester.scrollUntilVisible(target, 300, scrollable: find.byType(Scrollable).first);
+/// Scrolls the first scrollable inside [within] (or on screen) until [target] is built and visible.
+Future<void> scrollTo(WidgetTester tester, Finder target, {Finder? within}) async {
+  final scrollable = within == null
+      ? find.byType(Scrollable).first
+      : find.descendant(of: within, matching: find.byType(Scrollable)).first;
+  await tester.scrollUntilVisible(target, 300, scrollable: scrollable);
   await tester.pumpAndSettle();
 }
 
@@ -34,8 +38,10 @@ Future<void> tapTab(WidgetTester tester, int index) async {
   await tester.pumpAndSettle();
 }
 
+/// Opens OL-1001 from the Home tab (tabs stay alive, so look only inside HomeTab).
 Future<void> openFirstListing(WidgetTester tester) async {
-  await scrollTo(tester, find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
-  await tester.tap(find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి').first);
+  final title = find.descendant(of: find.byType(HomeTab), matching: find.text('బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి'));
+  await scrollTo(tester, title, within: find.byType(HomeTab));
+  await tester.tap(title);
   await tester.pumpAndSettle();
 }
