@@ -104,7 +104,10 @@
     "call": "Call",
     "explore": "Properties",
     "company": "OnlineLand",
-    "rights": "© {year} OnlineLand. All rights reserved."
+    "rights": "© {year} OnlineLand. All rights reserved.",
+    "privacy": "Privacy policy",
+    "terms": "Terms of use",
+    "refund": "Refund policy"
   },
   "listings": {
     "titleSale": "Properties for sale",

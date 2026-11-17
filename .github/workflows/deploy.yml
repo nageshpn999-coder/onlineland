@@ -1,0 +1,62 @@
+name: Deploy Firebase (rules, indexes, functions)
+
+# Run by hand: Actions → "Deploy Firebase" → Run workflow → dev or prod.
+# Deploys ONLY to onlineland-dev or onlineland-prod. Any other project is refused, so the existing
+# projects (onlineland-28234, vahan-3e329, ridekart-70332, scraplake) can never be touched from here.
+#
+# Needs the secret FIREBASE_SERVICE_ACCOUNT_DEV / FIREBASE_SERVICE_ACCOUNT_PROD: the JSON key of a
+# service account created inside that one project (see docs/LAUNCH.md). Values are never printed.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Firebase project
+        type: choice
+        options: [dev, prod]
+        default: dev
+      only:
+        description: What to deploy
+        type: choice
+        options: ['firestore,storage,functions', 'firestore,storage', 'functions']
+        default: 'firestore,storage,functions'
+
+concurrency: deploy-${{ inputs.target }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ inputs.target == 'prod' && 'production' || 'development' }}
+    env:
+      PROJECT: ${{ inputs.target == 'prod' && 'onlineland-prod' || 'onlineland-dev' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Tests first (rules + functions on emulators)
+        run: npm run test:firebase
+
+      - name: Service account (must belong to the chosen project)
+        env:
+          SA: ${{ inputs.target == 'prod' && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+        run: |
+          case "$PROJECT" in onlineland-dev|onlineland-prod) ;; *) echo "::error::Refusing project $PROJECT"; exit 1;; esac
+          [ -n "$SA" ] || { echo "::error::Service account secret for $PROJECT is not set"; exit 1; }
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          SA_PROJECT=$(node -e "console.log(require(process.argv[1]).project_id)" "$RUNNER_TEMP/sa.json")
+          if [ "$SA_PROJECT" != "$PROJECT" ]; then
+            echo "::error::The service account belongs to another project. Refusing to deploy."; rm -f "$RUNNER_TEMP/sa.json"; exit 1
+          fi
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
+
+      - name: Deploy ${{ inputs.only }} to ${{ env.PROJECT }}
+        run: npx firebase deploy --config firebase/firebase.json --project "$PROJECT" --only "${{ inputs.only }}" --non-interactive --force
+
+      - name: Remove key file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/sa.json"

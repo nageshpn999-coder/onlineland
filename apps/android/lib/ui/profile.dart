@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../data/catalog.dart';
 import '../data/format.dart';
@@ -98,7 +99,53 @@ class ProfileTab extends ConsumerWidget {
         const SizedBox(width: 10),
         Expanded(child: OutlinedButton.icon(onPressed: callOnlineLand, icon: const Icon(Icons.call), label: Text(s.call))),
       ]),
+      const SizedBox(height: 16),
+      Wrap(spacing: 4, children: [
+        TextButton(
+          onPressed: () => launchUrl(Uri.parse('https://onlineland.in/$locale/legal/privacy'), mode: LaunchMode.externalApplication),
+          child: Text(s.privacyPolicy),
+        ),
+        TextButton(
+          onPressed: () => launchUrl(Uri.parse('https://onlineland.in/$locale/legal/terms'), mode: LaunchMode.externalApplication),
+          child: Text(s.termsOfUse),
+        ),
+      ]),
+      if (user != null && user.role != 'admin')
+        TextButton(
+          key: const Key('delete-account'),
+          style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+          onPressed: () => _confirmDelete(context, ref),
+          child: Text(s.deleteAccount),
+        ),
     ]);
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final s = ref.read(stringsProvider);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(s.deleteAccountTitle),
+        content: Text(s.deleteAccountBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.cancel)),
+          FilledButton(
+            key: const Key('delete-confirm'),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade700),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(s.deleteConfirm),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ref.read(repositoryProvider).deleteAccount();
+      refreshRevenue(ref);
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.accountDeleted)));
+    } catch (_) {
+      if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s.submitError)));
+    }
   }
 }
 

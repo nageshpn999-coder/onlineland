@@ -16,7 +16,7 @@ import { FieldValue, type Transaction } from 'firebase-admin/firestore';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import * as functionsV1 from 'firebase-functions/v1';
 import { logger } from 'firebase-functions';
-import { applyRole, audit, auth, db, isRole, ms, REGION, requireAdmin, requireSignedIn, ROLES, safeNotify, type Role } from './common';
+import { applyRole, audit, auth, CALLABLE, db, isRole, ms, REGION, requireAdmin, requireSignedIn, ROLES, safeNotify, type Role } from './common';
 import { loadConfig } from './config';
 
 export { REGION, ROLES } from './common';
@@ -53,7 +53,7 @@ export const onUserCreated = functionsV1
 // ---------- callables ----------
 
 /** A buyer who wants to post a property becomes an owner. Dealers are set by admin (subscription). */
-export const becomeOwner = onCall(async (req) => {
+export const becomeOwner = onCall(CALLABLE, async (req) => {
   const a = requireSignedIn(req);
   const role = a.token.role;
   if (role === 'owner' || role === 'dealer' || role === 'admin') return { role };
@@ -64,7 +64,7 @@ export const becomeOwner = onCall(async (req) => {
 });
 
 /** Admin assigns a role. The user must refresh their ID token to see it. */
-export const setUserRole = onCall(async (req) => {
+export const setUserRole = onCall(CALLABLE, async (req) => {
   const a = requireAdmin(req);
   const { uid, role } = (req.data ?? {}) as { uid?: unknown; role?: unknown };
   if (typeof uid !== 'string' || uid.length === 0 || uid.length > 128) {
@@ -86,7 +86,7 @@ export const setUserRole = onCall(async (req) => {
 });
 
 /** Admin approves or rejects a pending listing. Approval assigns a public code like OL-1001. */
-export const reviewProperty = onCall(async (req) => {
+export const reviewProperty = onCall(CALLABLE, async (req) => {
   const a = requireAdmin(req);
   const { propertyId, decision, reason } = (req.data ?? {}) as { propertyId?: unknown; decision?: unknown; reason?: unknown };
   if (typeof propertyId !== 'string' || propertyId.length === 0 || propertyId.length > 64) {

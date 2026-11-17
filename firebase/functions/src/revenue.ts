@@ -14,7 +14,7 @@ import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { logger } from 'firebase-functions';
-import { applyRole, audit, auth, db, DAY_MS, ms, requireAdmin, requireId, requireSignedIn, safeNotify } from './common';
+import { applyRole, audit, auth, CALLABLE, db, DAY_MS, ms, requireAdmin, requireId, requireSignedIn, safeNotify } from './common';
 import { loadConfig } from './config';
 import { isPlanId, type PlanConfig, type PlanId } from './plans';
 
@@ -39,7 +39,7 @@ function planFields(planId: PlanId, plan: PlanConfig) {
 
 // ---------------------------------------------------------------- payments
 
-export const reviewPayment = onCall(async (req) => {
+export const reviewPayment = onCall(CALLABLE, async (req) => {
   const a = requireAdmin(req);
   const { paymentId, decision, reason } = (req.data ?? {}) as { paymentId?: unknown; decision?: unknown; reason?: unknown };
   const id = requireId(paymentId, 'paymentId');
@@ -157,7 +157,7 @@ export const reviewPayment = onCall(async (req) => {
 
 // ---------------------------------------------------------------- verified badge
 
-export const setVerified = onCall(async (req) => {
+export const setVerified = onCall(CALLABLE, async (req) => {
   const a = requireAdmin(req);
   const { uid, verified } = (req.data ?? {}) as { uid?: unknown; verified?: unknown };
   const id = requireId(uid, 'uid');
@@ -190,7 +190,7 @@ export const setVerified = onCall(async (req) => {
 
 // ---------------------------------------------------------------- featured slots (Pro)
 
-export const useFeaturedSlot = onCall(async (req) => {
+export const useFeaturedSlot = onCall(CALLABLE, async (req) => {
   const a = requireSignedIn(req);
   const propertyId = requireId((req.data as { propertyId?: unknown } | null)?.propertyId, 'propertyId');
   const { pricing } = await loadConfig();
@@ -218,7 +218,7 @@ export const useFeaturedSlot = onCall(async (req) => {
 // ---------------------------------------------------------------- stats
 
 /** Public: counts a view or a WhatsApp share of a live listing. */
-export const trackEvent = onCall(async (req) => {
+export const trackEvent = onCall(CALLABLE, async (req) => {
   const { propertyId, type } = (req.data ?? {}) as { propertyId?: unknown; type?: unknown };
   const id = requireId(propertyId, 'propertyId');
   if (type !== 'view' && type !== 'share') throw new HttpsError('invalid-argument', 'type must be "view" or "share".');
@@ -310,7 +310,7 @@ export const dailyMaintenance = onSchedule({ schedule: 'every day 09:00', timeZo
 });
 
 /** Admin "run now" (also used by tests). */
-export const runMaintenance = onCall(async (req) => {
+export const runMaintenance = onCall(CALLABLE, async (req) => {
   const a = requireAdmin(req);
   const { nowMs } = (req.data ?? {}) as { nowMs?: unknown };
   // Tests in the emulator may pass a future time to simulate expiry; production always uses the real clock.
@@ -318,4 +318,38 @@ export const runMaintenance = onCall(async (req) => {
   const res = await maintenance(at);
   await audit(null, { actorId: a.uid, action: 'maintenance.run', target: 'system', before: null, after: res });
   return res;
+});
+
+// ---------------------------------------------------------------- account deletion (Play Store / DPDP Act)
+
+/**
+ * The signed-in user deletes their own account: profile, favourites, device tokens, dealer card,
+ * their listings taken off the site (owner contact deleted), then the login itself.
+ * Kept for legal accounting: payment records, subscriptions, audit logs. Admins cannot delete themselves.
+ */
+export const deleteMyAccount = onCall(CALLABLE, async (req) => {
+  const a = requireSignedIn(req);
+  if (a.token.role === 'admin') throw new HttpsError('failed-precondition', 'Admins cannot delete their own account.');
+  const uid = a.uid;
+
+  const [favs, devices, props] = await Promise.all([
+    db.collection(`users/${uid}/favorites`).listDocuments(),
+    db.collection(`users/${uid}/devices`).listDocuments(),
+    db.collection('properties').where('ownerId', '==', uid).get(),
+  ]);
+  const deletes: DocumentReference[] = [...favs, ...devices, db.doc(`dealers/${uid}`), db.doc(`users/${uid}`)];
+  for (const p of props.docs) deletes.push(db.doc(`properties/${p.id}/private/contact`));
+  for (let i = 0; i < deletes.length; i += 400) {
+    const batch = db.batch();
+    deletes.slice(i, i + 400).forEach((r) => batch.delete(r));
+    await batch.commit();
+  }
+  const live = props.docs.filter((p) => ['draft', 'pending', 'approved'].includes(p.get('status')));
+  await commitInBatches(live.map((p) => p.ref), { status: 'expired', isFeatured: false, updatedAt: FieldValue.serverTimestamp() });
+  await audit(null, {
+    actorId: uid, action: 'user.deleteAccount', target: `users/${uid}`,
+    before: { listings: props.size }, after: { deleted: true, listingsTakenDown: live.length },
+  });
+  await auth.deleteUser(uid);
+  return { deleted: true, listingsTakenDown: live.length };
 });

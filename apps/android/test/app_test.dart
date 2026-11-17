@@ -202,4 +202,19 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('leads-need-plan')), findsOneWidget);
   });
+
+  testWidgets('a user can delete their account from Profile', (tester) async {
+    final repo = await pumpApp(tester);
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await tester.pumpAndSettle();
+    await tapTab(tester, 4);
+    await scrollTo(tester, find.byKey(const Key('delete-account')), within: find.byType(ProfileTab));
+    await tester.tap(find.byKey(const Key('delete-account')));
+    await tester.pumpAndSettle();
+    expect(find.text('ఖాతా తొలగించాలా?'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('delete-confirm')));
+    await tester.pumpAndSettle();
+    expect(repo.currentUser, isNull);
+    expect(find.text('మీ ఖాతా తొలగించబడింది.'), findsOneWidget);
+  });
 }

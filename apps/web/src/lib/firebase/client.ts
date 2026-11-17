@@ -4,6 +4,7 @@
  * Security comes from Firestore/Storage rules and App Check, not from hiding this config.
  */
 import { getApp, getApps, initializeApp, type FirebaseApp } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { connectAuthEmulator, getAuth, type Auth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore, type Firestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions, type Functions } from 'firebase/functions';
@@ -52,6 +53,12 @@ export function firebaseClient(): FirebaseClient {
     connectFirestoreEmulator(db, '127.0.0.1', 8080);
     connectStorageEmulator(storage, '127.0.0.1', 9199);
     connectFunctionsEmulator(functions, '127.0.0.1', 5001);
+  }
+
+  // App Check (reCAPTCHA Enterprise): proves requests come from our site, not a bot. On only when the key is set.
+  const recaptcha = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  if (!USE_EMULATORS && recaptcha && typeof window !== 'undefined') {
+    initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(recaptcha), isTokenAutoRefreshEnabled: true });
   }
 
   client = { app, auth, db, storage, functions };

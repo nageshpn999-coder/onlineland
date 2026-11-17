@@ -46,10 +46,17 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <a href="https://onlineland.in/blog.html" className={link}>
+              <a href="/blog.html" className={link}>
                 {nav('blog')}
               </a>
             </li>
+            {(['privacy', 'terms', 'refund'] as const).map((doc) => (
+              <li key={doc}>
+                <Link href={`/legal/${doc}`} className={link}>
+                  {t(doc)}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 

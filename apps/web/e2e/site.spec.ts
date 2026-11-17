@@ -235,3 +235,70 @@ test.describe('share links and dealers (D7)', () => {
     expect(res?.status()).toBe(404);
   });
 });
+
+test.describe('launch readiness (Phase 8)', () => {
+  test('privacy, terms, refund and account-deletion pages exist in both languages and are in the footer', async ({ page }) => {
+    for (const [locale, title] of [
+      ['te', 'గోప్యతా విధానం'],
+      ['en', 'Privacy Policy'],
+    ] as const) {
+      await page.goto(`/${locale}/legal/privacy`);
+      await expect(page.getByRole('heading', { level: 1 })).toContainText(title);
+    }
+    for (const doc of ['terms', 'refund', 'delete-account']) {
+      expect((await page.goto(`/en/legal/${doc}`))?.status()).toBe(200);
+    }
+    await page.goto('/te');
+    await page.getByRole('contentinfo').getByRole('link', { name: 'గోప్యతా విధానం' }).click();
+    await expect(page).toHaveURL(/\/te\/legal\/privacy$/);
+  });
+
+  test('old onlineland.in pages keep working (cards, demos, poster, blog)', async ({ page, request }) => {
+    for (const url of ['/c/siri/', '/c/onlineland/', '/demo/dental/', '/demo/dental/dental2/', '/poster/', '/blog.html']) {
+      const res = await request.get(url);
+      expect(res.status(), url).toBe(200);
+      expect(await res.text(), url).toContain('<html');
+    }
+    const noSlash = await request.get('/c/siri', { maxRedirects: 0 });
+    expect(noSlash.status()).toBe(308);
+    expect(noSlash.headers()['location']).toMatch(/\/c\/siri\/$/);
+    expect((await request.get('/c/siri/photo.jpg')).headers()['content-type']).toContain('image');
+    const sw = await request.get('/sw.js');
+    expect(await sw.text()).toContain('unregister');
+    await page.goto('/index.html');
+    await expect(page).toHaveURL(/\/te$/);
+  });
+
+  test('sitemap lists listings in both languages; robots points to it', async ({ request }) => {
+    const xml = await (await request.get('/sitemap.xml')).text();
+    expect(xml).toContain('/te/properties/OL-1001');
+    expect(xml).toContain('/en/properties/OL-1001');
+    expect(xml).not.toContain('OL-0999'); // sold
+    expect(xml).toContain('/te/legal/privacy');
+    const robots = await (await request.get('/robots.txt')).text();
+    expect(robots).toContain('Sitemap:');
+    expect(robots).toContain('Disallow: /api/');
+  });
+
+  test('a bot filling the hidden field gets "sent" but nothing is saved', async ({ page }) => {
+    await page.goto('/en/properties/OL-1002');
+    const form = page.locator('form').filter({ has: page.getByTestId('enquiry-privacy') });
+    await form.getByLabel(/name/i).first().fill('Spam Bot');
+    await form.getByLabel(/mobile/i).fill('9876509999');
+    await form.locator('input[name="company"]').fill('spam inc', { force: true });
+    await form.getByRole('button').click();
+    await expect(page.getByTestId('enquiry-sent')).toBeVisible();
+    await page.waitForTimeout(1500);
+    expect((await db.collection('leads').where('name', '==', 'Spam Bot').get()).size).toBe(0);
+  });
+
+  test('no serious accessibility problems on the main pages', async ({ page }) => {
+    const { default: AxeBuilder } = await import('@axe-core/playwright');
+    for (const url of ['/te', '/te/properties', '/te/properties/OL-1001', '/en/legal/privacy', '/te/favorites']) {
+      await page.goto(url);
+      const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+      const bad = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+      expect(bad.map((v) => `${url}: ${v.id} — ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);
+    }
+  });
+});

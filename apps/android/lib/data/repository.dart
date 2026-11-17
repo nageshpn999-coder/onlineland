@@ -35,6 +35,9 @@ abstract class Repository {
   Future<String> submitListing(ListingDraft draft, List<Uint8List> photos, {void Function(int done, int total)? onProgress});
   Future<List<Property>> myListings();
 
+  /// Deletes the signed-in user's account and data (Play Store / DPDP requirement), then signs out.
+  Future<void> deleteAccount();
+
   // ---- revenue (D7) ----
   /// Plans and prices (Firestore values over the defaults).
   Future<RevenueConfig> revenueConfig();

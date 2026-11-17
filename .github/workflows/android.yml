@@ -31,7 +31,9 @@ jobs:
           cache: true
 
       - name: Packages
-        run: flutter pub get
+        run: |
+          flutter pub get
+          grep -A3 '^  firebase_app_check:' pubspec.lock || true
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos

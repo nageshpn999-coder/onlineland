@@ -31,7 +31,7 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
-          <a href="https://onlineland.in/blog.html" className="text-[0.95rem] font-medium text-ink-soft hover:text-brand">
+          <a href="/blog.html" className="text-[0.95rem] font-medium text-ink-soft hover:text-brand">
             {t('blog')}
           </a>
         </nav>
@@ -69,7 +69,7 @@ export function SiteHeader() {
                   {l.label}
                 </Link>
               ))}
-              <a href="https://onlineland.in/blog.html" className="block rounded px-3 py-2.5 text-ink hover:bg-mist">
+              <a href="/blog.html" className="block rounded px-3 py-2.5 text-ink hover:bg-mist">
                 {t('blog')}
               </a>
               <Link href="/favorites" className="block rounded px-3 py-2.5 text-ink hover:bg-mist">

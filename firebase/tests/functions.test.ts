@@ -360,6 +360,36 @@ describe('revenue (D7)', () => {
   });
 });
 
+describe('deleteMyAccount', () => {
+  it('deletes profile, favourites, devices, dealer card and login; takes listings down; keeps payments', async () => {
+    const uid = `leaver-${run}`;
+    await createAccount(uid, '+919000000555');
+    await adminDb().doc(`users/${uid}/favorites/x`).set({ savedAt: Timestamp.now() });
+    await adminDb().doc(`users/${uid}/devices/tok`).set({ token: 'tok', platform: 'android', updatedAt: Timestamp.now() });
+    await adminDb().doc(`dealers/${uid}`).set({ name: 'Leaver', verified: false, planId: 'free' });
+    await adminDb().doc(`properties/leave-${run}`).set(adminListing(uid, { status: 'approved', code: 'OL-6001', isFeatured: true }));
+    await adminDb().doc(`properties/leave-${run}/private/contact`).set({ ownerName: 'L', ownerPhone: '9000000555' });
+    await adminDb().doc(`paymentRequests/leave-pay-${run}`).set({ userId: uid, kind: 'plan', status: 'approved' });
+
+    await signInAs(uid);
+    const res = (await httpsCallable(functions, 'deleteMyAccount')({})).data as { listingsTakenDown: number };
+    expect(res.listingsTakenDown).toBe(1);
+    await expect(adminAuth().getUser(uid)).rejects.toThrow();
+    for (const path of [`users/${uid}`, `users/${uid}/favorites/x`, `users/${uid}/devices/tok`, `dealers/${uid}`, `properties/leave-${run}/private/contact`]) {
+      expect((await adminDb().doc(path).get()).exists, path).toBe(false);
+    }
+    expect((await adminDb().doc(`properties/leave-${run}`).get()).data()).toMatchObject({ status: 'expired', isFeatured: false });
+    expect((await adminDb().doc(`paymentRequests/leave-pay-${run}`).get()).exists).toBe(true);
+  });
+
+  it('admins cannot delete themselves; signed-out callers are refused', async () => {
+    await signInAs(`admin-${run}`);
+    expect(await callError('deleteMyAccount', {})).toBe('functions/failed-precondition');
+    await signOut(auth);
+    expect(await callError('deleteMyAccount', {})).toBe('functions/unauthenticated');
+  });
+});
+
 describe('scripts/set-role.mjs (first-admin setup)', () => {
   it('gives an existing user a role by phone number', async () => {
     const uid = `cli-${run}`;

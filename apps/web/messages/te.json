@@ -104,7 +104,10 @@
     "call": "కాల్ చేయండి",
     "explore": "ఆస్తులు",
     "company": "OnlineLand",
-    "rights": "© {year} OnlineLand. అన్ని హక్కులు ప్రత్యేకించబడ్డాయి."
+    "rights": "© {year} OnlineLand. అన్ని హక్కులు ప్రత్యేకించబడ్డాయి.",
+    "privacy": "గోప్యతా విధానం",
+    "terms": "నిబంధనలు",
+    "refund": "రిఫండ్ విధానం"
   },
   "listings": {
     "titleSale": "అమ్మకానికి ఆస్తులు",

@@ -176,3 +176,19 @@ test('works on a phone screen', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Leads (CRM)' })).toBeVisible();
   await shot(page, 'mobile-leads');
 });
+
+test('no serious accessibility problems (login, overview, leads)', async ({ page }) => {
+  const { default: AxeBuilder } = await import('@axe-core/playwright');
+  const check = async (label: string) => {
+    const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
+    const bad = violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
+    expect(bad.map((v) => `${label}: ${v.id} — ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}`)).toEqual([]);
+  };
+  await page.goto('/login/');
+  await check('login');
+  await login(page);
+  await check('overview');
+  await page.goto('/leads/');
+  await expect(page.getByRole('heading', { name: 'Leads (CRM)' })).toBeVisible();
+  await check('leads');
+});

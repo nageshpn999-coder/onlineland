@@ -258,4 +258,15 @@ class S {
   String get leadsNeedPlan => _('మీ షేర్ లింక్ ద్వారా వచ్చిన leads చూడటానికి Basic లేదా Pro ప్లాన్ కావాలి.', 'You need the Basic or Pro plan to see leads from your shared links.');
   String get leadsEmpty => _('ఇంకా leads రాలేదు. మీ ప్రాపర్టీలను WhatsApp లో షేర్ చేయండి.', 'No leads yet. Share your properties on WhatsApp.');
   String get seePlans => _('ప్లాన్‌లు చూడండి', 'See plans');
+
+  // account & legal (Phase 8)
+  String get deleteAccount => _('ఖాతా తొలగించండి', 'Delete account');
+  String get deleteAccountTitle => _('ఖాతా తొలగించాలా?', 'Delete your account?');
+  String get deleteAccountBody => _(
+      'మీ ప్రొఫైల్, favourites తొలగిపోతాయి; మీ ప్రాపర్టీలు సైట్ నుంచి తీసేస్తాం. చెల్లింపు రికార్డులు చట్టం కోసం ఉంచుతాం. ఇది తిరిగి రాదు.',
+      'Your profile and favourites are deleted and your properties are taken off the site. Payment records are kept for legal reasons. This cannot be undone.');
+  String get deleteConfirm => _('అవును, తొలగించండి', 'Yes, delete');
+  String get accountDeleted => _('మీ ఖాతా తొలగించబడింది.', 'Your account has been deleted.');
+  String get privacyPolicy => _('గోప్యతా విధానం', 'Privacy policy');
+  String get termsOfUse => _('నిబంధనలు', 'Terms of use');
 }

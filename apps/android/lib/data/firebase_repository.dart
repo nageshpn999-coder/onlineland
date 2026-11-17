@@ -190,6 +190,16 @@ class FirebaseRepository implements Repository {
   Future<void> signOut() => _auth.signOut();
 
   @override
+  Future<void> deleteAccount() async {
+    try {
+      await _functions.httpsCallable('deleteMyAccount').call();
+    } on FirebaseFunctionsException catch (e) {
+      throw RepoException(e.code, e.message ?? e.code);
+    }
+    await _auth.signOut();
+  }
+
+  @override
   Future<String> becomeOwner() async {
     final res = await _functions.httpsCallable('becomeOwner').call<Map<String, dynamic>>();
     await _auth.currentUser?.getIdToken(true);

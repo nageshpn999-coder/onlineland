@@ -4,6 +4,7 @@ import { useId, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@onlineland/shared';
 import { useDealerRef } from '@/lib/dealer-ref';
+import { Honeypot, isBot } from './Honeypot';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -34,6 +35,10 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
       onSubmit={async (e) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
+        if (isBot(data)) {
+          setStatus('sent');
+          return;
+        }
         const { createLead, normalizeMobile, MOBILE_RE } = await import('@/lib/leads');
         const phone = normalizeMobile(String(data.get('phone') ?? ''));
         if (!MOBILE_RE.test(phone)) {
@@ -107,6 +112,7 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
       <p className="text-xs text-ink-soft" data-testid="enquiry-privacy">
         {dealer ? t('privacyDealer', { name: dealer.name }) : t('privacy')}
       </p>
+      <Honeypot />
     </form>
   );
 }

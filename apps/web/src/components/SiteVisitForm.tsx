@@ -4,6 +4,7 @@ import { useId, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@onlineland/shared';
 import { useDealerRef } from '@/lib/dealer-ref';
+import { Honeypot, isBot } from './Honeypot';
 import { inputClass, labelClass } from './EnquiryForm';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
@@ -40,6 +41,10 @@ export function SiteVisitForm({ propertyId }: { propertyId: string }) {
       onSubmit={async (e) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
+        if (isBot(data)) {
+          setStatus('sent');
+          return;
+        }
         const { createSiteVisit, normalizeMobile, MOBILE_RE } = await import('@/lib/leads');
         const name = String(data.get('name') ?? '').trim().slice(0, 80);
         const phone = normalizeMobile(String(data.get('phone') ?? ''));
@@ -105,6 +110,7 @@ export function SiteVisitForm({ propertyId }: { propertyId: string }) {
       >
         {status === 'sending' ? t('sending') : t('submit')}
       </button>
+      <Honeypot />
     </form>
   );
 }

@@ -76,6 +76,14 @@ class DemoRepository implements Repository {
   }
 
   @override
+  Future<void> deleteAccount() async {
+    if (_user == null) throw RepoException('unauthenticated', 'Sign in first');
+    _payments.clear();
+    _dealer = null;
+    await signOut();
+  }
+
+  @override
   Future<String> becomeOwner() async {
     final u = _user;
     if (u == null) throw RepoException('unauthenticated', 'Sign in first');

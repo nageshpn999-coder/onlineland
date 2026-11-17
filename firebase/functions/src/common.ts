@@ -16,6 +16,12 @@ export type Role = (typeof ROLES)[number];
 initializeApp();
 setGlobalOptions({ region: REGION, maxInstances: 10 });
 
+/**
+ * App Check on callable functions. Turn on (ENFORCE_APP_CHECK=true in firebase/functions/.env.<project>)
+ * only after the website, admin and app all send App Check tokens — see docs/LAUNCH.md.
+ */
+export const CALLABLE = { enforceAppCheck: process.env.ENFORCE_APP_CHECK === 'true' } as const;
+
 export const db = getFirestore();
 export const auth = getAuth();
 
