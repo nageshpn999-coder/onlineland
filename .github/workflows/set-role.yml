@@ -1,0 +1,48 @@
+name: Give a role (make an admin / agent)
+
+# Run by hand from GitHub (works from a phone): Actions → "Give a role" → Run workflow.
+# The person must have signed in once on the website or app with that number.
+# Only onlineland-dev / onlineland-prod; uses the same service-account secret as "Deploy Firebase".
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: Firebase project
+        type: choice
+        options: [dev, prod]
+        default: dev
+      phone:
+        description: Mobile number with +91 (e.g. +919959731120)
+        required: true
+      role:
+        description: Role
+        type: choice
+        options: [admin, agent, dealer, owner, buyer]
+        default: admin
+
+jobs:
+  role:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ${{ inputs.target == 'prod' && 'production' || 'development' }}
+    env:
+      PROJECT: ${{ inputs.target == 'prod' && 'onlineland-prod' || 'onlineland-dev' }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Set role
+        env:
+          SA: ${{ inputs.target == 'prod' && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+          PHONE: ${{ inputs.phone }}
+          ROLE: ${{ inputs.role }}
+        run: |
+          echo "$PHONE" | grep -Eq '^\+91[6-9][0-9]{9}$' || { echo "::error::Phone must look like +919959731120"; exit 1; }
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          [ "$(node -e "console.log(require(process.argv[1]).project_id)" "$RUNNER_TEMP/sa.json")" = "$PROJECT" ] || { echo "::error::Service account is not for $PROJECT"; rm -f "$RUNNER_TEMP/sa.json"; exit 1; }
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" node scripts/set-role.mjs --project "$PROJECT" --phone "$PHONE" --role "$ROLE"
+          rm -f "$RUNNER_TEMP/sa.json"

@@ -37,6 +37,10 @@ npm run emulators:check  # verify emulators + deny-all rules
 
 Emulators use the offline project `demo-onlineland`, so nothing touches real data.
 
+## Launch
+
+Step-by-step go-live guide (Telugu): [docs/LAUNCH.md](docs/LAUNCH.md). Play Store text: [docs/PLAY_STORE.md](docs/PLAY_STORE.md).
+
 ## Android app (demo)
 
 Download the latest test APK: https://github.com/nageshpn999-coder/onlineland/releases/tag/android-demo

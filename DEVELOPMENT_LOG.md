@@ -188,5 +188,23 @@
 - UPI ID to be entered in admin → Prices & settings.
 - Area-leads forwarding for Pro dealers is manual for now (admin assigns); automatic rules later if needed.
 
-## Phase 8 — Testing, launch ⏳ (awaiting approval)
+## Phase 8A — Launch preparation ✅ (17 Nov 2026) · 8B go-live waits for Firebase projects
+
+Approved for "everything that does not need the laptop".
+
+**Built**
+
+- Legal (te/en): `/legal/privacy`, `/legal/terms`, `/legal/refund`, `/legal/delete-account` (`apps/web/src/lib/legal.ts`), footer links. Written from what the platform really does — **have a lawyer/CA review before launch**.
+- Account deletion: Cloud Function `deleteMyAccount` (profile, favourites, devices, dealer card, owner contacts, login; listings taken down; payments/audit kept) + app Profile → "ఖాతా తొలగించండి" (Play Store requirement).
+- Old onlineland.in URLs kept: `c/*` visiting cards, `demo/dental`, `poster`, `blog.html` + `posts.js`, icons copied unchanged from `main` into `apps/web/public`; trailing-slash handling in `src/proxy.ts`; `/index.html` → `/te`; self-unregistering `sw.js` replaces the old cache worker. (`c/an-landscape /readme.txt` with the space was not copied.)
+- SEO: `sitemap.xml` (every live listing, te + en alternates), `robots.txt`; GA4 `G-FS8G5F66CB` when `NEXT_PUBLIC_GA_ID` is set; security headers (HSTS, nosniff, referrer, permissions).
+- Abuse protection: App Check in website/admin (reCAPTCHA Enterprise, on when key set), app (Play Integrity, `firebase_app_check ^0.5.2`), callables enforce when `ENFORCE_APP_CHECK=true`; honeypot field on enquiry and visit forms.
+- Workflows: `deploy.yml` (rules/indexes/functions, tests first, refuses any project but onlineland-dev/prod and checks the key's project), `set-role.yml` (first admin from a phone), `android-release.yml` (signed App Bundle from secrets). Release signing in `build.gradle.kts` reads env only.
+- Store: `docs/store/play-icon-512.png`, `feature-graphic-1024x500.png`, `docs/PLAY_STORE.md` (listing te/en, data safety, rating). Launch guide `docs/LAUNCH.md` (Telugu, step by step).
+
+**Tests** — Firebase 102, website 12 unit + 23 browser (legal pages, old URLs, sitemap, honeypot, axe accessibility), admin 12 browser (+ axe), app 24 (+ account deletion). All passing in CI.
+
+**Pending (8B, needs Nagesh)** — docs/LAUNCH.md steps 1–9; decision on old listings (step 10).
+
+## Phase 8B — Go-live ⏳ (after Firebase projects exist)
 
