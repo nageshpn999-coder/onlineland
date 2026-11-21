@@ -82,7 +82,7 @@ export function PropertyCard({
             <dt className="sr-only">Location</dt>
             <PinIcon className="size-[18px] shrink-0" />
             <dd className="flex min-w-0 items-baseline gap-1.5">
-              <span className="truncate">{place}</span>
+              <span className="min-w-0 truncate">{place}</span>
               {distance && (
                 <span className="shrink-0 whitespace-nowrap font-semibold text-field" data-testid="distance">
                   · {formatKm(distance.km, distance.exact, tl('km'))}
