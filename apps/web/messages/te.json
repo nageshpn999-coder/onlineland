@@ -124,7 +124,8 @@
     "sorts": {
       "newest": "కొత్తవి ముందు",
       "price-asc": "తక్కువ ధర ముందు",
-      "price-desc": "ఎక్కువ ధర ముందు"
+      "price-desc": "ఎక్కువ ధర ముందు",
+      "nearest": "దగ్గర ఉన్నవి ముందు"
     },
     "page": "పేజీ {page} / {pages}",
     "prev": "ముందు పేజీ",
@@ -134,7 +135,18 @@
     "emptyBody": "మీ అవసరం WhatsApp లో చెప్పండి. సరిపోయే ఆస్తులు వెతికి మీకు పంపుతాం.",
     "emptyCta": "WhatsApp లో అడగండి",
     "emptyMessage": "నమస్తే OnlineLand, నాకు ఆస్తి కావాలి: {query}",
-    "metaTitle": "{title} | OnlineLand"
+    "metaTitle": "{title} | OnlineLand",
+    "nearMe": "నా దగ్గర",
+    "locating": "లొకేషన్ చూస్తున్నాం…",
+    "locationDenied": "లొకేషన్ అనుమతి ఇవ్వలేదు. జిల్లా/మండలం ఎంచుకోండి.",
+    "locationOutside": "మీరు తెలంగాణ బయట ఉన్నారు. జిల్లా/మండలం ఎంచుకోండి.",
+    "nearActive": "మీ దగ్గర ఉన్నవి ముందు",
+    "radius": "దూరం",
+    "radiusAny": "ఎంత దూరమైనా",
+    "radiusKm": "{km} కి.మీ లోపు",
+    "nearOff": "తీసేయండి",
+    "km": "కి.మీ",
+    "away": "దూరం"
   },
   "property": {
     "code": "ఆస్తి కోడ్",

@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { AREA_UNITS, getCategory, type Locale } from '@onlineland/shared';
 import { Link } from '@/i18n/navigation';
-import { formatPrice } from '@/lib/format';
+import { formatKm, formatPrice } from '@/lib/format';
 import { placeLabel } from '@/lib/place';
 import type { PublicProperty } from '@/lib/property-types';
 import { IMAGES_UNOPTIMIZED, photoUrl } from '@/lib/storage-url';
@@ -16,12 +16,24 @@ export function areaText(p: Pick<PublicProperty, 'area' | 'areaUnit'>, locale: L
   return `${p.area.toLocaleString('en-IN')} ${label}`;
 }
 
-export function PropertyCard({ property: p, priority = false, refId }: { property: PublicProperty; priority?: boolean; refId?: string }) {
+export function PropertyCard({
+  property: p,
+  priority = false,
+  refId,
+  distance,
+}: {
+  property: PublicProperty;
+  priority?: boolean;
+  refId?: string;
+  /** "Near me": km from the visitor; exact = the listing has its own GPS point. */
+  distance?: { km: number; exact: boolean };
+}) {
   const t = useTranslations('featured');
   const locale = useLocale() as Locale;
   const title = p.title[locale] || p.title.te || p.title.en;
   const place = placeLabel(p.location, locale);
   const suffix = p.priceBasis === 'per-month' ? t('perMonth') : '';
+  const tl = useTranslations('listings');
 
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-[var(--radius-plot)] border border-line bg-paper">
@@ -69,7 +81,14 @@ export function PropertyCard({ property: p, priority = false, refId }: { propert
           <div className="flex items-center gap-2">
             <dt className="sr-only">Location</dt>
             <PinIcon className="size-[18px] shrink-0" />
-            <dd className="line-clamp-1">{place}</dd>
+            <dd className="line-clamp-1">
+              {place}
+              {distance && (
+                <span className="ml-1.5 whitespace-nowrap font-semibold text-field" data-testid="distance">
+                  · {formatKm(distance.km, distance.exact, tl('km'))}
+                </span>
+              )}
+            </dd>
           </div>
           <div className="flex items-center gap-2">
             <dt className="sr-only">Area</dt>

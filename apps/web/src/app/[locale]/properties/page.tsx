@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getCategory, getDistrict, getMandal, type Locale } from '@onlineland/shared';
 import { ChatIcon } from '@/components/icons';
 import { ListingFilters } from '@/components/ListingFilters';
+import { NearMe } from '@/components/NearMe';
 import { PropertyCard } from '@/components/PropertyCard';
 import { SortSelect } from '@/components/SortSelect';
 import { Link } from '@/i18n/navigation';
@@ -93,6 +94,9 @@ export default async function PropertiesPage({ params, searchParams }: { params:
               </p>
               <SortSelect filters={filters} />
             </div>
+            <div className="mt-3">
+              <NearMe filters={filters} />
+            </div>
             {chips.length > 0 && (
               <ul className="mt-3 flex flex-wrap gap-2">
                 {chips.map((c) => (
@@ -112,7 +116,11 @@ export default async function PropertiesPage({ params, searchParams }: { params:
               <ul className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3" data-testid="results">
                 {items.map((p, i) => (
                   <li key={p.id}>
-                    <PropertyCard property={p} priority={i < 3} />
+                    <PropertyCard
+                      property={p}
+                      priority={i < 3}
+                      distance={p.distanceKm !== undefined ? { km: p.distanceKm, exact: p.distancePrecision === 'exact' } : undefined}
+                    />
                   </li>
                 ))}
               </ul>

@@ -302,3 +302,37 @@ test.describe('launch readiness (Phase 8)', () => {
     }
   });
 });
+
+test.describe('near me', () => {
+  test.use({ geolocation: { latitude: 16.5021, longitude: 77.5075 }, permissions: ['geolocation'] }); // Makthal
+
+  test('lists properties nearest first with distances, and a radius narrows them', async ({ page }) => {
+    await page.goto('/te/properties');
+    await page.getByTestId('near-me').click();
+    await expect(page).toHaveURL(/near=16\.5%2C77\.51|near=16\.5,77\.51/);
+    await expect(page.getByTestId('near-active')).toBeVisible();
+    const kms = async () =>
+      (await page.getByTestId('distance').allTextContents()).map((s) => Number(s.replace(/[^\d.]/g, '')));
+    const all = await kms();
+    expect(all.length).toBeGreaterThan(3);
+    expect([...all].sort((a, b) => a - b)).toEqual(all); // nearest first
+    const first = page.getByTestId('results').locator('article').first();
+    await expect(first).toContainText(/OL-100[12]/); // the Makthal listings
+    await page.screenshot({ path: `${SHOTS}/near-me.png`, fullPage: false });
+
+    await page.locator('#near-radius').selectOption('5');
+    await expect(page).toHaveURL(/radius=5/);
+    await expect(page.getByTestId('results').locator('article')).toHaveCount(2);
+    expect((await kms()).every((k) => k <= 5)).toBe(true);
+
+    await page.getByRole('button', { name: 'తీసేయండి' }).click();
+    await expect(page).not.toHaveURL(/near=/);
+    await expect(page.getByTestId('distance')).toHaveCount(0);
+  });
+
+  test('a link with a place outside Telangana is ignored', async ({ page }) => {
+    await page.goto('/en/properties?near=28.61,77.21&radius=5');
+    await expect(page.getByTestId('distance')).toHaveCount(0);
+    await expect(page.getByTestId('near-me')).toBeVisible();
+  });
+});

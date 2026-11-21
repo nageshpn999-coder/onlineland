@@ -9,7 +9,15 @@ export function SortSelect({ filters }: { filters: ListingFilters }) {
   const t = useTranslations('listings');
   const locale = useLocale();
   const id = useId();
-  const hidden = { purpose: filters.purpose, type: filters.type, district: filters.district, mandal: filters.mandal, budget: filters.budget };
+  const hidden = {
+    purpose: filters.purpose,
+    type: filters.type,
+    district: filters.district,
+    mandal: filters.mandal,
+    budget: filters.budget,
+    near: filters.near ? `${filters.near.lat},${filters.near.lng}` : null,
+    radius: filters.radius ? String(filters.radius) : null,
+  };
 
   return (
     <form action={`/${locale}/properties`} method="get" className="flex items-center gap-2">
@@ -24,7 +32,7 @@ export function SortSelect({ filters }: { filters: ListingFilters }) {
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
         className="h-10 rounded-[var(--radius-plot)] border border-line bg-paper px-2 text-sm text-ink outline-none focus:border-brand"
       >
-        {SORTS.map((s) => (
+        {SORTS.filter((s) => s !== 'nearest' || filters.near).map((s) => (
           <option key={s} value={s}>
             {t(`sorts.${s}`)}
           </option>

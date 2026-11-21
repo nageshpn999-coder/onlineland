@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../config.dart';
 import '../data/catalog.dart';
 import '../data/format.dart';
+import '../data/geo.dart';
 import '../data/models.dart';
 import '../state.dart';
 import '../theme.dart';
@@ -77,8 +78,11 @@ class DemoBanner extends ConsumerWidget {
 }
 
 class PropertyCard extends ConsumerWidget {
-  const PropertyCard({super.key, required this.property});
+  const PropertyCard({super.key, required this.property, this.distance});
   final Property property;
+
+  /// "Near me": km from the phone; exact = the listing has its own GPS point.
+  final (double, bool)? distance;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -133,7 +137,11 @@ class PropertyCard extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(p.title(te), style: Theme.of(context).textTheme.titleMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
                   const SizedBox(height: 6),
-                  _IconLine(icon: Icons.place_outlined, text: p.place.label(te)),
+                  _IconLine(
+                    icon: Icons.place_outlined,
+                    text: distance == null ? p.place.label(te) : '${p.place.label(te)} · ${formatKm(distance!.$1, distance!.$2, s.km)}',
+                    key: distance == null ? null : Key('distance-${p.id}'),
+                  ),
                   _IconLine(icon: Icons.square_foot, text: formatArea(p.area, p.areaUnit, te)),
                   const SizedBox(height: 8),
                   PriceBlock(property: p),
@@ -148,7 +156,7 @@ class PropertyCard extends ConsumerWidget {
 }
 
 class _IconLine extends StatelessWidget {
-  const _IconLine({required this.icon, required this.text});
+  const _IconLine({required this.icon, required this.text, super.key});
   final IconData icon;
   final String text;
 

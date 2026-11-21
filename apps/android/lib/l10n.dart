@@ -269,4 +269,16 @@ class S {
   String get accountDeleted => _('మీ ఖాతా తొలగించబడింది.', 'Your account has been deleted.');
   String get privacyPolicy => _('గోప్యతా విధానం', 'Privacy policy');
   String get termsOfUse => _('నిబంధనలు', 'Terms of use');
+
+  // near me
+  String get nearMe => _('నా దగ్గర', 'Near me');
+  String get locating => _('లొకేషన్ చూస్తున్నాం…', 'Finding your location…');
+  String get nearActive => _('మీ దగ్గర ఉన్నవి ముందు', 'Nearest to you first');
+  String get radiusAny => _('ఎంత దూరమైనా', 'Any distance');
+  String radiusKm(int km) => _('$km కి.మీ లోపు', 'Within $km km');
+  String get nearOff => _('తీసేయండి', 'Turn off');
+  String get sortNearest => _('దగ్గర ఉన్నవి ముందు', 'Nearest first');
+  String get km => _('కి.మీ', 'km');
+  String get locationDenied => _('లొకేషన్ అనుమతి లేదు. జిల్లా/మండలం ఎంచుకోండి.', 'Location not allowed. Choose a district/mandal instead.');
+  String get locationOutside => _('మీరు తెలంగాణ బయట ఉన్నారు. జిల్లా/మండలం ఎంచుకోండి.', 'You seem to be outside Telangana. Choose a district/mandal.');
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onlineland/data/catalog.dart';
+import 'package:onlineland/data/geo.dart';
 import 'package:onlineland/data/models.dart';
 
 /// The app's lists must match packages/shared (used by the website and Cloud Functions).
@@ -51,5 +52,25 @@ void main() {
     expect(uri.scheme, 'upi');
     expect(uri.queryParameters['pa'], 'onlineland@okaxis');
     expect(uri.queryParameters['am'], '499.00');
+  });
+
+  test('near-me centres match packages/shared/src/geo.ts and cover every district and mandal', () {
+    final ts = File('../../packages/shared/src/geo.ts').readAsStringSync();
+    final parts = ts.split('export const MANDAL_CENTERS');
+    final re = RegExp(r"^\s+'?([a-z-]+)'?: \{ lat: ([\d.]+), lng: ([\d.]+) \},", multiLine: true);
+    final tsDistricts = {for (final m in re.allMatches(parts[0])) m[1]!: (double.parse(m[2]!), double.parse(m[3]!))};
+    final tsMandals = {for (final m in re.allMatches(parts[1].split('export const NEAR_RADII_KM')[0])) m[1]!: (double.parse(m[2]!), double.parse(m[3]!))};
+    expect(districtCenters.map((k, v) => MapEntry(k, (v.lat, v.lng))), tsDistricts);
+    expect(mandalCenters['narayanpet']!.map((k, v) => MapEntry(k, (v.lat, v.lng))), tsMandals);
+    for (final d in districts) {
+      expect(districtCenters[d.id], isNotNull, reason: d.id);
+    }
+    for (final m in mandals['narayanpet']!) {
+      expect(mandalCenters['narayanpet']![m.id], isNotNull, reason: m.id);
+    }
+    final km = distanceKm((lat: 16.5021, lng: 77.5075), mandalCenters['narayanpet']!['narayanpet']!);
+    expect(km, inInclusiveRange(25, 30));
+    expect(formatKm(3.24, true, 'km'), '3.2 km');
+    expect(formatKm(12.6, false, 'km'), '~13 km');
   });
 }

@@ -17,3 +17,9 @@ export function formatPrice(rupees: number, locale: Locale): string {
   }
   return `₹${rupees.toLocaleString('en-IN')}`;
 }
+
+/** "3.2 km" / "~12 km" (approximate when the listing has no GPS point of its own). */
+export function formatKm(km: number, exact: boolean, unit: string) {
+  const n = km < 10 ? km.toFixed(1) : Math.round(km).toString();
+  return `${exact ? '' : '~'}${n} ${unit}`;
+}

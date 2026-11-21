@@ -217,4 +217,35 @@ void main() {
     expect(repo.currentUser, isNull);
     expect(find.text('మీ ఖాతా తొలగించబడింది.'), findsOneWidget);
   });
+
+  testWidgets('near me: nearest first with distances; radius narrows; turn off', (tester) async {
+    await pumpApp(tester, location: (lat: 16.5, lng: 77.51)); // Makthal
+    await tapTab(tester, 1);
+    await tester.tap(find.byKey(const Key('near-me')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('near-active')), findsOneWidget);
+    expect(find.byKey(const Key('distance-seed-1001')), findsOneWidget); // Makthal listing is first, so it is built
+    expect(find.textContaining('కి.మీ'), findsWidgets);
+
+    await tester.tap(find.byKey(const Key('near-radius')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('5 కి.మీ లోపు').last);
+    await tester.pumpAndSettle();
+    final count = tester.widget<Text>(find.byKey(const Key('results-count'))).data!;
+    expect(count, contains('2'));
+
+    await tester.tap(find.byKey(const Key('near-off')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('near-me')), findsOneWidget);
+    expect(find.textContaining('కి.మీ'), findsNothing);
+  });
+
+  testWidgets('near me without location permission explains what to do', (tester) async {
+    await pumpApp(tester); // location: null
+    await tapTab(tester, 1);
+    await tester.tap(find.byKey(const Key('near-me')));
+    await tester.pumpAndSettle();
+    expect(find.text('లొకేషన్ అనుమతి లేదు. జిల్లా/మండలం ఎంచుకోండి.'), findsOneWidget);
+    expect(find.byKey(const Key('near-active')), findsNothing);
+  });
 }

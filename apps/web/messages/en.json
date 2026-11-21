@@ -124,7 +124,8 @@
     "sorts": {
       "newest": "Newest first",
       "price-asc": "Price: low to high",
-      "price-desc": "Price: high to low"
+      "price-desc": "Price: high to low",
+      "nearest": "Nearest first"
     },
     "page": "Page {page} of {pages}",
     "prev": "Previous",
@@ -134,7 +135,18 @@
     "emptyBody": "Tell us what you need on WhatsApp and we'll find matching properties for you.",
     "emptyCta": "Ask on WhatsApp",
     "emptyMessage": "Hello OnlineLand, I'm looking for a property: {query}",
-    "metaTitle": "{title} | OnlineLand"
+    "metaTitle": "{title} | OnlineLand",
+    "nearMe": "Near me",
+    "locating": "Finding your location…",
+    "locationDenied": "Location not allowed. Choose a district/mandal instead.",
+    "locationOutside": "You seem to be outside Telangana. Choose a district/mandal instead.",
+    "nearActive": "Nearest to you first",
+    "radius": "Distance",
+    "radiusAny": "Any distance",
+    "radiusKm": "Within {km} km",
+    "nearOff": "Turn off",
+    "km": "km",
+    "away": "away"
   },
   "property": {
     "code": "Property code",

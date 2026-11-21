@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/filters.dart';
+import 'data/geo.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 import 'l10n.dart';
@@ -55,6 +57,16 @@ class FiltersNotifier extends Notifier<Filters> {
 }
 
 final filtersProvider = NotifierProvider<FiltersNotifier, Filters>(FiltersNotifier.new);
+
+/// Phone location for "near me" (overridden in tests). Null when location is off or not allowed.
+final locatorProvider = Provider<Future<LatLng?> Function()>((ref) => () async {
+      if (!await Geolocator.isLocationServiceEnabled()) return null;
+      var perm = await Geolocator.checkPermission();
+      if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
+      if (perm == LocationPermission.denied || perm == LocationPermission.deniedForever) return null;
+      final pos = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.medium));
+      return (lat: roundCoord(pos.latitude), lng: roundCoord(pos.longitude));
+    });
 
 final filteredProvider = Provider<AsyncValue<List<Property>>>((ref) {
   final f = ref.watch(filtersProvider);

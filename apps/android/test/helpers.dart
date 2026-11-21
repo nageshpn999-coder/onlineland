@@ -3,12 +3,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/app.dart';
 import 'package:onlineland/data/demo_repository.dart';
+import 'package:onlineland/data/geo.dart';
 import 'package:onlineland/state.dart';
 import 'package:onlineland/ui/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Starts the app with demo data. Phone size 412×915 (common Android).
-Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, String locale = 'te'}) async {
+Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, String locale = 'te', LatLng? location}) async {
   tester.view.physicalSize = const Size(412 * 3, 915 * 3);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
@@ -16,7 +17,12 @@ Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, Stri
   final prefs = await SharedPreferences.getInstance();
   final repo = DemoRepository(now: DateTime(2026, 11, 17));
   await tester.pumpWidget(ProviderScope(
-    overrides: [prefsProvider.overrideWithValue(prefs), repositoryProvider.overrideWithValue(repo)],
+    overrides: [
+      prefsProvider.overrideWithValue(prefs),
+      repositoryProvider.overrideWithValue(repo),
+      // Never touch the real GPS in tests.
+      locatorProvider.overrideWithValue(() async => location),
+    ],
     child: const OnlineLandApp(),
   ));
   await tester.pumpAndSettle();

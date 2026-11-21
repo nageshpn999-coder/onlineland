@@ -33,7 +33,7 @@ describe('pricing', () => {
 
 describe('parseFilters', () => {
   it('defaults to sale, newest, page 1', () => {
-    expect(parseFilters({})).toEqual({ purpose: 'sale', type: null, district: null, mandal: null, budget: null, sort: 'newest', page: 1 });
+    expect(parseFilters({})).toEqual({ purpose: 'sale', type: null, district: null, mandal: null, budget: null, sort: 'newest', page: 1, near: null, radius: null });
   });
   it('drops unknown or unsafe values', () => {
     const f = parseFilters({ type: 'castle', district: 'mars', mandal: 'x', budget: '9-1', sort: 'random', page: '-4' });

@@ -3,6 +3,8 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/catalog.dart';
 import '../data/filters.dart';
+import '../data/geo.dart';
+import '../data/models.dart';
 import '../l10n.dart';
 import '../state.dart';
 import '../theme.dart';
@@ -69,6 +71,7 @@ class ListingsTab extends ConsumerWidget {
             TextButton(onPressed: notifier.reset, child: Text(s.clearAll)),
           ]),
         ),
+      const _NearMeBar(),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
         child: Row(children: [
@@ -83,6 +86,7 @@ class ListingsTab extends ConsumerWidget {
               DropdownMenuItem(value: 'newest', child: Text(s.sortNewest)),
               DropdownMenuItem(value: 'price-asc', child: Text(s.sortPriceAsc)),
               DropdownMenuItem(value: 'price-desc', child: Text(s.sortPriceDesc)),
+              if (f.near != null) DropdownMenuItem(value: 'nearest', child: Text(s.sortNearest)),
             ],
             onChanged: (v) => notifier.set(f.copyWith(sort: v)),
           ),
@@ -98,7 +102,7 @@ class ListingsTab extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                     itemCount: list.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 14),
-                    itemBuilder: (_, i) => PropertyCard(property: list[i]),
+                    itemBuilder: (_, i) => PropertyCard(property: list[i], distance: _distance(f, list[i])),
                   ),
                 ),
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -208,6 +212,81 @@ class FilterSheet extends ConsumerWidget {
           FilledButton(onPressed: () => Navigator.of(context).pop(), child: Text('${s.showResults} (${s.count(count)})')),
         ]),
       ),
+    );
+  }
+}
+
+(double, bool)? _distance(Filters f, Property p) {
+  final near = f.near;
+  if (near == null) return null;
+  final pt = listingPoint(p.place);
+  return pt == null ? null : (distanceKm(near, pt.$1), pt.$2);
+}
+
+/// 📍 Near me: one tap to sort by distance from the phone; radius 5/10/25/50 km.
+class _NearMeBar extends ConsumerStatefulWidget {
+  const _NearMeBar();
+  @override
+  ConsumerState<_NearMeBar> createState() => _NearMeBarState();
+}
+
+class _NearMeBarState extends ConsumerState<_NearMeBar> {
+  bool _busy = false;
+
+  Future<void> _locate() async {
+    final s = ref.read(stringsProvider);
+    setState(() => _busy = true);
+    LatLng? p;
+    try {
+      p = await ref.read(locatorProvider)();
+    } catch (_) {
+      p = null;
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
+    final msg = p == null ? s.locationDenied : (!inTelanganaArea(p) ? s.locationOutside : null);
+    if (msg != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+      return;
+    }
+    final n = ref.read(filtersProvider.notifier);
+    n.set(ref.read(filtersProvider).nearMe(p!));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = ref.watch(stringsProvider);
+    final f = ref.watch(filtersProvider);
+    final n = ref.read(filtersProvider.notifier);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
+      child: f.near == null
+          ? Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                key: const Key('near-me'),
+                style: OutlinedButton.styleFrom(foregroundColor: Brand.green, side: const BorderSide(color: Brand.green), minimumSize: const Size(0, 40)),
+                onPressed: _busy ? null : _locate,
+                icon: _busy ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.my_location, size: 18),
+                label: Text(_busy ? s.locating : s.nearMe),
+              ),
+            )
+          : Row(key: const Key('near-active'), children: [
+              const Icon(Icons.my_location, size: 18, color: Brand.green),
+              const SizedBox(width: 6),
+              Expanded(child: Text(s.nearActive, style: const TextStyle(color: Brand.green, fontWeight: FontWeight.w700))),
+              DropdownButton<int?>(
+                key: const Key('near-radius'),
+                value: f.radius,
+                underline: const SizedBox.shrink(),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(s.radiusAny)),
+                  for (final r in nearRadiiKm) DropdownMenuItem(value: r, child: Text(s.radiusKm(r))),
+                ],
+                onChanged: (v) => n.set(f.copyWith(radius: () => v)),
+              ),
+              IconButton(key: const Key('near-off'), tooltip: s.nearOff, onPressed: () => n.set(f.nearOff()), icon: const Icon(Icons.close)),
+            ]),
     );
   }
 }

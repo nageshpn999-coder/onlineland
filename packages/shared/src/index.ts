@@ -8,3 +8,4 @@ export * from './models';
 export * from './locations';
 export * from './pricing';
 export * from './plans';
+export * from './geo';

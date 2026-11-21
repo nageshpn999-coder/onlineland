@@ -31,6 +31,8 @@ export function ListingFilters({ filters }: { filters: Filters }) {
   return (
     <form ref={form} action={`/${locale}/properties`} method="get" className="space-y-5" onChange={submit}>
       {filters.sort !== 'newest' && <input type="hidden" name="sort" value={filters.sort} />}
+      {filters.near && <input type="hidden" name="near" value={`${filters.near.lat},${filters.near.lng}`} />}
+      {filters.radius && <input type="hidden" name="radius" value={filters.radius} />}
 
       <fieldset className="inline-flex rounded-full bg-mist p-1">
         <legend className="sr-only">{ts('label')}</legend>
