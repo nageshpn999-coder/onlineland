@@ -312,9 +312,10 @@ test.describe('near me', () => {
     await expect(page).toHaveURL(/near=16\.5%2C77\.51|near=16\.5,77\.51/);
     await expect(page.getByTestId('near-active')).toBeVisible();
     const kms = async () =>
-      (await page.getByTestId('distance').allTextContents()).map((s) => Number(s.replace(/[^\d.]/g, '')));
+      (await page.getByTestId('distance').allTextContents()).map((s) => Number(s.match(/\d+(?:\.\d+)?/)![0]));
     const all = await kms();
     expect(all.length).toBeGreaterThan(3);
+    expect(all.every((k) => Number.isFinite(k))).toBe(true);
     expect([...all].sort((a, b) => a - b)).toEqual(all); // nearest first
     const first = page.getByTestId('results').locator('article').first();
     await expect(first).toContainText(/OL-100[12]/); // the Makthal listings
