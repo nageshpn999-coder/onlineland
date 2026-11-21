@@ -63,7 +63,7 @@ export default async function DealerPage({ params }: { params: Params }) {
         {properties.length === 0 ? (
           <p className="mt-10 text-center text-ink-soft">{t('empty')}</p>
         ) : (
-          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {properties.map((p) => (
               <li key={p.id}>
                 <PropertyCard property={p} refId={id} />

@@ -23,7 +23,7 @@ export function FeaturedProperties({ properties }: { properties: PublicProperty[
           </Link>
         </div>
 
-        <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {properties.map((p) => (
             <li key={p.id}>
               <PropertyCard property={p} />

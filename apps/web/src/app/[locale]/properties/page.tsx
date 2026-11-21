@@ -57,7 +57,7 @@ export default async function PropertiesPage({ params, searchParams }: { params:
           {filters.purpose === 'rent' ? t('titleRent') : t('titleSale')}
         </h1>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[280px_minmax(0,1fr)]">
           {/* Filters: collapsible on phones, always open on desktop */}
           <aside>
             <details className="group rounded-[var(--radius-plot)] border border-line bg-paper lg:hidden">
@@ -113,7 +113,7 @@ export default async function PropertiesPage({ params, searchParams }: { params:
             )}
 
             {items.length > 0 ? (
-              <ul className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3" data-testid="results">
+              <ul className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3" data-testid="results">
                 {items.map((p, i) => (
                   <li key={p.id}>
                     <PropertyCard
