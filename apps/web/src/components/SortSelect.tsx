@@ -26,6 +26,8 @@ export function SortSelect({ filters }: { filters: ListingFilters }) {
         {t('sort')}
       </label>
       <select
+        // Remount when the sort changes through navigation (e.g. "near me" switches to nearest first).
+        key={filters.sort}
         id={id}
         name="sort"
         defaultValue={filters.sort}

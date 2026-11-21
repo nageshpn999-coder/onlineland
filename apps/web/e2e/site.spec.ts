@@ -311,6 +311,14 @@ test.describe('near me', () => {
     await page.getByTestId('near-me').click();
     await expect(page).toHaveURL(/near=16\.5%2C77\.51|near=16\.5,77\.51/);
     await expect(page.getByTestId('near-active')).toBeVisible();
+    await expect(page.getByLabel('క్రమం')).toHaveValue('nearest');
+    // the distance stays visible even when the place name is long
+    for (const d of (await page.getByTestId('distance').all()).slice(0, 6)) {
+      const box = (await d.boundingBox())!;
+      const card = (await d.locator('xpath=ancestor::article').boundingBox())!;
+      expect(box.width).toBeGreaterThan(20);
+      expect(box.x + box.width).toBeLessThanOrEqual(card.x + card.width);
+    }
     const kms = async () =>
       (await page.getByTestId('distance').allTextContents()).map((s) => Number(s.match(/\d+(?:\.\d+)?/)![0]));
     const all = await kms();
