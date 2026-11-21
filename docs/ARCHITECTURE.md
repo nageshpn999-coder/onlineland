@@ -15,6 +15,8 @@ Full document with diagram: https://claude.ai/artifact/Lgt3U9iqripwCjgxcK27v2
 | D5 | Firebase phone OTP as the main login, plus Google sign-in. Login optional for browsing. |
 | D6 | Manual UPI first: dealer pays, admin confirms, a Cloud Function activates the plan. Gateway later. |
 | D7 | Revenue (17 Nov 2026): commission on deals via OnlineLand + dealer/agent subscriptions + paid featured listings. Prices and limits are editable in admin. |
+| D8 | Old listings (onlineland-28234) are not migrated; the new platform starts fresh (21 Nov 2026). |
+| D9 | Business contact / Play Console email: info@onlineland.in. |
 
 ### Subscription plans (D7)
 

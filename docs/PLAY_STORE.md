@@ -7,7 +7,7 @@ Screenshots: take 4–6 from the app (home, listings with filters, property page
 
 - **App name:** OnlineLand — భూములు, ప్లాట్లు, ఇళ్లు
 - **Category:** House & Home · **Tags:** Real estate
-- **Contact:** phone +91 99597 31120 · website https://onlineland.in · email: (your business email)
+- **Contact:** phone +91 99597 31120 · website https://onlineland.in · email info@onlineland.in
 - **Privacy policy URL:** https://onlineland.in/en/legal/privacy
 - **Account deletion URL:** https://onlineland.in/en/legal/delete-account
 

@@ -77,7 +77,7 @@ const te: Record<LegalDoc, LegalPage> = {
       },
       {
         heading: 'సంప్రదించండి (Grievance Officer)',
-        body: [`${COMPANY}, మక్తల్, నారాయణపేట జిల్లా, తెలంగాణ. ఫోన్/WhatsApp: +91 99597 31120. 30 రోజుల్లో సమాధానం ఇస్తాం.`],
+        body: [`${COMPANY}, మక్తల్, నారాయణపేట జిల్లా, తెలంగాణ. ఫోన్/WhatsApp: +91 99597 31120, ఇమెయిల్: info@onlineland.in. 30 రోజుల్లో సమాధానం ఇస్తాం.`],
       },
     ],
   },
@@ -148,7 +148,7 @@ const te: Record<LegalDoc, LegalPage> = {
       },
       {
         heading: 'ఎలా అడగాలి',
-        body: ['WhatsApp +91 99597 31120 కు మీ UTR నంబర్‌తో మెసేజ్ చేయండి. రిఫండ్ 7 పని దినాల్లో అదే UPI ఖాతాకు పంపుతాం.'],
+        body: ['WhatsApp +91 99597 31120 కు లేదా info@onlineland.in కు మీ UTR నంబర్‌తో మెసేజ్ చేయండి. రిఫండ్ 7 పని దినాల్లో అదే UPI ఖాతాకు పంపుతాం.'],
       },
     ],
   },
@@ -162,7 +162,7 @@ const te: Record<LegalDoc, LegalPage> = {
       },
       {
         heading: 'యాప్ లేకపోతే',
-        body: ['మీ ఖాతా ఉన్న మొబైల్ నంబర్ నుంచి WhatsApp +91 99597 31120 కు "నా ఖాతా తొలగించండి" అని పంపండి. 7 రోజుల్లో తొలగిస్తాం.'],
+        body: ['మీ ఖాతా ఉన్న మొబైల్ నంబర్ నుంచి WhatsApp +91 99597 31120 కు (లేదా info@onlineland.in కు) "నా ఖాతా తొలగించండి" అని పంపండి. 7 రోజుల్లో తొలగిస్తాం.'],
       },
       {
         heading: 'ఏమి తొలగిపోతుంది',
@@ -231,7 +231,7 @@ const en: Record<LegalDoc, LegalPage> = {
       },
       {
         heading: 'Contact (Grievance Officer)',
-        body: [`${COMPANY}, Makthal, Narayanpet District, Telangana. Phone/WhatsApp: +91 99597 31120. We reply within 30 days.`],
+        body: [`${COMPANY}, Makthal, Narayanpet District, Telangana. Phone/WhatsApp: +91 99597 31120, email: info@onlineland.in. We reply within 30 days.`],
       },
     ],
   },
@@ -302,7 +302,7 @@ const en: Record<LegalDoc, LegalPage> = {
       },
       {
         heading: 'How to ask',
-        body: ['WhatsApp +91 99597 31120 with your UTR number. Refunds are sent to the same UPI account within 7 working days.'],
+        body: ['WhatsApp +91 99597 31120 or email info@onlineland.in with your UTR number. Refunds are sent to the same UPI account within 7 working days.'],
       },
     ],
   },
@@ -313,7 +313,7 @@ const en: Record<LegalDoc, LegalPage> = {
       { heading: 'In the app', body: ['Profile → "Delete account" → confirm. It is deleted immediately.'] },
       {
         heading: 'Without the app',
-        body: ['From the mobile number of your account, WhatsApp "Delete my account" to +91 99597 31120. We delete it within 7 days.'],
+        body: ['From the mobile number of your account, WhatsApp (or email info@onlineland.in) "Delete my account" to +91 99597 31120. We delete it within 7 days.'],
       },
       {
         heading: 'What is deleted',
