@@ -206,5 +206,13 @@ Approved for "everything that does not need the laptop".
 
 **Pending (8B, needs Nagesh)** — docs/LAUNCH.md steps 1–9; decision on old listings (step 10).
 
+### 21 Nov 2026 — "Near me" (Nagesh's request, small change during 8A)
+
+- Website + app: 📍 నా దగ్గర / Near me lists properties nearest first with distances ("0.3 కి.మీ", "~12 కి.మీ" when approximate), radius 5/10/25/50 km, turn off. A listing's own GPS is used when saved, else its mandal HQ (13 Narayanpet mandals), else its district HQ (33 districts) — `packages/shared/src/geo.ts`, mirrored in `apps/android/lib/data/geo.dart`. Five mandal points are estimates (±5 km), marked in the file.
+- Privacy: app computes on the phone; website rounds to ~1 km in the URL; nothing stored. Privacy policy and Play data-safety text updated.
+- Decisions: D8 no legacy listing migration; D9 info@onlineland.in.
+- Fixed: card grids could widen the page on phones with long place names.
+- Tests: website 17 unit + 25 browser, app 27, all green.
+
 ## Phase 8B — Go-live ⏳ (after Firebase projects exist)
 

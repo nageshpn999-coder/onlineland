@@ -52,7 +52,7 @@ From Makthal, Narayanpet District — OnlineLand Infra Private Limited.
 | Can users request deletion? | Yes — in app (Profile → Delete account) and the web page above |
 | **Personal info → Name** | Collected, optional; app functionality (enquiries, listings) |
 | **Personal info → Phone number** | Collected, required for sign-in; account management, app functionality |
-| **Location → Approximate/Precise** | Collected, optional (only when posting a property and tapping "use my location"); app functionality |
+| **Location → Approximate/Precise** | Collected, optional (only when posting a property and tapping "use my location"); app functionality. "Near me" uses location on the device only and does not send it. |
 | **Photos** | Collected, optional (property photos); app functionality |
 | **Financial info → Purchase history** | Collected (plan/featured payments: amount + UTR); app functionality |
 | **App activity → Other actions** | Collected (listing views/shares as totals); analytics |
