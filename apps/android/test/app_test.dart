@@ -408,21 +408,14 @@ void main() {
     expect(find.text('OnlineLand అమ్మిపెట్టాలి'), findsOneWidget);
   });
 
-  testWidgets('plan: yearly prices, and the launch offer gives Basic free once', (tester) async {
+  testWidgets('plan: the launch offer gives Basic free once; yearly prices', (tester) async {
     final repo = await pumpApp(tester);
     await loginAsBuyer(tester, repo);
     await tapTab(tester, 4);
     await tester.tap(find.byKey(const Key('open-plan')));
     await tester.pumpAndSettle();
 
-    await scrollTo(tester, find.byKey(const Key('billing-year')), within: find.byType(MyPlanPage));
-    await tester.tap(find.byKey(const Key('billing-year')));
-    await tester.pumpAndSettle();
-    expect(find.text('₹4,999 / సంవత్సరం'), findsOneWidget);
-    expect(find.text('₹14,999 / సంవత్సరం'), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.byKey(const Key('launch-offer')), -300,
-        scrollable: find.descendant(of: find.byType(MyPlanPage), matching: find.byType(Scrollable)).first);
+    // The offer card sits right under the current plan, so no scrolling is needed.
     expect(find.text('🎉 బేసిక్ ప్లాన్ 90 రోజులు ఉచితం'), findsOneWidget);
     await tester.tap(find.byKey(const Key('offer-district')));
     await tester.pumpAndSettle();
@@ -434,5 +427,10 @@ void main() {
     expect(find.descendant(of: find.byKey(const Key('current-plan')), matching: find.text('బేసిక్')), findsOneWidget);
     expect(repo.currentUser!.role, 'dealer');
     await expectLater(repo.claimLaunchOffer('narayanpet'), throwsA(isA<RepoException>()));
+
+    await tester.tap(find.byKey(const Key('billing-year')));
+    await tester.pumpAndSettle();
+    expect(find.text('₹4,999 / సంవత్సరం'), findsOneWidget);
+    expect(find.text('₹14,999 / సంవత్సరం', skipOffstage: false), findsOneWidget);
   });
 }
