@@ -504,9 +504,8 @@ Future<void> showSubmittedSheet(BuildContext context, WidgetRef ref, {required S
                 Text(s.droneTip, style: const TextStyle(fontWeight: FontWeight.w700)),
                 if (drone!.priceInr != null && drone.priceInr! > 0) Text('₹${groupIndian(drone.priceInr!)}', style: const TextStyle(color: Brand.green)),
                 const SizedBox(height: 8),
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
                   TextButton(key: const Key('drone-no'), onPressed: () => Navigator.pop(ctx), child: Text(s.noThanks)),
-                  const SizedBox(width: 8),
                   FilledButton(
                     key: const Key('drone-yes'),
                     onPressed: () {

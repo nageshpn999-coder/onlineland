@@ -220,5 +220,16 @@ Approved for "everything that does not need the laptop".
 - Storage rules: only .mp4 under 60 MB in `properties/{id}/videos/`. Firestore rules check video/YouTube media docs.
 - Tests: Firebase rules, website unit + browser, admin, app 32 — all green. Demo APK updated.
 
+## Phase 9 — More revenue ✅ (2026-11-24)
+- **How an owner sells** (owners only, one question at the end of the form): "I'll sell it myself" or "OnlineLand should sell it" (fee only on a sale, default 1%). The choice and its time are saved; owners can change it in My properties. Dealers never see the question.
+- **Deal commission (admin CRM):** when a lead is "won", admin enters the sale price; the fee is worked out automatically and tracked as due/received. Overview shows commission this month and commission due.
+- **Paid services:** drone/video shoot (₹1,999), document check (₹2,999), survey and registration (priced after a look), loan help (free). Request from the app, the website home page, or "Get documents checked" on a listing. Fixed prices are quoted at once; admin quotes the rest from the new Services page; customers pay in the app with UPI + UTR like plans.
+- After a listing is sent (without a video), one optional suggestion: book a drone video.
+- **Yearly plans:** Basic ₹4,999/year, Pro ₹14,999/year (365 days).
+- **Launch offer:** admin turns it on, picks the plan, days (90) and districts (Narayanpet); a new dealer takes it once.
+- Everything is editable in admin Settings (yearly prices, sale fee %, launch offer, service prices).
+- Legal terms updated (selling through OnlineLand, services, yearly plans, launch offer).
+- Note: check with a CA/lawyer about RERA agent registration before taking commission on plots in RERA projects.
+
 ## Phase 8B — Go-live ⏳ (after Firebase projects exist)
 

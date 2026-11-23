@@ -184,6 +184,8 @@ void main() {
     await tester.tap(find.text('మూసివేయండి'));
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(find.byKey(const Key('current-plan')), -300,
+        scrollable: find.descendant(of: find.byType(MyPlanPage), matching: find.byType(Scrollable)).first);
     expect(find.descendant(of: find.byKey(const Key('current-plan')), matching: find.text('బేసిక్')), findsOneWidget);
     await scrollTo(tester, find.textContaining('UTR 412345678901'));
     expect(find.textContaining('UTR 412345678901'), findsOneWidget);
@@ -419,7 +421,8 @@ void main() {
     expect(find.text('₹4,999 / సంవత్సరం'), findsOneWidget);
     expect(find.text('₹14,999 / సంవత్సరం'), findsOneWidget);
 
-    await scrollTo(tester, find.byKey(const Key('offer-claim')), within: find.byType(MyPlanPage));
+    await tester.scrollUntilVisible(find.byKey(const Key('launch-offer')), -300,
+        scrollable: find.descendant(of: find.byType(MyPlanPage), matching: find.byType(Scrollable)).first);
     expect(find.text('🎉 బేసిక్ ప్లాన్ 90 రోజులు ఉచితం'), findsOneWidget);
     await tester.tap(find.byKey(const Key('offer-district')));
     await tester.pumpAndSettle();

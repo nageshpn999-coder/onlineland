@@ -115,7 +115,7 @@ class _RequestCard extends ConsumerWidget {
           Text('${r.quotedInr != null ? '₹${groupIndian(r.quotedInr!)} · ' : ''}${shortDate(r.createdAt)}', style: const TextStyle(color: Brand.inkSoft)),
           if (r.adminNote != null) Text(r.adminNote!),
           if (r.canPay || r.canCancel)
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            Wrap(alignment: WrapAlignment.end, spacing: 8, children: [
               if (r.canCancel)
                 TextButton(
                   key: Key('cancel-request-${r.id}'),

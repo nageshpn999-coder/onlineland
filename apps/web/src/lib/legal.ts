@@ -19,7 +19,7 @@ export interface LegalPage {
   sections: LegalSection[];
 }
 
-export const LEGAL_UPDATED = '2026-11-23';
+export const LEGAL_UPDATED = '2026-11-24';
 const COMPANY = 'OnlineLand Infra Private Limited';
 
 const te: Record<LegalDoc, LegalPage> = {
@@ -31,7 +31,7 @@ const te: Record<LegalDoc, LegalPage> = {
         heading: 'మేము తీసుకునే వివరాలు',
         body: [
           '• మొబైల్ నంబర్: OTP తో లాగిన్ అవ్వడానికి (Firebase Authentication ద్వారా).',
-          '• పేరు, మొబైల్ నంబర్, సందేశం: మీరు enquiry లేదా సైట్ విజిట్ ఫారమ్ పంపినప్పుడు.',
+          '• పేరు, మొబైల్ నంబర్, సందేశం: మీరు enquiry, సైట్ విజిట్ లేదా సేవ (డ్రోన్ వీడియో, documents చెక్, సర్వే, registration, లోన్) request పంపినప్పుడు.',
           '• మీరు పెట్టే ప్రాపర్టీ వివరాలు: ఫోటోలు, వీడియో (ఉంటే; ఫోన్‌లోనే చిన్నగా compress చేసి upload చేస్తాం) లేదా YouTube లింక్, ధర, విస్తీర్ణం, లొకేషన్, మరియు ఓనర్ పేరు/నంబర్. ఓనర్ నంబర్ ప్రైవేట్‌గా ఉంటుంది, సైట్‌లో ఎవరికీ కనిపించదు.',
           '• లొకేషన్: (1) ప్రాపర్టీ పోస్ట్ చేసేటప్పుడు "నా లొకేషన్" నొక్కితే, ఆ ప్రాపర్టీ స్థానం సేవ్ అవుతుంది. (2) "నా దగ్గర" నొక్కితే దగ్గర ఉన్న ప్రాపర్టీలు చూపించడానికి మాత్రమే వాడతాం. యాప్‌లో ఇది మీ ఫోన్‌లోనే లెక్కించబడుతుంది; వెబ్‌సైట్‌లో సుమారు 1 కి.మీ వరకు రౌండ్ చేసి పేజీ చిరునామాలో పెడతాం. దీన్ని మేము సేవ్ చేయము, మీ కదలికలను ట్రాక్ చేయము.',
           '• చెల్లింపు వివరాలు: మొత్తం మరియు UPI UTR నంబర్ మాత్రమే. మీ బ్యాంక్ ఖాతా, కార్డ్, UPI PIN మేము ఎప్పుడూ తీసుకోము.',
@@ -102,9 +102,22 @@ const te: Record<LegalDoc, LegalPage> = {
       {
         heading: 'ప్లాన్‌లు మరియు చెల్లింపులు',
         body: [
-          '• Basic మరియు Pro ప్లాన్‌లు 30 రోజులకు. Featured listing 7 రోజులకు. ఓనర్‌కు 1 listing ఉచితం; తర్వాతి ప్రతి listing కి ఫీజు, అది అమ్ముడయ్యే వరకు లేదా 90 రోజుల వరకు ఉంటుంది. ప్రస్తుత ధరలు యాప్‌లో "నా ప్లాన్" లో ఉంటాయి.',
+          '• Basic మరియు Pro ప్లాన్‌లు నెలకు (30 రోజులు) లేదా సంవత్సరానికి (365 రోజులు). Featured listing 7 రోజులకు. ఓనర్‌కు 1 listing ఉచితం; తర్వాతి ప్రతి listing కి ఫీజు, అది అమ్ముడయ్యే వరకు లేదా 90 రోజుల వరకు ఉంటుంది. ప్రస్తుత ధరలు యాప్‌లో "నా ప్లాన్" లో ఉంటాయి.',
           '• చెల్లింపు UPI ద్వారా. మీరు UTR నంబర్ ఇచ్చాక, మా ఖాతాలో డబ్బు వచ్చిందని చెక్ చేసి ఆమోదిస్తాం.',
           '• ప్లాన్ ఆటోమేటిక్‌గా renew కాదు. గడువుకు ముందు మేము గుర్తు చేస్తాం.',
+          '• Launch offer: OnlineLand ప్రకటించిన జిల్లాల్లో కొత్త dealers ఒక్కసారి ఉచిత ప్లాన్ తీసుకోవచ్చు. ఆఫర్ ఎప్పుడైనా ఆపవచ్చు.',
+        ],
+      },
+      {
+        heading: 'OnlineLand ద్వారా అమ్మకం',
+        body: [
+          'ఓనర్ "OnlineLand అమ్మిపెట్టాలి" ఎంచుకుంటే, మేము కొనేవాళ్ళను తెచ్చి, బేరం, documents, registration వరకు సహాయం చేస్తాం. ఆ ఆస్తి మా ద్వారా అమ్ముడైతేనే ఫీజు (ఎంపిక చేసే సమయంలో యాప్‌లో చూపించిన శాతం). అమ్ముడుపోకపోతే ఏమీ కట్టనవసరం లేదు. ఓనర్ ఈ ఎంపికను ఎప్పుడైనా మార్చుకోవచ్చు; ఎంపిక చేసిన తేదీ, సమయం మా దగ్గర రికార్డ్ అవుతాయి.',
+        ],
+      },
+      {
+        heading: 'సేవలు',
+        body: [
+          'డ్రోన్ వీడియో, documents చెక్, సర్వే, registration, లోన్ సహాయం. స్థిర ధర ఉన్న సేవలకు ఆ ధర, మిగతా వాటికి మేము చూసి చెప్పిన ధర చెల్లించాలి. చెల్లింపు UPI ద్వారా, మేము ఆమోదించాక పని మొదలవుతుంది. Documents చెక్ ఒక న్యాయవాది అభిప్రాయం మాత్రమే; తుది నిర్ణయం కొనేవారిదే.',
         ],
       },
       {
@@ -185,7 +198,7 @@ const en: Record<LegalDoc, LegalPage> = {
         heading: 'What we collect',
         body: [
           '• Mobile number: to sign in with OTP (via Firebase Authentication).',
-          '• Name, mobile number and message: when you send an enquiry or book a site visit.',
+          '• Name, mobile number and message: when you send an enquiry, book a site visit or ask for a service (drone video, document check, survey, registration, loan).',
           "• Properties you post: photos, an optional video (compressed on your phone before upload) or YouTube link, price, area, location and the owner's name/number. The owner's number is private and never shown on the site.",
           '• Location: (1) when you tap "use my location" while posting a property, it is saved as that property\'s map position; (2) when you tap "Near me", it is used only to show nearby properties — in the app this is worked out on your phone, on the website it is rounded to about 1 km and put in the page address. We do not save it or track where you go.',
           '• Payments: the amount and your UPI UTR number only. We never collect bank account, card or UPI PIN details.',
@@ -256,9 +269,22 @@ const en: Record<LegalDoc, LegalPage> = {
       {
         heading: 'Plans and payments',
         body: [
-          '• Basic and Pro plans run for 30 days; a featured listing for 7 days. Owners get 1 listing free; each further listing is paid and stays live until sold or for 90 days. Current prices are shown in the app under "My plan".',
+          '• Basic and Pro plans run monthly (30 days) or yearly (365 days); a featured listing for 7 days. Owners get 1 listing free; each further listing is paid and stays live until sold or for 90 days. Current prices are shown in the app under "My plan".',
           '• Payment is by UPI. After you send the UTR number we check that the money reached our account, then approve.',
           '• Plans do not renew automatically. We remind you before they end.',
+          '• Launch offer: in districts OnlineLand announces, a new dealer may take one free plan once. The offer may end at any time.',
+        ],
+      },
+      {
+        heading: 'Selling through OnlineLand',
+        body: [
+          'If an owner chooses "OnlineLand should sell it", we bring buyers and help with negotiation, documents and registration. A fee (the percentage shown in the app when choosing) is due only if the property sells through us. Nothing is due if it does not sell. The owner can change this choice at any time; the date and time of the choice are recorded.',
+        ],
+      },
+      {
+        heading: 'Services',
+        body: [
+          'Drone video, document check, survey, registration and loan help. Fixed-price services cost the listed price; others cost the price we quote after a look. Payment is by UPI and work starts after we confirm it. A document check is a lawyer\'s opinion; the buyer makes the final decision.',
         ],
       },
       {
