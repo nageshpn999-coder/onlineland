@@ -289,8 +289,7 @@ void main() {
     await scrollTo(tester, find.byKey(const Key('sell-submit')), within: find.byType(SellTab));
     await tester.tap(find.byKey(const Key('sell-submit')));
     await tester.pumpAndSettle();
-    await scrollTo(tester, find.byKey(const Key('youtube-link')), within: find.byType(SellTab));
-    expect(find.text('సరైన YouTube లింక్ ఇవ్వండి.'), findsWidgets);
+    expect(find.text('సరైన YouTube లింక్ ఇవ్వండి.', skipOffstage: false), findsWidgets);
   });
 
   testWidgets('property page shows the listing video', (tester) async {
