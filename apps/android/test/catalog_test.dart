@@ -34,13 +34,29 @@ void main() {
       int n(String k) => int.parse(RegExp('$k: (\\d+)').firstMatch(block)![1]!);
       bool b(String k) => RegExp('$k: (true|false)').firstMatch(block)![1] == 'true';
       expect(block, contains("te: '${p.nameTe}', en: '${p.nameEn}'"), reason: p.id);
-      expect([n('priceInr'), n('durationDays'), n('listingLimit'), n('featuredSlots')], [p.priceInr, p.durationDays, p.listingLimit, p.featuredSlots], reason: p.id);
+      expect([n('priceInr'), n('durationDays'), n('yearlyPriceInr'), n('listingLimit'), n('featuredSlots')],
+          [p.priceInr, p.durationDays, p.yearlyPriceInr, p.listingLimit, p.featuredSlots], reason: p.id);
       expect([b('ownContact'), b('verifiedBadge'), b('dealerPage'), b('areaLeads')], [p.ownContact, p.verifiedBadge, p.dealerPage, p.areaLeads], reason: p.id);
     }
     const z = Pricing();
     int price(String k) => int.parse(RegExp('$k: (\\d+)').firstMatch(plans.substring(plans.indexOf('DEFAULT_PRICING')))![1]!);
     expect([price('featuredWeekInr'), price('featuredDays'), price('ownerFreeListings'), price('ownerListingInr'), price('ownerListingDays')],
         [z.featuredWeekInr, z.featuredDays, z.ownerFreeListings, z.ownerListingInr, z.ownerListingDays]);
+    expect([price('dealCommissionPct'), price('launchOfferDays')], [z.dealCommissionPct.round(), z.launchOfferDays]);
+    expect(defaultPlans['basic']!.yearlySavingMonths, 1); // ₹499×12 = ₹5,988 vs ₹4,999
+    expect(defaultPlans['basic']!.price('year'), 4999);
+  });
+
+  test('service defaults match packages/shared/src/services.ts', () {
+    final ts = File('../../packages/shared/src/services.ts').readAsStringSync();
+    final body = ts.substring(ts.indexOf('DEFAULT_SERVICES'));
+    expect(RegExp(r"^  (\w+): \{", multiLine: true).allMatches(body.substring(0, body.indexOf('\n};'))).map((m) => m[1]).toList(), serviceIds);
+    for (final svc in defaultServices.values) {
+      final block = RegExp('  ${svc.id}: \\{([\\s\\S]*?)\\n  \\},').firstMatch(body)![1]!;
+      expect(block, contains("name: { te: '${svc.nameTe}', en: '${svc.nameEn}' }"), reason: svc.id);
+      expect(block, contains("te: '${svc.descTe}'"), reason: svc.id);
+      expect(RegExp(r'priceInr: (\w+)').firstMatch(block)![1], '${svc.priceInr}', reason: svc.id);
+    }
   });
 
   test('share links carry the owner ref; UTR must be 12 digits', () {

@@ -48,8 +48,9 @@ abstract class Repository {
   /// The signed-in user's plan and badge, or null if they never had one.
   Future<DealerInfo?> myDealer();
 
-  /// Records a UPI payment for admin to check. kind: plan | featured | listing.
-  Future<void> submitPayment({required String kind, String? planId, String? propertyId, required int amountInr, required String utr});
+  /// Records a UPI payment for admin to check. kind: plan | featured | listing | service.
+  /// billing: month | year (plans only). serviceRequestId: kind "service".
+  Future<void> submitPayment({required String kind, String? planId, String? propertyId, String? billing, String? serviceRequestId, required int amountInr, required String utr});
   Future<List<PaymentInfo>> myPayments();
 
   /// Enquiries from the user's own share links (needs an active paid plan).
@@ -58,6 +59,19 @@ abstract class Repository {
 
   /// Pro plan: put one live listing on top (uses a featured slot).
   Future<void> useFeaturedSlot(String propertyId);
+
+  // ---- Phase 9 ----
+  /// New dealers in offer districts take the free plan once (Cloud Function). Throws RepoException
+  /// already-exists (used) / failed-precondition (offer off, district not included, plan running).
+  Future<void> claimLaunchOffer(String district);
+
+  /// Asks for a paid service (login optional). Returns the request id.
+  Future<String> requestService({required String serviceId, String? propertyId, required String name, required String phone, String? note, required String locale});
+  Future<List<ServiceRequestInfo>> myServiceRequests();
+  Future<void> cancelServiceRequest(String id);
+
+  /// Owners: change how they want to sell a listing (self / assisted).
+  Future<void> setSaleMode(String propertyId, String mode);
 
   /// Counts a view / share for the owner's stats. Never throws.
   Future<void> track(String propertyId, String type);

@@ -10,8 +10,10 @@ import '../data/catalog.dart';
 import '../data/format.dart';
 import '../data/media.dart';
 import '../data/models.dart';
+import '../l10n.dart';
 import '../state.dart';
 import '../theme.dart';
+import 'services.dart';
 import 'widgets.dart';
 
 const maxPhotos = 20;
@@ -171,6 +173,8 @@ class _ListingFormState extends ConsumerState<ListingForm> {
       err = s.needArea;
     } else if (_ownerPhone.text.isNotEmpty && !isMobile(normalizeMobile(_ownerPhone.text))) {
       err = s.invalidPhone;
+    } else if (_asksSaleMode && _draft.saleMode == null) {
+      err = s.needSaleMode;
     }
     final ytText = _youtube.text.trim();
     final ytId = ytText.isEmpty ? null : parseYouTubeId(ytText);
@@ -193,20 +197,22 @@ class _ListingFormState extends ConsumerState<ListingForm> {
     setState(() => _busy = true);
     try {
       final VideoAttachment? video = _video ?? (ytId != null ? YouTubeAttachment(ytId) : null);
-      await ref.read(repositoryProvider).submitListing(_draft, List.of(_photos), video: video, onProgress: (d, t) {
+      final id = await ref.read(repositoryProvider).submitListing(_draft, List.of(_photos), video: video, onProgress: (d, t) {
         if (mounted) setState(() => _progress = d == t && _video != null ? s.uploadingVideo : s.uploading(d, t));
       });
       ref.invalidate(myListingsProvider);
       if (!mounted) return;
-      showSnack(context, s.submitted);
+      final hadVideo = video != null;
       setState(() {
         _photos.clear();
         _video = null;
+        _draft.saleMode = null;
         for (final c in [_title, _desc, _price, _area, _village, _mandalText, _ownerName, _ownerPhone, _youtube]) {
           c.clear();
         }
         _progress = null;
       });
+      await showSubmittedSheet(context, ref, propertyId: id, suggestDrone: !hadVideo);
     } catch (_) {
       setState(() => _error = s.submitError);
     } finally {
@@ -214,10 +220,83 @@ class _ListingFormState extends ConsumerState<ListingForm> {
     }
   }
 
+  /// Only owners are asked how they want to sell (dealers sell for a living).
+  bool get _asksSaleMode => ref.read(authProvider).value?.role == 'owner';
+
+  Widget _saleModeQuestion(S s) {
+    final pricing = ref.watch(revenueConfigProvider).value?.pricing ?? const Pricing();
+    final pct = pricing.dealCommissionPct;
+    final pctText = pct == pct.roundToDouble() ? pct.toStringAsFixed(0) : pct.toString();
+    final example = s.te
+        ? '₹20 లక్షలకు ₹${groupIndian((2000000 * pct / 100).round())}'
+        : '₹${groupIndian((2000000 * pct / 100).round())} on ₹20 lakh';
+    Widget option(String mode, String title, String body, IconData icon) {
+      final on = _draft.saleMode == mode;
+      return Card(
+        key: Key('sale-$mode'),
+        margin: const EdgeInsets.only(bottom: 8),
+        color: on ? Brand.greenSoft : null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: on ? Brand.green : Brand.line, width: on ? 2 : 1),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => setState(() {
+            _draft.saleMode = mode;
+            if (_error == s.needSaleMode) _error = null;
+          }),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Icon(on ? Icons.radio_button_checked : Icons.radio_button_unchecked, color: on ? Brand.green : Brand.inkSoft),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    Icon(icon, size: 18, color: Brand.blue),
+                    const SizedBox(width: 6),
+                    Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w700))),
+                  ]),
+                  const SizedBox(height: 2),
+                  Text(body, style: const TextStyle(color: Brand.inkSoft, fontSize: 13)),
+                ]),
+              ),
+            ]),
+          ),
+        ),
+      );
+    }
+
+    return Column(key: const Key('sale-mode'), crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Row(children: [
+        Expanded(child: Text(s.saleModeQ, style: Theme.of(context).textTheme.titleMedium)),
+        IconButton(
+          key: const Key('sale-help'),
+          tooltip: s.saleModeHelpTitle,
+          icon: const Icon(Icons.help_outline),
+          onPressed: () => showDialog<void>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(s.saleModeHelpTitle),
+              content: SingleChildScrollView(child: Text(s.saleModeHelp)),
+              actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(s.close))],
+            ),
+          ),
+        ),
+      ]),
+      const SizedBox(height: 4),
+      option('self', s.saleSelf, s.saleSelfBody, Icons.person_outline),
+      option('assisted', s.saleAssisted, s.saleAssistedBody(pctText, example), Icons.handshake_outlined),
+      const SizedBox(height: 12),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = ref.watch(stringsProvider);
     final te = s.te;
+    final isOwner = ref.watch(authProvider).value?.role == 'owner';
     final mandalList = mandals[_draft.district] ?? const <Named>[];
 
     InputDecoration dec(String label) => InputDecoration(labelText: label);
@@ -392,10 +471,59 @@ class _ListingFormState extends ConsumerState<ListingForm> {
       TextField(controller: _ownerName, decoration: dec(s.ownerName), maxLength: 80),
       TextField(controller: _ownerPhone, keyboardType: TextInputType.phone, decoration: dec(s.ownerPhone).copyWith(prefixText: '+91 ')),
       const SizedBox(height: 20),
+      if (isOwner) _saleModeQuestion(s),
       if (_error != null)
         Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(_error!, key: const Key('sell-error'), style: const TextStyle(color: Colors.red))),
       if (_progress != null) Padding(padding: const EdgeInsets.only(bottom: 10), child: Text(_progress!)),
       FilledButton(key: const Key('sell-submit'), onPressed: _busy ? null : _submit, child: Text(_busy ? s.sending : s.submit)),
     ]);
   }
+}
+
+/// After a listing is sent: what happens next, and (when it has no video) one optional suggestion — a drone video.
+Future<void> showSubmittedSheet(BuildContext context, WidgetRef ref, {required String propertyId, required bool suggestDrone}) {
+  final s = ref.read(stringsProvider);
+  final drone = (ref.read(revenueConfigProvider).value ?? const RevenueConfig()).services['drone'];
+  final offerDrone = suggestDrone && (drone?.active ?? false);
+  return showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (ctx) => Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      child: Column(key: const Key('submitted-sheet'), mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        Text(s.submittedTitle, style: Theme.of(ctx).textTheme.titleLarge),
+        const SizedBox(height: 4),
+        Text(s.submittedBody, style: const TextStyle(color: Brand.inkSoft)),
+        if (offerDrone) ...[
+          const SizedBox(height: 16),
+          Card(
+            color: Brand.greenSoft,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                Text(s.droneTip, style: const TextStyle(fontWeight: FontWeight.w700)),
+                if (drone!.priceInr != null && drone.priceInr! > 0) Text('₹${groupIndian(drone.priceInr!)}', style: const TextStyle(color: Brand.green)),
+                const SizedBox(height: 8),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  TextButton(key: const Key('drone-no'), onPressed: () => Navigator.pop(ctx), child: Text(s.noThanks)),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    key: const Key('drone-yes'),
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      showServiceRequestSheet(context, ref, serviceId: 'drone', propertyId: propertyId);
+                    },
+                    child: Text(s.droneYes),
+                  ),
+                ]),
+              ]),
+            ),
+          ),
+        ] else ...[
+          const SizedBox(height: 12),
+          FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(s.close)),
+        ],
+      ]),
+    ),
+  );
 }

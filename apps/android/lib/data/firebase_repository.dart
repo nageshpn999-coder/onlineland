@@ -69,6 +69,7 @@ class FirebaseRepository implements Repository {
       docsVerified: d['docsVerified'] == true,
       rejectReason: d['rejectReason'] as String?,
       ownerId: (d['ownerId'] ?? '') as String,
+      saleMode: d['saleMode'] as String?,
       createdAt: created is Timestamp ? created.toDate() : DateTime.fromMillisecondsSinceEpoch(0),
     );
   }
@@ -261,6 +262,8 @@ class FirebaseRepository implements Repository {
       'reviewedAt': null,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
+      // Phase 9: owners choose how to sell; the time of the choice is recorded (rules require it).
+      if (role == 'owner' && d.saleMode != null) ...{'saleMode': d.saleMode, 'saleModeAt': FieldValue.serverTimestamp()},
     });
     // 2) Owner contact stays private (D3).
     if (d.ownerPhone.isNotEmpty) {
@@ -326,15 +329,21 @@ class FirebaseRepository implements Repository {
 
   @override
   Future<RevenueConfig> revenueConfig() async {
-    final results = await Future.wait([_db.collection('plans').get(), _db.doc('settings/pricing').get()]);
+    final results = await Future.wait([_db.collection('plans').get(), _db.doc('settings/pricing').get(), _db.doc('settings/services').get()]);
     final planSnap = results[0] as QuerySnapshot<Map<String, dynamic>>;
     final pricingSnap = results[1] as DocumentSnapshot<Map<String, dynamic>>;
+    final servicesSnap = results[2] as DocumentSnapshot<Map<String, dynamic>>;
     final plans = Map<String, PlanConfig>.of(defaultPlans);
     for (final d in planSnap.docs) {
       final base = defaultPlans[d.id];
       if (base != null) plans[d.id] = base.merge(d.data());
     }
-    return RevenueConfig(plans: plans, pricing: Pricing.fromMap(pricingSnap.data() ?? const {}));
+    final services = Map<String, ServiceConfig>.of(defaultServices);
+    final sd = servicesSnap.data() ?? const <String, dynamic>{};
+    for (final id in serviceIds) {
+      if (sd[id] is Map) services[id] = defaultServices[id]!.merge(Map<String, dynamic>.from(sd[id] as Map));
+    }
+    return RevenueConfig(plans: plans, pricing: Pricing.fromMap(pricingSnap.data() ?? const {}), services: services);
   }
 
   @override
@@ -353,7 +362,7 @@ class FirebaseRepository implements Repository {
   }
 
   @override
-  Future<void> submitPayment({required String kind, String? planId, String? propertyId, required int amountInr, required String utr}) async {
+  Future<void> submitPayment({required String kind, String? planId, String? propertyId, String? billing, String? serviceRequestId, required int amountInr, required String utr}) async {
     final user = _auth.currentUser;
     if (user == null) throw RepoException('unauthenticated', 'Sign in first');
     if (!utrPattern.hasMatch(utr)) throw RepoException('invalid-argument', 'UTR must be 12 digits');
@@ -361,7 +370,9 @@ class FirebaseRepository implements Repository {
       'userId': user.uid,
       'kind': kind,
       'planId': kind == 'plan' ? planId : null,
-      'propertyId': kind == 'plan' ? null : propertyId,
+      'propertyId': kind == 'featured' || kind == 'listing' ? propertyId : null,
+      if (kind == 'plan') 'billing': billing == 'year' ? 'year' : 'month',
+      if (kind == 'service') 'serviceRequestId': serviceRequestId,
       'amountInr': amountInr,
       'utr': utr,
       'status': 'pending',
@@ -383,6 +394,7 @@ class FirebaseRepository implements Repository {
         id: doc.id,
         kind: (d['kind'] as String?) ?? 'plan',
         planId: d['planId'] as String?,
+        billing: d['billing'] == 'year' ? 'year' : 'month',
         propertyId: d['propertyId'] as String?,
         amountInr: (d['amountInr'] as num?)?.toInt() ?? 0,
         utr: (d['utr'] as String?) ?? '',
@@ -422,6 +434,67 @@ class FirebaseRepository implements Repository {
     int n(String k) => (d[k] as num?)?.toInt() ?? 0;
     return ListingStats(views: n('views'), shares: n('shares'), leads: n('leads'));
   }
+
+  // ---------- Phase 9 ----------
+
+  @override
+  Future<void> claimLaunchOffer(String district) async {
+    try {
+      await _functions.httpsCallable('claimLaunchOffer').call({'district': district});
+    } on FirebaseFunctionsException catch (e) {
+      throw RepoException(e.code, e.message ?? e.code);
+    }
+    await _auth.currentUser?.getIdToken(true);
+    _user = await _toAppUser(_auth.currentUser, refresh: true);
+  }
+
+  @override
+  Future<String> requestService({required String serviceId, String? propertyId, required String name, required String phone, String? note, required String locale}) async {
+    final ref = await _db.collection('serviceRequests').add({
+      'serviceId': serviceId,
+      'propertyId': propertyId,
+      'name': name.trim().isEmpty ? '—' : name.trim(),
+      'phone': phone,
+      'note': (note ?? '').trim().isEmpty ? null : note!.trim(),
+      'locale': locale,
+      'userId': _auth.currentUser?.uid,
+      'status': 'new',
+      'quotedInr': null,
+      'adminNote': null,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    return ref.id;
+  }
+
+  @override
+  Future<List<ServiceRequestInfo>> myServiceRequests() async {
+    final user = _auth.currentUser;
+    if (user == null) return [];
+    final snap = await _db.collection('serviceRequests').where('userId', isEqualTo: user.uid).orderBy('createdAt', descending: true).limit(30).get();
+    return snap.docs.map((doc) {
+      final d = doc.data();
+      return ServiceRequestInfo(
+        id: doc.id,
+        serviceId: (d['serviceId'] as String?) ?? '',
+        propertyId: d['propertyId'] as String?,
+        status: (d['status'] as String?) ?? 'new',
+        quotedInr: (d['quotedInr'] as num?)?.toInt(),
+        adminNote: d['adminNote'] as String?,
+        createdAt: _date(d['createdAt']) ?? DateTime.now(),
+      );
+    }).toList();
+  }
+
+  @override
+  Future<void> cancelServiceRequest(String id) =>
+      _db.doc('serviceRequests/$id').update({'status': 'cancelled', 'updatedAt': FieldValue.serverTimestamp()});
+
+  @override
+  Future<void> setSaleMode(String propertyId, String mode) => _db.doc('properties/$propertyId').update({
+        'saleMode': mode,
+        'saleModeAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
   @override
   Future<void> useFeaturedSlot(String propertyId) async {

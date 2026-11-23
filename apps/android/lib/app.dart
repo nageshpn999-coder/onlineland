@@ -10,6 +10,7 @@ import 'ui/my_leads.dart';
 import 'ui/onboarding.dart';
 import 'ui/plan.dart';
 import 'ui/property_page.dart';
+import 'ui/services.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -25,6 +26,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/plan', builder: (_, _) => const MyPlanPage()),
       GoRoute(path: '/leads', builder: (_, _) => const MyLeadsPage()),
+      GoRoute(path: '/services', builder: (_, _) => const ServicesPage()),
       GoRoute(path: '/property/:code', builder: (_, state) => PropertyPage(code: state.pathParameters['code'] ?? '')),
     ],
   );

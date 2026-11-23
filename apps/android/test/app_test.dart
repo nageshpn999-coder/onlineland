@@ -4,8 +4,13 @@ import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/data/filters.dart';
 import 'package:onlineland/state.dart';
 import 'package:onlineland/data/demo_repository.dart';
+import 'package:onlineland/data/models.dart';
+import 'package:onlineland/data/repository.dart';
+import 'package:onlineland/ui/plan.dart';
 import 'package:onlineland/ui/profile.dart';
+import 'package:onlineland/ui/property_page.dart';
 import 'package:onlineland/ui/sell.dart';
+import 'package:onlineland/ui/services.dart';
 
 import 'helpers.dart';
 
@@ -164,6 +169,7 @@ void main() {
     expect(find.text('₹499 / నెల'), findsOneWidget);
     expect(find.text('₹1,499 / నెల'), findsOneWidget);
 
+    await scrollTo(tester, find.byKey(const Key('choose-basic')), within: find.byType(MyPlanPage));
     await tester.tap(find.byKey(const Key('choose-basic')));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('pay-upi')), findsOneWidget);
@@ -297,5 +303,133 @@ void main() {
     await openFirstListing(tester);
     await scrollTo(tester, find.byKey(const Key('listing-video')));
     expect(find.text('YouTube లో చూడండి'), findsOneWidget);
+  });
+
+  // ---------------- Phase 9 ----------------
+
+  Future<void> loginAsBuyer(WidgetTester tester, DemoRepository repo) async {
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('services: ask for a document check, it is priced at once, pay by UPI', (tester) async {
+    final repo = await pumpApp(tester);
+    await loginAsBuyer(tester, repo);
+    await tapTab(tester, 4);
+    await scrollTo(tester, find.byKey(const Key('open-services')), within: find.byType(ProfileTab));
+    await tester.tap(find.byKey(const Key('open-services')));
+    await tester.pumpAndSettle();
+    expect(find.text('డ్రోన్ / వీడియో షూట్'), findsOneWidget);
+    expect(find.text('₹2,999'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('ask-documents')));
+    await tester.pumpAndSettle();
+    expect(find.text('9000000001'), findsOneWidget); // mobile filled from the login
+    await tester.tap(find.byKey(const Key('svc-send')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('svc-sent')), findsOneWidget);
+    await tester.tap(find.text('మూసివేయండి').last);
+    await tester.pumpAndSettle();
+
+    await scrollTo(tester, find.byKey(const Key('pay-request-demo-svc-1')), within: find.byType(ServicesPage));
+    expect(find.text('చెల్లించాలి'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('pay-request-demo-svc-1')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('utr-field')), '512345678901');
+    await tester.tap(find.byKey(const Key('send-payment')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('మూసివేయండి').last);
+    await tester.pumpAndSettle();
+    expect(find.text('చెల్లించారు'), findsOneWidget);
+    final pay = (await repo.myPayments()).single;
+    expect([pay.kind, pay.amountInr], ['service', 2999]);
+  });
+
+  testWidgets('property page: "get documents checked" sends a request for that listing', (tester) async {
+    final repo = await pumpApp(tester);
+    await openFirstListing(tester);
+    await scrollTo(tester, find.byKey(const Key('docs-check')), within: find.byType(PropertyPage));
+    await tester.tap(find.byKey(const Key('docs-check')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('svc-phone')), '123');
+    await tester.tap(find.byKey(const Key('svc-send')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('సరైన 10 అంకెల'), findsOneWidget);
+    await tester.enterText(find.byKey(const Key('svc-phone')), '98765 43210');
+    await tester.tap(find.byKey(const Key('svc-send')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('svc-sent')), findsOneWidget);
+    expect(repo.lastServiceRequest?.serviceId, 'documents');
+    expect(repo.lastServiceRequest?.propertyId, isNotNull);
+    expect(repo.lastServiceRequest?.phone, '9876543210');
+  });
+
+  testWidgets('sell form: only owners are asked how to sell; the help explains it', (tester) async {
+    final repo = await pumpApp(tester);
+    await openSellForm(tester, repo);
+    await scrollTo(tester, find.byKey(const Key('sale-assisted')), within: find.byType(SellTab));
+    expect(find.text('మీ ఆస్తిని ఎలా అమ్మాలనుకుంటున్నారు?'), findsOneWidget);
+    expect(find.textContaining('₹20 లక్షలకు ₹20,000'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('sale-help')));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('ఆస్తి అమ్ముడైనప్పుడు మాత్రమే ఫీజు'), findsOneWidget);
+    await tester.tap(find.text('మూసివేయండి').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('sale-assisted')));
+    await tester.pumpAndSettle();
+    expect(find.descendant(of: find.byKey(const Key('sale-assisted')), matching: find.byIcon(Icons.radio_button_checked)), findsOneWidget);
+  });
+
+  testWidgets('dealers are not asked how to sell', (tester) async {
+    final repo = await pumpApp(tester);
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await repo.claimLaunchOffer('narayanpet'); // becomes a dealer
+    await tester.pumpAndSettle();
+    await tapTab(tester, 3);
+    expect(find.byKey(const Key('sale-mode'), skipOffstage: false), findsNothing);
+  });
+
+  testWidgets('owner changes how to sell from My properties', (tester) async {
+    final repo = await pumpApp(tester);
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await repo.becomeOwner();
+    final id = await repo.submitListing(ListingDraft()..title = 'Test land'..price = 100000..area = 1..saleMode = 'self', const []);
+    expect(repo.lastSaleMode, 'self');
+    await tester.pumpAndSettle();
+    await tapTab(tester, 4);
+    await scrollTo(tester, find.byKey(Key('sale-mode-$id')), within: find.byType(ProfileTab));
+    expect(find.text('నేనే అమ్ముకుంటాను'), findsOneWidget);
+    await tester.tap(find.byKey(Key('sale-mode-$id')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('sale-choose-assisted')));
+    await tester.pumpAndSettle();
+    expect(find.text('OnlineLand అమ్మిపెట్టాలి'), findsOneWidget);
+  });
+
+  testWidgets('plan: yearly prices, and the launch offer gives Basic free once', (tester) async {
+    final repo = await pumpApp(tester);
+    await loginAsBuyer(tester, repo);
+    await tapTab(tester, 4);
+    await tester.tap(find.byKey(const Key('open-plan')));
+    await tester.pumpAndSettle();
+
+    await scrollTo(tester, find.byKey(const Key('billing-year')), within: find.byType(MyPlanPage));
+    await tester.tap(find.byKey(const Key('billing-year')));
+    await tester.pumpAndSettle();
+    expect(find.text('₹4,999 / సంవత్సరం'), findsOneWidget);
+    expect(find.text('₹14,999 / సంవత్సరం'), findsOneWidget);
+
+    await scrollTo(tester, find.byKey(const Key('offer-claim')), within: find.byType(MyPlanPage));
+    expect(find.text('🎉 బేసిక్ ప్లాన్ 90 రోజులు ఉచితం'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('offer-district')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('నారాయణపేట').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('offer-claim')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('launch-offer')), findsNothing);
+    expect(find.descendant(of: find.byKey(const Key('current-plan')), matching: find.text('బేసిక్')), findsOneWidget);
+    expect(repo.currentUser!.role, 'dealer');
+    await expectLater(repo.claimLaunchOffer('narayanpet'), throwsA(isA<RepoException>()));
   });
 }

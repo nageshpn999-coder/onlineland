@@ -76,6 +76,17 @@ class ProfileTab extends ConsumerWidget {
           ]),
         ),
       ],
+      const SizedBox(height: 16),
+      Card(
+        child: ListTile(
+          key: const Key('open-services'),
+          leading: const Icon(Icons.handyman, color: Brand.green),
+          title: Text(s.services),
+          subtitle: Text(s.servicesLead),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push('/services'),
+        ),
+      ),
       if (user != null && user.canPost) ...[
         const SizedBox(height: 22),
         Text(s.myListings, style: Theme.of(context).textTheme.titleMedium),
@@ -208,6 +219,27 @@ class _MyListingTile extends ConsumerWidget {
         kind: 'listing', propertyId: property.id, title: s.payKind('listing'), amountInr: config.pricing.ownerListingInr, pricing: config.pricing);
   }
 
+  Future<void> _chooseSale(BuildContext context, WidgetRef ref) async {
+    final s = ref.read(stringsProvider);
+    final mode = await showDialog<String>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: Text(s.saleModeQ),
+        children: [
+          SimpleDialogOption(key: const Key('sale-choose-self'), onPressed: () => Navigator.pop(ctx, 'self'), child: Text(s.saleSelf)),
+          SimpleDialogOption(key: const Key('sale-choose-assisted'), onPressed: () => Navigator.pop(ctx, 'assisted'), child: Text(s.saleAssisted)),
+        ],
+      ),
+    );
+    if (mode == null || mode == property.saleMode) return;
+    try {
+      await ref.read(repositoryProvider).setSaleMode(property.id, mode);
+      ref.invalidate(myListingsProvider);
+    } catch (_) {
+      if (context.mounted) showSnack(context, s.submitError);
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(stringsProvider);
@@ -222,6 +254,7 @@ class _MyListingTile extends ConsumerWidget {
     final liveCount = mine.where((m) => m.status == 'approved').length;
     final needsPayment = p.status == 'pending' && user?.role == 'owner' && !planActive && liveCount >= pricing.ownerFreeListings;
     final stats = live ? ref.watch(listingStatsProvider(p.id)).value : null;
+    final canChooseSale = user?.role == 'owner' && (p.status == 'approved' || p.status == 'pending');
     final color = switch (p.status) {
       'approved' => Brand.green,
       'rejected' => Colors.red.shade700,
@@ -240,11 +273,13 @@ class _MyListingTile extends ConsumerWidget {
             if (p.status == 'rejected' && p.rejectReason != null) Text(s.rejectReason(p.rejectReason!)),
             if (stats != null) Text(s.stats(stats.views, stats.shares, stats.leads), key: Key('stats-${p.id}'), style: const TextStyle(color: Brand.inkSoft)),
             if (needsPayment) Text(s.payListingNote(pricing.ownerFreeListings), style: const TextStyle(color: Brand.inkSoft)),
+            if (p.saleMode != null)
+              Text(p.saleMode == 'assisted' ? s.saleAssisted : s.saleSelf, key: Key('sale-mode-label-${p.id}'), style: const TextStyle(color: Brand.blue)),
           ]),
           isThreeLine: true,
           onTap: live ? () => context.push('/property/${p.code}') : null,
         ),
-        if (live || needsPayment)
+        if (live || needsPayment || canChooseSale)
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
             child: Wrap(spacing: 8, runSpacing: 4, children: [
@@ -267,6 +302,13 @@ class _MyListingTile extends ConsumerWidget {
                   onPressed: () => _feature(context, ref),
                   icon: const Icon(Icons.star_outline, size: 18),
                   label: Text(planActive && dealer.slotsLeft > 0 ? s.featureFree(dealer.slotsLeft) : '${s.feature} · ₹${pricing.featuredWeekInr}'),
+                ),
+              if (canChooseSale)
+                TextButton.icon(
+                  key: Key('sale-mode-${p.id}'),
+                  onPressed: () => _chooseSale(context, ref),
+                  icon: const Icon(Icons.handshake_outlined, size: 18),
+                  label: Text(s.changeSaleMode),
                 ),
               if (needsPayment)
                 FilledButton(

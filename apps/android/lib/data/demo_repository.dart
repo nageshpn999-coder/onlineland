@@ -80,6 +80,7 @@ class DemoRepository implements Repository {
   Future<void> deleteAccount() async {
     if (_user == null) throw RepoException('unauthenticated', 'Sign in first');
     _payments.clear();
+    _requests.clear();
     _dealer = null;
     await signOut();
   }
@@ -96,6 +97,9 @@ class DemoRepository implements Repository {
 
   /// The video attached to the last submitted listing (for tests).
   VideoAttachment? lastVideo;
+
+  /// How the owner chose to sell the last submitted listing (for tests).
+  String? lastSaleMode;
 
   @override
   Future<String> submitListing(ListingDraft d, List<Uint8List> photos,
@@ -127,8 +131,10 @@ class DemoRepository implements Repository {
       },
       status: 'pending',
       ownerId: u.uid,
+      saleMode: u.role == 'owner' ? d.saleMode : null,
       createdAt: DateTime.now(),
     ));
+    lastSaleMode = d.saleMode;
     return id;
   }
 
@@ -146,23 +152,29 @@ class DemoRepository implements Repository {
   int _pay = 0;
 
   @override
-  Future<RevenueConfig> revenueConfig() async => const RevenueConfig(pricing: Pricing(upiId: 'onlineland@demo'));
+  // The launch offer is on in the demo so the card can be tried.
+  Future<RevenueConfig> revenueConfig() async =>
+      const RevenueConfig(pricing: Pricing(upiId: 'onlineland@demo', launchOfferActive: true));
 
   @override
   Future<DealerInfo?> myDealer() async => _user == null ? null : _dealer;
 
   @override
-  Future<void> submitPayment({required String kind, String? planId, String? propertyId, required int amountInr, required String utr}) async {
+  Future<void> submitPayment({required String kind, String? planId, String? propertyId, String? billing, String? serviceRequestId, required int amountInr, required String utr}) async {
     final u = _user;
     if (u == null) throw RepoException('unauthenticated', 'Sign in first');
     if (!utrPattern.hasMatch(utr)) throw RepoException('invalid-argument', 'UTR must be 12 digits');
     _payments.insert(0, PaymentInfo(
-      id: 'demo-pay-${++_pay}', kind: kind, planId: planId, propertyId: propertyId, amountInr: amountInr, utr: utr,
-      status: 'approved', createdAt: DateTime.now(),
+      id: 'demo-pay-${++_pay}', kind: kind, planId: planId, billing: billing == 'year' ? 'year' : 'month', propertyId: propertyId,
+      amountInr: amountInr, utr: utr, status: 'approved', createdAt: DateTime.now(),
     ));
+    if (kind == 'service' && serviceRequestId != null) {
+      _setRequest(serviceRequestId, status: 'paid');
+    }
     if (kind == 'plan' && planId != null) {
       final plan = defaultPlans[planId]!;
-      _dealer = DealerInfo(planId: planId, validUntil: DateTime.now().add(Duration(days: plan.durationDays)), featuredSlots: plan.featuredSlots);
+      final days = billing == 'year' ? 365 : plan.durationDays;
+      _dealer = DealerInfo(planId: planId, validUntil: DateTime.now().add(Duration(days: days)), featuredSlots: plan.featuredSlots);
       if (u.role == 'buyer' || u.role == 'owner') {
         _user = AppUser(uid: u.uid, phone: u.phone, role: 'dealer');
         _auth.add(_user);
@@ -197,6 +209,75 @@ class DemoRepository implements Repository {
     if (d == null || !d.active(DateTime.now())) throw RepoException('failed-precondition', 'Plan not active');
     if (d.slotsLeft <= 0) throw RepoException('resource-exhausted', 'No featured slots left');
     _dealer = DealerInfo(planId: d.planId, validUntil: d.validUntil, verified: d.verified, featuredSlots: d.featuredSlots, featuredUsed: d.featuredUsed + 1);
+  }
+
+  // ---------- Phase 9 ----------
+
+  bool _offerUsed = false;
+  final _requests = <ServiceRequestInfo>[];
+  int _req = 0;
+
+  @override
+  Future<void> claimLaunchOffer(String district) async {
+    final u = _user;
+    if (u == null) throw RepoException('unauthenticated', 'Sign in first');
+    const pricing = Pricing(launchOfferActive: true);
+    if (_offerUsed) throw RepoException('already-exists', 'Offer already used');
+    if (pricing.launchOfferDistricts.isNotEmpty && !pricing.launchOfferDistricts.contains(district)) {
+      throw RepoException('failed-precondition', 'Not in this district');
+    }
+    if (_dealer?.active(DateTime.now()) == true) throw RepoException('failed-precondition', 'Plan already active');
+    _offerUsed = true;
+    final plan = defaultPlans[pricing.launchOfferPlan]!;
+    _dealer = DealerInfo(planId: plan.id, validUntil: DateTime.now().add(Duration(days: pricing.launchOfferDays)), featuredSlots: plan.featuredSlots);
+    if (u.role == 'buyer' || u.role == 'owner') {
+      _user = AppUser(uid: u.uid, phone: u.phone, role: 'dealer');
+      _auth.add(_user);
+    }
+  }
+
+  @override
+  Future<String> requestService({required String serviceId, String? propertyId, required String name, required String phone, String? note, required String locale}) async {
+    final price = defaultServices[serviceId]?.priceInr;
+    final id = 'demo-svc-${++_req}';
+    // Fixed prices are quoted at once (like the Cloud Function); others wait for the team.
+    _requests.insert(0, ServiceRequestInfo(
+      id: id, serviceId: serviceId, propertyId: propertyId,
+      status: price != null && price > 0 ? 'quoted' : 'new', quotedInr: price != null && price > 0 ? price : null,
+      createdAt: DateTime.now(),
+    ));
+    lastServiceRequest = (serviceId: serviceId, propertyId: propertyId, phone: phone);
+    return id;
+  }
+
+  /// The last service request (for tests).
+  ({String serviceId, String? propertyId, String phone})? lastServiceRequest;
+
+  @override
+  Future<List<ServiceRequestInfo>> myServiceRequests() async => _user == null ? const [] : List.of(_requests);
+
+  @override
+  Future<void> cancelServiceRequest(String id) async => _setRequest(id, status: 'cancelled');
+
+  void _setRequest(String id, {required String status}) {
+    final i = _requests.indexWhere((r) => r.id == id);
+    if (i < 0) return;
+    final r = _requests[i];
+    _requests[i] = ServiceRequestInfo(id: r.id, serviceId: r.serviceId, propertyId: r.propertyId, status: status, quotedInr: r.quotedInr, adminNote: r.adminNote, createdAt: r.createdAt);
+  }
+
+  @override
+  Future<void> setSaleMode(String propertyId, String mode) async {
+    final i = _items.indexWhere((p) => p.id == propertyId && p.ownerId == _user?.uid);
+    if (i < 0) throw RepoException('permission-denied', 'Not your listing');
+    final p = _items[i];
+    _items[i] = Property(
+      id: p.id, code: p.code, category: p.category, purpose: p.purpose, titleTe: p.titleTe, titleEn: p.titleEn,
+      descriptionTe: p.descriptionTe, descriptionEn: p.descriptionEn, price: p.price, priceBasis: p.priceBasis, area: p.area,
+      areaUnit: p.areaUnit, place: p.place, facing: p.facing, roadAccess: p.roadAccess, waterSource: p.waterSource,
+      coverPath: p.coverPath, photos: p.photos, videos: p.videos, status: p.status, isFeatured: p.isFeatured,
+      docsVerified: p.docsVerified, rejectReason: p.rejectReason, ownerId: p.ownerId, saleMode: mode, createdAt: p.createdAt,
+    );
   }
 
   @override

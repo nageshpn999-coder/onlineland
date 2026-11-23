@@ -244,6 +244,7 @@ class S {
   String payKind(String k) => switch (k) {
         'featured' => _('Featured వారం', 'Featured week'),
         'listing' => _('అదనపు listing', 'Extra listing'),
+        'service' => _('సేవ', 'Service'),
         _ => _('ప్లాన్', 'Plan'),
       };
   String get share => _('WhatsApp లో షేర్', 'Share on WhatsApp');
@@ -298,4 +299,59 @@ class S {
   String get removeVideo => _('వీడియో తీసేయండి', 'Remove video');
   String get playVideo => _('వీడియో ప్లే చేయండి', 'Play video');
   String get openYouTube => _('YouTube లో చూడండి', 'Watch on YouTube');
+
+  // Phase 9: how to sell, services, yearly plans, launch offer
+  String get saleModeQ => _('మీ ఆస్తిని ఎలా అమ్మాలనుకుంటున్నారు?', 'How do you want to sell?');
+  String get saleSelf => _('నేనే అమ్ముకుంటాను', "I'll sell it myself");
+  String get saleSelfBody => _('కొనేవాళ్ళ కాల్స్ OnlineLand ద్వారా మీకు వస్తాయి.', 'Buyers reach you through OnlineLand.');
+  String get saleAssisted => _('OnlineLand అమ్మిపెట్టాలి', 'OnlineLand should sell it');
+  String saleAssistedBody(String pct, String example) => _(
+      'మేమే కొనేవాళ్ళను తెచ్చి, బేరం చేసి, registration వరకు చూసుకుంటాం. అమ్ముడైతేనే $pct% ఫీజు (ఉదా: $example). అమ్ముడుపోకపోతే ఏమీ కట్టనవసరం లేదు.',
+      'We bring buyers, negotiate and handle it up to registration. A $pct% fee only if it sells (e.g. $example). Nothing to pay if it does not sell.');
+  String get saleModeHelpTitle => _('ఇది ఏమిటి?', 'What is this?');
+  String get saleModeHelp => _(
+      '"నేనే అమ్ముకుంటాను" ఎంచుకుంటే మీ ఆస్తి సైట్‌లో, యాప్‌లో కనిపిస్తుంది. కొనేవాళ్ళ enquiries మీకు చేరతాయి. OnlineLand కి ఫీజు లేదు.\n\n"OnlineLand అమ్మిపెట్టాలి" ఎంచుకుంటే మా టీమ్ కొనేవాళ్ళను వెతికి, సైట్ విజిట్‌లు, బేరం, డాక్యుమెంట్స్, registration చూసుకుంటుంది. ఆస్తి అమ్ముడైనప్పుడు మాత్రమే ఫీజు. తర్వాత ఎప్పుడైనా "నా ప్రాపర్టీలు" లో మార్చుకోవచ్చు.',
+      '"I\'ll sell it myself": your property is shown on the site and app and buyers\' enquiries reach you. No fee to OnlineLand.\n\n"OnlineLand should sell it": our team finds buyers and handles site visits, negotiation, documents and registration. The fee is paid only when it sells. You can change this later in "My properties".');
+  String get needSaleMode => _('మీ ఆస్తిని ఎలా అమ్మాలో ఎంచుకోండి.', 'Choose how you want to sell.');
+  String get submittedTitle => _('✅ మీ ఆస్తి review కి వెళ్ళింది', '✅ Your property was sent for review');
+  String get submittedBody => _('ఆమోదించగానే notification వస్తుంది.', "You'll get a notification once it is approved.");
+  String get droneTip => _('డ్రోన్ వీడియో తీయించండి — త్వరగా అమ్ముడవుతుంది.', 'Get a drone video — it sells faster.');
+  String get droneYes => _('తీయించండి', 'Book it');
+  String get noThanks => _('వద్దు', 'No thanks');
+  String get changeSaleMode => _('అమ్మకం విధానం', 'How to sell');
+
+  String get services => _('సేవలు', 'Services');
+  String get servicesLead => _('ఏ సేవ కావాలో "అడగండి" నొక్కండి. మా టీమ్ కాల్ చేస్తుంది.', 'Tap "Ask" on what you need. Our team will call you.');
+  String get ask => _('అడగండి', 'Ask');
+  String get free => _('ఉచితం', 'Free');
+  String get priceOnCall => _('ధర చూసి చెబుతాం', 'Priced after a look');
+  String get serviceNote => _('వివరాలు (ఐచ్ఛికం): ఊరు, ఎకరాలు, సర్వే నంబర్', 'Details (optional): village, acres, survey number');
+  String get sendRequest => _('Request పంపండి', 'Send request');
+  String get requestSent => _('Request అందింది. ధర ఉంటే "నా requests" లో చెల్లించవచ్చు; మా టీమ్ కాల్ చేస్తుంది.', 'Request received. If it has a price you can pay in "My requests"; our team will call you.');
+  String get myRequests => _('నా requests', 'My requests');
+  String get loginForRequests => _('మీ requests, ధరలు చూడటానికి లాగిన్ అవ్వండి.', 'Log in to see your requests and prices.');
+  String serviceStatus(String st) => switch (st) {
+        'quoted' => _('చెల్లించాలి', 'To pay'),
+        'paid' => _('చెల్లించారు', 'Paid'),
+        'in-progress' => _('పని జరుగుతోంది', 'In progress'),
+        'done' => _('పూర్తయింది', 'Done'),
+        'cancelled' => _('రద్దు', 'Cancelled'),
+        _ => _('ధర కోసం వేచి ఉంది', 'Waiting for price'),
+      };
+  String get payNow => _('ఇప్పుడే చెల్లించండి', 'Pay now');
+  String get cancelRequest => _('రద్దు చేయండి', 'Cancel');
+  String get docsCheck => _('Documents చెక్ చేయించండి', 'Get documents checked');
+  String get docsCheckBody => _('కొనే ముందు పట్టా, EC న్యాయవాది చేత చెక్ చేయిస్తాం.', 'A lawyer checks the title and EC before you buy.');
+
+  String get monthly => _('నెలకు', 'Monthly');
+  String get yearly => _('సంవత్సరానికి', 'Yearly');
+  String pricePerYear(String price) => _('$price / సంవత్సరం', '$price / year');
+  String monthsFree(int n) => _('$n నెలలు ఉచితం', '$n months free');
+  String offerTitle(String plan, int days) => _('🎉 $plan ప్లాన్ $days రోజులు ఉచితం', '🎉 $plan plan free for $days days');
+  String get offerBody => _('కొత్త డీలర్లకు launch offer. ఒక్కసారి మాత్రమే.', 'Launch offer for new dealers. Once per account.');
+  String get offerDistrict => _('మీ జిల్లా', 'Your district');
+  String get offerClaim => _('ఉచితంగా తీసుకోండి', 'Take it free');
+  String get offerDone => _('మీ ఉచిత ప్లాన్ మొదలైంది 🎉', 'Your free plan has started 🎉');
+  String get offerUsed => _('ఈ ఖాతాలో ఆఫర్ ఇప్పటికే వాడారు.', 'The offer was already used on this account.');
+  String get offerNotHere => _('ఈ జిల్లాలో ఆఫర్ ఇంకా లేదు.', 'The offer is not available in this district yet.');
 }

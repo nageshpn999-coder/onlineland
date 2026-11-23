@@ -156,6 +156,11 @@ final myLeadsProvider = FutureProvider<List<LeadInfo>>((ref) {
   return ref.watch(repositoryProvider).myLeads();
 });
 
+final myServiceRequestsProvider = FutureProvider<List<ServiceRequestInfo>>((ref) {
+  ref.watch(authProvider);
+  return ref.watch(repositoryProvider).myServiceRequests();
+});
+
 final listingStatsProvider = FutureProvider.family<ListingStats, String>((ref, id) => ref.watch(repositoryProvider).listingStats(id));
 
 /// Refresh everything that a payment or plan change affects.
@@ -164,6 +169,7 @@ void refreshRevenue(WidgetRef ref) {
   ref.invalidate(myPaymentsProvider);
   ref.invalidate(myLeadsProvider);
   ref.invalidate(myListingsProvider);
+  ref.invalidate(myServiceRequestsProvider);
 }
 
 /// Video compression on the phone (overridden with a fake in tests).

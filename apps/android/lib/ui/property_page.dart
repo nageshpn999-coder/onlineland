@@ -7,6 +7,7 @@ import '../data/models.dart';
 import '../state.dart';
 import '../theme.dart';
 import 'forms.dart';
+import 'services.dart';
 import 'video.dart';
 import 'widgets.dart';
 
@@ -144,6 +145,20 @@ class _PropertyView extends ConsumerWidget {
               icon: const Icon(Icons.event_available),
               label: Text(s.bookVisit),
             ),
+            if (p.purpose == 'sale') ...[
+              const SizedBox(height: 16),
+              Card(
+                color: Brand.greenSoft,
+                child: ListTile(
+                  key: const Key('docs-check'),
+                  leading: const Icon(Icons.verified_user_outlined, color: Brand.green),
+                  title: Text(s.docsCheck, style: const TextStyle(fontWeight: FontWeight.w700)),
+                  subtitle: Text(s.docsCheckBody),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => showServiceRequestSheet(context, ref, serviceId: 'documents', propertyId: p.id),
+                ),
+              ),
+            ],
           ]),
         ),
       ]),
