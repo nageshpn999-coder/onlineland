@@ -8,7 +8,8 @@ import type { Role } from './roles';
 import type { AreaUnit, PriceBasis, PropertyCategory, PropertyPurpose, PropertySource, PropertyStatus } from './property';
 import type { LeadChannel, LeadStage, PaymentMethod, SiteVisitStatus } from './leads';
 import type { MediaType } from './media';
-import type { PaymentKind, PaymentStatus, PlanConfig, PlanId } from './plans';
+import type { BillingPeriod, PaymentKind, PaymentStatus, PlanConfig, PlanId } from './plans';
+import type { CommissionStatus, SaleMode } from './services';
 
 export interface TimestampLike {
   toMillis(): number;
@@ -79,6 +80,9 @@ export interface Property<T = TimestampLike> {
 
   ownerId: string;
   source: PropertySource;
+  /** Owners only: sell it themselves, or let OnlineLand sell it for a fee on success (Phase 9). */
+  saleMode?: SaleMode | null;
+  saleModeAt?: T | null;
   status: PropertyStatus;
   isFeatured: boolean;
   featuredUntil: T | null;
@@ -136,6 +140,11 @@ export interface Lead<T = TimestampLike> {
   notes: string | null;
   /** Dealer/owner whose share link brought this enquiry (D7). Must be the property's owner. */
   refId?: string | null;
+  /** Admin only, when the stage is "won" (Phase 9). */
+  dealPriceInr?: number | null;
+  commissionInr?: number | null;
+  commissionStatus?: CommissionStatus | null;
+  closedAt?: T | null;
   createdAt: T;
   updatedAt?: T;
 }
@@ -176,7 +185,9 @@ export interface PaymentRequest<T = TimestampLike> {
   userId: string;
   kind: PaymentKind;
   planId: PlanId | null; // kind "plan"
+  billing?: BillingPeriod; // kind "plan" (missing = month)
   propertyId: string | null; // kind "featured" / "listing"
+  serviceRequestId?: string | null; // kind "service"
   amountInr: number;
   utr: string; // 12-digit UPI reference
   status: PaymentStatus;

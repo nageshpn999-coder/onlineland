@@ -7,8 +7,8 @@ import { getFirestore as getAdminDb, Timestamp } from 'firebase-admin/firestore'
 import { deleteApp, initializeApp, type FirebaseApp } from 'firebase/app';
 import { connectAuthEmulator, getAuth, signInWithCustomToken, signOut, type Auth } from 'firebase/auth';
 import { connectFunctionsEmulator, getFunctions, httpsCallable, type Functions } from 'firebase/functions';
-import { DEFAULT_PLANS as SHARED_PLANS, DEFAULT_PRICING as SHARED_PRICING, ROLES as SHARED_ROLES } from '@onlineland/shared';
-import { DEFAULT_PLANS as FN_PLANS, DEFAULT_PRICING as FN_PRICING } from '../functions/src/plans';
+import { DEFAULT_PLANS as SHARED_PLANS, DEFAULT_PRICING as SHARED_PRICING, DEFAULT_SERVICES as SHARED_SERVICES, ROLES as SHARED_ROLES } from '@onlineland/shared';
+import { DEFAULT_PLANS as FN_PLANS, DEFAULT_PRICING as FN_PRICING, DEFAULT_SERVICES as FN_SERVICES } from '../functions/src/plans';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PROJECT_ID, storedListing } from './helpers';
 
@@ -357,6 +357,96 @@ describe('revenue (D7)', () => {
     await adminDb().doc(`properties/paid-${run}`).update({ status: 'approved' }); // the paid listing went live
     await call('runMaintenance', { nowMs: Date.now() + 92 * DAY });
     expect((await adminDb().doc(`properties/paid-${run}`).get()).data()!.status).toBe('expired');
+  });
+});
+
+describe('Phase 9: yearly plans, services, launch offer', () => {
+  const DAY = 86_400_000;
+  const call = (name: string, data: unknown) => httpsCallable(functions, name)(data);
+  async function payment(id: string, data: Record<string, unknown>) {
+    await adminDb().doc(`paymentRequests/${id}`).set({
+      planId: null, propertyId: null, utr: '512345678901', status: 'pending', rejectReason: null,
+      reviewedBy: null, reviewedAt: null, createdAt: Timestamp.now(), ...data,
+    });
+  }
+  async function serviceRequest(id: string, data: Record<string, unknown>) {
+    await adminDb().doc(`serviceRequests/${id}`).set({
+      propertyId: null, name: 'Ravi', phone: '9876543210', note: null, locale: 'te', userId: null,
+      status: 'new', quotedInr: null, adminNote: null, createdAt: Timestamp.now(), ...data,
+    });
+  }
+  const notesFor = async (userId: string, type: string) =>
+    (await adminDb().collection('notifications').where('userId', '==', userId).where('type', '==', type).get()).size;
+
+  it('service defaults are the same in functions and @onlineland/shared', () => {
+    expect(FN_SERVICES).toEqual(SHARED_SERVICES);
+  });
+
+  it('a yearly Basic payment gives 365 days; the monthly price is not enough for it', async () => {
+    const uid = `yearly-${run}`;
+    await createAccount(uid, '+919000000201');
+    await payment(`pay-y-low-${run}`, { userId: uid, kind: 'plan', planId: 'basic', billing: 'year', amountInr: 499 });
+    await payment(`pay-y-${run}`, { userId: uid, kind: 'plan', planId: 'basic', billing: 'year', amountInr: 4999 });
+    await signInAs(`admin-${run}`);
+    expect(await callError('reviewPayment', { paymentId: `pay-y-low-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
+    const res = (await call('reviewPayment', { paymentId: `pay-y-${run}`, decision: 'approve' })).data as { validUntil: number };
+    expect(Math.round((res.validUntil - Date.now()) / DAY)).toBe(365);
+    const subs = await adminDb().collection('subscriptions').where('dealerId', '==', uid).get();
+    expect(subs.docs[0]!.data()).toMatchObject({ billing: 'year', amountInr: 4999 });
+  });
+
+  it('a fixed-price service is priced at once; paying it marks the request paid', async () => {
+    const uid = `svc-${run}`;
+    await createAccount(uid, '+919000000202');
+    await serviceRequest(`sr-drone-${run}`, { serviceId: 'drone', userId: uid });
+    const quoted = await waitFor(async () => {
+      const d = (await adminDb().doc(`serviceRequests/sr-drone-${run}`).get()).data();
+      return d?.status === 'quoted' ? d : null;
+    });
+    expect(quoted.quotedInr).toBe(1999);
+    expect(await notesFor(uid, 'service.quoted')).toBe(1);
+
+    await payment(`pay-svc-low-${run}`, { userId: uid, kind: 'service', serviceRequestId: `sr-drone-${run}`, amountInr: 999 });
+    await payment(`pay-svc-${run}`, { userId: uid, kind: 'service', serviceRequestId: `sr-drone-${run}`, amountInr: 1999 });
+    await signInAs(`admin-${run}`);
+    expect(await callError('reviewPayment', { paymentId: `pay-svc-low-${run}`, decision: 'approve' })).toBe('functions/failed-precondition');
+    await call('reviewPayment', { paymentId: `pay-svc-${run}`, decision: 'approve' });
+    const sr = (await adminDb().doc(`serviceRequests/sr-drone-${run}`).get()).data()!;
+    expect(sr).toMatchObject({ status: 'paid', paymentId: `pay-svc-${run}` });
+    expect(await notesFor(uid, 'payment.approved')).toBe(1);
+  });
+
+  it('a survey request waits for the admin quote; only admins quote; a paid request cannot be re-quoted', async () => {
+    const uid = `svc-${run}`;
+    await serviceRequest(`sr-survey-${run}`, { serviceId: 'survey', userId: uid });
+    await new Promise((r) => setTimeout(r, 1500));
+    expect((await adminDb().doc(`serviceRequests/sr-survey-${run}`).get()).data()!.status).toBe('new');
+    await signInAs(uid);
+    expect(await callError('quoteService', { requestId: `sr-survey-${run}`, amountInr: 5000 })).toBe('functions/permission-denied');
+    await signInAs(`admin-${run}`);
+    expect(await callError('quoteService', { requestId: `sr-survey-${run}`, amountInr: 0 })).toBe('functions/invalid-argument');
+    await call('quoteService', { requestId: `sr-survey-${run}`, amountInr: 5000, note: '3 ఎకరాలు' });
+    expect((await adminDb().doc(`serviceRequests/sr-survey-${run}`).get()).data()).toMatchObject({ status: 'quoted', quotedInr: 5000, adminNote: '3 ఎకరాలు' });
+    expect(await callError('quoteService', { requestId: `sr-drone-${run}`, amountInr: 100 })).toBe('functions/failed-precondition');
+  });
+
+  it('launch offer: only while on, only in offer districts, only once', async () => {
+    const uid = `offer-${run}`;
+    await createAccount(uid, '+919000000203');
+    await signInAs(uid);
+    expect(await callError('claimLaunchOffer', { district: 'narayanpet' })).toBe('functions/failed-precondition'); // off
+    await adminDb().doc('settings/pricing').set({ launchOfferActive: true, launchOfferDistricts: ['narayanpet'] }, { merge: true });
+    try {
+      expect(await callError('claimLaunchOffer', { district: 'hyderabad' })).toBe('functions/failed-precondition');
+      const res = (await call('claimLaunchOffer', { district: 'narayanpet' })).data as { planId: string; validUntil: number };
+      expect(res.planId).toBe('basic');
+      expect(Math.round((res.validUntil - Date.now()) / DAY)).toBe(90);
+      expect((await adminDb().doc(`dealers/${uid}`).get()).data()).toMatchObject({ planId: 'basic', ownContact: true });
+      expect((await adminAuth().getUser(uid)).customClaims?.role).toBe('dealer');
+      expect(await callError('claimLaunchOffer', { district: 'narayanpet' })).toBe('functions/already-exists');
+    } finally {
+      await adminDb().doc('settings/pricing').set({ launchOfferActive: false }, { merge: true });
+    }
   });
 });
 

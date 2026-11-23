@@ -16,19 +16,19 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { logger } from 'firebase-functions';
 import { applyRole, audit, auth, CALLABLE, db, DAY_MS, ms, requireAdmin, requireId, requireSignedIn, safeNotify } from './common';
 import { loadConfig } from './config';
-import { isPlanId, type PlanConfig, type PlanId } from './plans';
+import { isPlanId, YEAR_DAYS, type PlanConfig, type PlanId } from './plans';
 
 const INR = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
 /** Public dealer card. Phone is published only while the plan includes ownContact. */
-async function dealerCard(uid: string) {
+export async function dealerCard(uid: string) {
   const [userSnap, user] = await Promise.all([db.doc(`users/${uid}`).get(), auth.getUser(uid).catch(() => null)]);
   const name = (userSnap.get('name') as string | undefined)?.trim() || user?.displayName || '';
   const phone = (userSnap.get('phone') as string | null | undefined) ?? user?.phoneNumber ?? null;
   return { name, phone: phone ? phone.replace(/^\+91/, '') : null };
 }
 
-function planFields(planId: PlanId, plan: PlanConfig) {
+export function planFields(planId: PlanId, plan: PlanConfig) {
   return {
     planId,
     ownContact: plan.ownContact,
@@ -76,15 +76,19 @@ export const reviewPayment = onCall(CALLABLE, async (req) => {
       if (!isPlanId(p.planId) || p.planId === 'free') throw new HttpsError('failed-precondition', 'Unknown plan.');
       planId = p.planId;
       const plan = plans[planId];
-      if (p.amountInr < plan.priceInr) {
-        throw new HttpsError('failed-precondition', `Amount ${INR(p.amountInr)} is less than the ${plan.name.en} price ${INR(plan.priceInr)}.`);
+      const yearly = p.billing === 'year';
+      const price = yearly ? plan.yearlyPriceInr : plan.priceInr;
+      if (yearly && !(price > 0)) throw new HttpsError('failed-precondition', `${plan.name.en} has no yearly price.`);
+      if (p.amountInr < price) {
+        throw new HttpsError('failed-precondition', `Amount ${INR(p.amountInr)} is less than the ${plan.name.en} price ${INR(price)}.`);
       }
+      const days = yearly ? YEAR_DAYS : plan.durationDays;
       const dealerRef = db.doc(`dealers/${userId}`);
       const dealer = (await tx.get(dealerRef)).data();
       const current = ms(dealer?.validUntil) ?? 0;
       // Renewing the same plan early adds to the remaining days; a new or changed plan starts today.
       const samePlanRunning = current > now && dealer?.planId === planId;
-      until = (samePlanRunning ? current : now) + plan.durationDays * DAY_MS;
+      until = (samePlanRunning ? current : now) + days * DAY_MS;
       const card = await dealerCard(userId);
       tx.set(dealerRef, {
         name: card.name,
@@ -96,10 +100,20 @@ export const reviewPayment = onCall(CALLABLE, async (req) => {
         updatedAt: FieldValue.serverTimestamp(),
       }, { merge: true });
       tx.set(db.collection('subscriptions').doc(), {
-        dealerId: userId, planId, method: 'manual-upi', upiReference: p.utr, amountInr: p.amountInr,
+        dealerId: userId, planId, billing: yearly ? 'year' : 'month', method: 'manual-upi', upiReference: p.utr, amountInr: p.amountInr,
         status: 'active', validUntil: Timestamp.fromMillis(until), confirmedBy: a.uid, paymentId: id,
         createdAt: FieldValue.serverTimestamp(),
       });
+    } else if (p.kind === 'service') {
+      const srRef = db.doc(`serviceRequests/${requireId(p.serviceRequestId, 'serviceRequestId')}`);
+      const sr = (await tx.get(srRef)).data();
+      if (!sr || sr.userId !== userId) throw new HttpsError('failed-precondition', 'The service request does not belong to this user.');
+      if (sr.status !== 'quoted') throw new HttpsError('failed-precondition', `The service request is ${sr.status}.`);
+      if (typeof sr.quotedInr !== 'number' || p.amountInr < sr.quotedInr) {
+        throw new HttpsError('failed-precondition', `The quoted price is ${INR(sr.quotedInr ?? 0)}.`);
+      }
+      until = now;
+      tx.update(srRef, { status: 'paid', paymentId: id, updatedAt: FieldValue.serverTimestamp() });
     } else {
       const propertyId = requireId(p.propertyId, 'propertyId');
       const propRef = db.doc(`properties/${propertyId}`);
@@ -122,7 +136,7 @@ export const reviewPayment = onCall(CALLABLE, async (req) => {
     tx.update(payRef, { status: 'approved', ...review });
     audit(tx, {
       actorId: a.uid, action: `payment.approve.${p.kind}`, target: `paymentRequests/${id}`,
-      before: { status: 'pending' }, after: { status: 'approved', planId, propertyId: p.propertyId ?? null, until: new Date(until).toISOString() },
+      before: { status: 'pending' }, after: { status: 'approved', planId, billing: p.billing ?? null, propertyId: p.propertyId ?? null, serviceRequestId: p.serviceRequestId ?? null, until: new Date(until).toISOString() },
     });
     return { userId, kind: p.kind as string, status: 'approved' as const, until, reason: null, planId };
   });
@@ -143,7 +157,9 @@ export const reviewPayment = onCall(CALLABLE, async (req) => {
         title: 'చెల్లింపు ఆమోదించబడింది ✅',
         body: outcome.kind === 'plan'
           ? `మీ ${plans[outcome.planId!].name.te} ప్లాన్ ${date} వరకు active.`
-          : outcome.kind === 'featured' ? `మీ ప్రాపర్టీ ${date} వరకు పైన కనిపిస్తుంది.` : `మీ ప్రాపర్టీ ${date} వరకు live లో ఉంటుంది.`,
+          : outcome.kind === 'featured' ? `మీ ప్రాపర్టీ ${date} వరకు పైన కనిపిస్తుంది.`
+          : outcome.kind === 'service' ? 'మా టీమ్ త్వరలో మీకు కాల్ చేసి పని మొదలుపెడుతుంది.'
+          : `మీ ప్రాపర్టీ ${date} వరకు live లో ఉంటుంది.`,
         data: { paymentId: id, kind: outcome.kind },
       }
     : {

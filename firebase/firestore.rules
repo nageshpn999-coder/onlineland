@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// OnlineLand — Firestore security rules (Phase 4, extended in Phase 6–7).
+// OnlineLand — Firestore security rules (Phase 4, extended in Phase 6–9).
 // Roles come from Firebase Auth custom claims (request.auth.token.role), set only by Cloud Functions.
 // Every rule here has a matching test in firebase/tests/firestore.rules.test.ts.
 service cloud.firestore {
@@ -84,6 +84,12 @@ service cloud.firestore {
         && d.photoCount is int && d.photoCount >= 0 && d.photoCount <= 20;
     }
 
+    // Phase 9: an owner chooses to sell it themselves or let OnlineLand sell it (fee only on a sale).
+    // The choice is recorded with the time it was made; dealers never get the question.
+    function validSaleMode(d) {
+      return d.saleMode in ['self', 'assisted'] && d.source == 'owner' && d.get('saleModeAt', null) == request.time;
+    }
+
     function ownsProperty(propertyId) {
       return signedIn() && get(/databases/$(database)/documents/properties/$(propertyId)).data.ownerId == uid();
     }
@@ -96,7 +102,8 @@ service cloud.firestore {
       // Owners and dealers create listings that wait for admin review.
       allow create: if role() in ['owner', 'dealer', 'admin']
         && request.resource.data.keys().hasOnly(editableFields().concat(['code', 'ownerId', 'source', 'status', 'isFeatured',
-             'featuredUntil', 'docsVerified', 'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt', 'updatedAt']))
+             'featuredUntil', 'docsVerified', 'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt', 'updatedAt',
+             'saleMode', 'saleModeAt']))
         && request.resource.data.keys().hasAll(editableFields().concat(['code', 'ownerId', 'source', 'status', 'isFeatured',
              'featuredUntil', 'docsVerified', 'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt', 'updatedAt']))
         && request.resource.data.ownerId == uid()
@@ -113,6 +120,7 @@ service cloud.firestore {
             || (role() == 'admin' && request.resource.data.source in ['onlineland', 'owner', 'dealer']))
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
+        && (request.resource.data.get('saleMode', null) == null || validSaleMode(request.resource.data))
         && validProperty(request.resource.data);
 
       // Owners edit their own listing; any edit sends it back to review.
@@ -126,7 +134,10 @@ service cloud.firestore {
                  && request.resource.data.status in ['draft', 'pending'])
                 || (resource.data.status == 'approved'
                     && changed().hasOnly(['status', 'updatedAt'])
-                    && request.resource.data.status in ['sold', 'rented'])));
+                    && request.resource.data.status in ['sold', 'rented'])
+                // The owner may change how they want to sell at any time, without a new review.
+                || (changed().hasOnly(['saleMode', 'saleModeAt', 'updatedAt'])
+                    && validSaleMode(request.resource.data))));
 
       allow delete: if isAdmin()
         || (signedIn() && resource.data.ownerId == uid() && resource.data.status in ['draft', 'pending', 'rejected']);
@@ -255,6 +266,39 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ---------- Paid services (Phase 9) — like enquiries, login optional ----------
+    // Prices are set by Cloud Functions (fixed price) or by admin (quote); payment is a paymentRequest of kind "service".
+    match /serviceRequests/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['serviceId', 'propertyId', 'name', 'phone', 'note', 'locale',
+             'userId', 'status', 'quotedInr', 'adminNote', 'createdAt'])
+        && request.resource.data.keys().hasAll(['serviceId', 'propertyId', 'name', 'phone', 'note', 'locale',
+             'userId', 'status', 'quotedInr', 'adminNote', 'createdAt'])
+        && request.resource.data.serviceId in ['drone', 'documents', 'survey', 'registration', 'loan']
+        && request.resource.data.status == 'new'
+        && request.resource.data.quotedInr == null
+        && request.resource.data.adminNote == null
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.locale in ['te', 'en']
+        && optString(request.resource.data.propertyId, 64)
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
+        && indianMobile(request.resource.data.phone)
+        && optString(request.resource.data.note, 500)
+        && ((signedIn() && request.resource.data.userId == uid())
+            || (!signedIn() && request.resource.data.userId == null));
+
+      allow read: if isAdmin() || (signedIn() && resource.data.userId == uid());
+
+      // The customer may cancel before paying; everything else is admin (or Cloud Functions).
+      allow update: if isAdmin()
+        || (signedIn() && resource.data.userId == uid()
+            && resource.data.status in ['new', 'quoted']
+            && changed().hasOnly(['status', 'updatedAt'])
+            && request.resource.data.status == 'cancelled'
+            && request.resource.data.updatedAt == request.time);
+
+      allow delete: if isAdmin();
+    }
+
     // ---------- Public reference data (admin-managed) ----------
     match /locations/{id} {
       allow read: if true;
@@ -271,10 +315,15 @@ service cloud.firestore {
 
     // ---------- Payments (manual UPI, D6/D7) ----------
     // The customer records their UTR; only the reviewPayment Cloud Function changes it afterwards.
+    function serviceAwaitingPayment(srId) {
+      let sr = get(/databases/$(database)/documents/serviceRequests/$(srId)).data;
+      return sr.userId == uid() && sr.status == 'quoted';
+    }
+
     match /paymentRequests/{id} {
       allow create: if signedIn()
         && request.resource.data.keys().hasOnly(['userId', 'kind', 'planId', 'propertyId', 'amountInr', 'utr', 'status',
-             'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt'])
+             'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt', 'billing', 'serviceRequestId'])
         && request.resource.data.keys().hasAll(['userId', 'kind', 'planId', 'propertyId', 'amountInr', 'utr', 'status',
              'rejectReason', 'reviewedBy', 'reviewedAt', 'createdAt'])
         && request.resource.data.userId == uid()
@@ -287,10 +336,19 @@ service cloud.firestore {
         && request.resource.data.amountInr is number && request.resource.data.amountInr > 0
         && request.resource.data.amountInr <= 100000
         && ((request.resource.data.kind == 'plan' && request.resource.data.planId in ['basic', 'pro']
-             && request.resource.data.propertyId == null)
+             && request.resource.data.propertyId == null
+             && request.resource.data.get('billing', 'month') in ['month', 'year']
+             && request.resource.data.get('serviceRequestId', null) == null)
             || (request.resource.data.kind in ['featured', 'listing'] && request.resource.data.planId == null
                 && request.resource.data.propertyId is string
-                && ownsProperty(request.resource.data.propertyId)));
+                && request.resource.data.get('billing', null) == null
+                && request.resource.data.get('serviceRequestId', null) == null
+                && ownsProperty(request.resource.data.propertyId))
+            || (request.resource.data.kind == 'service' && request.resource.data.planId == null
+                && request.resource.data.propertyId == null
+                && request.resource.data.get('billing', null) == null
+                && request.resource.data.get('serviceRequestId', null) is string
+                && serviceAwaitingPayment(request.resource.data.serviceRequestId)));
       allow read: if isAdmin() || (signedIn() && resource.data.userId == uid());
       allow update, delete: if false;
     }

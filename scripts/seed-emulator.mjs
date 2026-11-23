@@ -222,6 +222,19 @@ if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {
   await lead('seed-lead-1', { name: 'Ramesh', phone: '9876543210', message: 'ధర తగ్గుతుందా?' }, 2);
   await lead('seed-lead-2', { name: 'Lakshmi', phone: '9876500000', message: 'Site visit kavali', propertyId: 'seed-pending-2', refId: 'seed-dealer' }, 5);
   await lead('seed-lead-3', { name: 'Venkat', phone: '9876511111', stage: 'contacted', assignedAgentId: 'seed-agent' }, 30);
+  // Phase 9: an owner who asked OnlineLand to sell (fee on success), a lead in negotiation, two service requests.
+  await db.doc('properties/seed-1001').update({ saleMode: 'assisted', saleModeAt: Timestamp.fromMillis(now - 2 * DAY) });
+  await lead('seed-lead-4', { name: 'Prasad', phone: '9876522222', stage: 'negotiation', message: '₹20 లక్షలకు ఒప్పుకుంటారా?' }, 50);
+  const service = (id, data, ageH) => db.doc(`serviceRequests/${id}`).set({
+    propertyId: null, name: 'Suresh', phone: '9000000202', note: null, locale: 'te', userId: 'seed-buyer',
+    status: 'new', quotedInr: null, adminNote: null, createdAt: Timestamp.fromMillis(now - ageH * 3600_000), ...data,
+  });
+  await service('seed-svc-1', { serviceId: 'survey', note: 'Makthal, 3 ఎకరాలు' }, 3);
+  await service('seed-svc-2', { serviceId: 'documents', propertyId: 'seed-1001', status: 'quoted', quotedInr: 2999 }, 26);
+  await db.doc('paymentRequests/seed-pay-2').set({
+    userId: 'seed-buyer', kind: 'service', planId: null, propertyId: null, serviceRequestId: 'seed-svc-2', amountInr: 2999,
+    utr: '512345678902', status: 'pending', rejectReason: null, reviewedBy: null, reviewedAt: null, createdAt: Timestamp.fromMillis(now - 1800_000),
+  });
   await db.doc('siteVisits/seed-visit-1').set({
     propertyId: 'seed-1001', leadId: 'seed-lead-1', name: 'Ramesh', phone: '9876543210', date: '2026-12-01', slot: 'morning',
     status: 'requested', userId: null, agentId: null, notes: null, createdAt: Timestamp.fromMillis(now - 3600_000),

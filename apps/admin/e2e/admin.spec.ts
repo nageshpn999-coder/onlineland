@@ -38,7 +38,8 @@ test('signing in with OTP shows the overview with today’s numbers (Telugu)', a
   await login(page, '9000000009', false);
   await expect(page.getByRole('heading', { name: 'సారాంశం' })).toBeVisible();
   await expect(page.getByTestId('count-pendingListings')).toContainText('2');
-  await expect(page.getByTestId('count-pendingPayments')).toContainText('1');
+  await expect(page.getByTestId('count-pendingPayments')).toContainText('2');
+  await expect(page.getByTestId('count-newServices')).toContainText('1');
   await expect(page.getByTestId('count-newLeads')).toContainText('2');
   await expect(page.getByTestId('count-requestedVisits')).toContainText('1');
   await expect(page.getByTestId('count-liveListings')).toContainText('10');
@@ -119,6 +120,69 @@ test('CRM: dealer-link lead is tagged; admin updates stage, notes and agent', as
   await shot(page, 'lead');
   const lead = (await db().doc('leads/seed-lead-1').get()).data()!;
   expect(lead).toMatchObject({ stage: 'contacted', notes: 'Called, visiting Sunday', assignedAgentId: 'seed-agent' });
+});
+
+test('deal won: commission follows the sale price and shows on the overview', async ({ page }) => {
+  await login(page);
+  await page.getByRole('link', { name: 'Leads (CRM)' }).first().click();
+  await page.getByRole('tab', { name: 'negotiation' }).click();
+  await page.getByRole('button', { name: /Prasad/ }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog.getByTestId('lead-sale-mode')).toContainText('OnlineLand sells (fee)');
+  await dialog.getByLabel('Stage').selectOption('won');
+  await dialog.getByLabel('Sale price (₹)').fill('2000000');
+  await expect(dialog.getByLabel('Commission (₹)')).toHaveValue('20000');
+  await dialog.getByRole('button', { name: 'Save' }).click();
+  await expect(dialog.getByRole('status')).toContainText('Saved');
+  await shot(page, 'lead-won');
+  await expect.poll(async () => (await db().doc('leads/seed-lead-4').get()).data()).toMatchObject({
+    stage: 'won', dealPriceInr: 2_000_000, commissionInr: 20_000, commissionStatus: 'pending',
+  });
+  expect((await db().doc('leads/seed-lead-4').get()).data()!.closedAt).toBeTruthy();
+  await page.goto('/');
+  await expect(page.getByTestId('money-commissionDue')).toContainText('20,000');
+  await expect(page.getByTestId('money-commissionMonth')).toContainText('20,000');
+});
+
+test('services: admin quotes a survey; a service payment marks the request paid', async ({ page }) => {
+  await login(page);
+  await page.getByRole('link', { name: 'Services' }).first().click();
+  await page.getByRole('button', { name: /Suresh/ }).click();
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toContainText('Makthal, 3 ఎకరాలు');
+  await dialog.getByLabel('Price (₹)').fill('5000');
+  await dialog.getByLabel('Note to customer (optional)').fill('3 ఎకరాలు, 2 రోజుల్లో');
+  await dialog.getByRole('button', { name: 'Send price' }).click();
+  await expect.poll(async () => (await db().doc('serviceRequests/seed-svc-1').get()).data()).toMatchObject({ status: 'quoted', quotedInr: 5000 });
+  await shot(page, 'service-quote');
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('link', { name: 'Payments' }).first().click();
+  await page.getByRole('button', { name: 'UTR 512345678902' }).click();
+  const pay = page.getByRole('dialog');
+  await expect(pay).toContainText('Document check');
+  await expect(pay).toContainText('₹2,999');
+  await pay.getByRole('button', { name: 'Approve' }).click();
+  await expect.poll(async () => (await db().doc('serviceRequests/seed-svc-2').get()).data()!.status).toBe('paid');
+});
+
+test('yearly price, launch offer, sale fee and service prices are edited in Settings', async ({ page }) => {
+  await login(page);
+  await page.getByRole('link', { name: 'Prices & settings' }).first().click();
+  await page.getByRole('region', { name: 'Pro' }).getByLabel('Price per year (₹, 0 = none)').fill('12999');
+  await page.getByLabel('Sale fee (%)').fill('1.5');
+  const offer = page.getByRole('region', { name: 'Launch offer (free plan for new dealers)' });
+  await offer.getByLabel('Offer on').check();
+  await offer.getByLabel(/Districts/).fill('narayanpet, mahabubnagar');
+  await page.getByLabel('Survey & boundaries price').fill('4000');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('status')).toContainText('Saved');
+  await shot(page, 'settings-phase9');
+  expect((await db().doc('plans/pro').get()).data()!.yearlyPriceInr).toBe(12999);
+  expect((await db().doc('settings/pricing').get()).data()).toMatchObject({
+    dealCommissionPct: 1.5, launchOfferActive: true, launchOfferDistricts: ['narayanpet', 'mahabubnagar'],
+  });
+  expect((await db().doc('settings/services').get()).data()!.survey.priceInr).toBe(4000);
 });
 
 test('site visit is confirmed', async ({ page }) => {

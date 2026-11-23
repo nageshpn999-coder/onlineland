@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { collection, doc, limit, orderBy, query, where } from 'firebase/firestore';
-import { paymentAmount, type PaymentRequest, type PaymentStatus, type Property, type UserProfile } from '@onlineland/shared';
+import { paymentAmount, type PaymentRequest, type PaymentStatus, type Property, type ServiceRequest, type UserProfile } from '@onlineland/shared';
 import { Shell } from '@/components/Shell';
 import { Badge, Button, Drawer, ErrorText, Field, KV, PageHeader, RowButton, StateBox, Tabs, TextArea } from '@/components/ui';
 import { useRevenueConfig } from '@/lib/config';
@@ -11,7 +11,7 @@ import { date, inr, tx } from '@/lib/format';
 import { useI18n, type Key } from '@/lib/i18n';
 import { useLiveDoc, useLiveQuery } from '@/lib/live';
 
-const KIND: Record<string, Key> = { plan: 'kindPlan', featured: 'kindFeatured', listing: 'kindListing' };
+const KIND: Record<string, Key> = { plan: 'kindPlan', featured: 'kindFeatured', listing: 'kindListing', service: 'kindService' };
 
 export default function PaymentsPage() {
   return (
@@ -38,7 +38,7 @@ function Payments() {
         {list.rows.map(({ id, data: p }) => (
           <RowButton key={id} onClick={() => setOpen(id)} label={`UTR ${p.utr}`}>
             <span className="min-w-0">
-              <span className="block font-semibold">{t(KIND[p.kind] ?? 'kindPlan')}{p.planId ? ` · ${p.planId}` : ''}</span>
+              <span className="block font-semibold">{t(KIND[p.kind] ?? 'kindPlan')}{p.planId ? ` · ${p.planId}` : ''}{p.billing === 'year' ? ` · ${t('yearly')}` : ''}</span>
               <span className="font-mono text-sm text-ink-soft">UTR {p.utr}</span>
             </span>
             <span className="font-display text-lg font-bold">{inr(p.amountInr)}</span>
@@ -60,7 +60,9 @@ function PaymentDrawer({ id, onClose }: { id: string; onClose: () => void }) {
   const user = useLiveDoc<UserProfile>(uid ? () => doc(fb().db, 'users', uid) : null, `pu-${uid}`);
   const pid = p?.propertyId ?? null;
   const prop = useLiveDoc<Property>(pid ? () => doc(fb().db, 'properties', pid) : null, `pp-${pid}`);
-  const { plans, pricing } = useRevenueConfig();
+  const srId = p?.serviceRequestId ?? null;
+  const sr = useLiveDoc<ServiceRequest>(srId ? () => doc(fb().db, 'serviceRequests', srId) : null, `ps-${srId}`);
+  const { plans, pricing, services } = useRevenueConfig();
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
@@ -79,7 +81,7 @@ function PaymentDrawer({ id, onClose }: { id: string; onClose: () => void }) {
     }
   }
 
-  const expected = p ? paymentAmount(p.kind, p.planId, plans, pricing) : 0;
+  const expected = p ? paymentAmount(p.kind, p.planId, plans, pricing, { billing: p.billing ?? 'month', quotedInr: sr.data?.quotedInr ?? null }) : 0;
   const short = p ? p.amountInr < expected : false;
 
   return (
@@ -89,7 +91,8 @@ function PaymentDrawer({ id, onClose }: { id: string; onClose: () => void }) {
         <>
           <div>
             <KV label={t('status')}><Badge value={p.status} /></KV>
-            <KV label={t('kind')}>{t(KIND[p.kind] ?? 'kindPlan')}{p.planId ? ` — ${plans[p.planId].name[locale]}` : ''}</KV>
+            <KV label={t('kind')}>{t(KIND[p.kind] ?? 'kindPlan')}{p.planId ? ` — ${plans[p.planId].name[locale]}` : ''}{sr.data ? ` — ${services[sr.data.serviceId]?.name[locale] ?? sr.data.serviceId}` : ''}</KV>
+            {p.kind === 'plan' && <KV label={t('billing')}>{p.billing === 'year' ? t('yearly') : t('monthly')}</KV>}
             {prop.data && <KV label={t('property')}>{prop.data.code ?? pid} {tx(prop.data.title, locale)}</KV>}
             <KV label={t('amount')}><span className={short ? 'text-red-700' : ''}>{inr(p.amountInr)}</span></KV>
             <KV label={t('expected')}>{inr(expected)}</KV>

@@ -13,7 +13,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
-import { createTestEnv, newLead, newListing, newPayment, newSiteVisit, storedListing } from './helpers';
+import { createTestEnv, newLead, newListing, newPayment, newServiceRequest, newSiteVisit, storedListing } from './helpers';
 
 let env: RulesTestEnvironment;
 
@@ -50,6 +50,8 @@ beforeEach(async () => {
     await setDoc(doc(db, 'leads/ref2'), { ...newLead({ propertyId: 'p-lapsed' }), createdAt: Timestamp.now(), refId: 'lapsed1' });
     await setDoc(doc(db, 'propertyStats/p-approved'), { views: 3, shares: 1, leads: 1 });
     await setDoc(doc(db, 'paymentRequests/pay1'), { ...newPayment('buyer1'), createdAt: Timestamp.now() });
+    await setDoc(doc(db, 'serviceRequests/sr-quoted'), { ...newServiceRequest({ userId: 'buyer1', status: 'quoted', quotedInr: 2999 }), createdAt: Timestamp.now() });
+    await setDoc(doc(db, 'serviceRequests/sr-new'), { ...newServiceRequest({ userId: 'buyer1', serviceId: 'survey' }), createdAt: Timestamp.now() });
     await setDoc(doc(db, 'auditLogs/a1'), { actorId: 'admin1', action: 'test', target: 'x', before: null, after: null, at: Timestamp.now() });
   });
 });
@@ -303,6 +305,60 @@ describe('payments (manual UPI)', () => {
     await assertFails(updateDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/pay1'), { status: 'approved' }));
     await assertSucceeds(getDoc(doc(as('admin1', 'admin'), 'paymentRequests/pay1')));
     await assertFails(updateDoc(doc(as('admin1', 'admin'), 'paymentRequests/pay1'), { status: 'approved' }));
+  });
+});
+
+describe('Phase 9: how an owner sells', () => {
+  const now = serverTimestamp();
+  it('owner chooses "self" or "assisted" when posting, with the time recorded', async () => {
+    await assertSucceeds(setDoc(doc(as('owner1', 'owner'), 'properties/s1'), newListing('owner1', { saleMode: 'assisted', saleModeAt: now })));
+    await assertSucceeds(setDoc(doc(as('owner1', 'owner'), 'properties/s2'), newListing('owner1', { saleMode: 'self', saleModeAt: now })));
+    await assertSucceeds(setDoc(doc(as('owner1', 'owner'), 'properties/s3'), newListing('owner1'))); // older apps: no choice
+  });
+  it('the choice needs its time; dealers cannot choose; unknown modes are refused', async () => {
+    await assertFails(setDoc(doc(as('owner1', 'owner'), 'properties/s4'), newListing('owner1', { saleMode: 'assisted' })));
+    await assertFails(setDoc(doc(as('dealer1', 'dealer'), 'properties/s5'), newListing('dealer1', { source: 'dealer', saleMode: 'assisted', saleModeAt: now })));
+    await assertFails(setDoc(doc(as('owner1', 'owner'), 'properties/s6'), newListing('owner1', { saleMode: 'free', saleModeAt: now })));
+  });
+  it('owner changes it later without a new review; others cannot', async () => {
+    await assertSucceeds(updateDoc(doc(as('owner1', 'owner'), 'properties/p-approved'), { saleMode: 'assisted', saleModeAt: now, updatedAt: now }));
+    await assertFails(updateDoc(doc(as('owner2', 'owner'), 'properties/p-approved'), { saleMode: 'assisted', saleModeAt: now, updatedAt: now }));
+    await assertFails(updateDoc(doc(as('owner1', 'owner'), 'properties/p-approved'), { saleMode: 'assisted', saleModeAt: now, updatedAt: now, isFeatured: true }));
+  });
+});
+
+describe('Phase 9: service requests', () => {
+  it('visitor asks for a service without login', () =>
+    assertSucceeds(setDoc(doc(visitor(), 'serviceRequests/n1'), newServiceRequest())));
+  it('signed-in user tags it with their own uid', async () => {
+    await assertSucceeds(setDoc(doc(as('buyer1', 'buyer'), 'serviceRequests/n2'), newServiceRequest({ userId: 'buyer1' })));
+    await assertFails(setDoc(doc(as('buyer1', 'buyer'), 'serviceRequests/n3'), newServiceRequest({ userId: 'buyer2' })));
+  });
+  it('rejects a set price, unknown service, bad phone, non-new status', async () => {
+    await assertFails(setDoc(doc(visitor(), 'serviceRequests/b1'), newServiceRequest({ quotedInr: 1 })));
+    await assertFails(setDoc(doc(visitor(), 'serviceRequests/b2'), newServiceRequest({ serviceId: 'astrology' })));
+    await assertFails(setDoc(doc(visitor(), 'serviceRequests/b3'), newServiceRequest({ phone: '12345' })));
+    await assertFails(setDoc(doc(visitor(), 'serviceRequests/b4'), newServiceRequest({ status: 'paid' })));
+  });
+  it('customer reads own requests and may cancel; cannot set a price; admin does everything', async () => {
+    await assertSucceeds(getDoc(doc(as('buyer1', 'buyer'), 'serviceRequests/sr-new')));
+    await assertFails(getDoc(doc(as('buyer2', 'buyer'), 'serviceRequests/sr-new')));
+    await assertFails(getDoc(doc(visitor(), 'serviceRequests/sr-new')));
+    await assertFails(updateDoc(doc(as('buyer1', 'buyer'), 'serviceRequests/sr-new'), { status: 'quoted', quotedInr: 1, updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(as('buyer1', 'buyer'), 'serviceRequests/sr-new'), { status: 'cancelled', updatedAt: serverTimestamp() }));
+    await assertSucceeds(updateDoc(doc(as('admin1', 'admin'), 'serviceRequests/sr-quoted'), { status: 'done' }));
+    await assertSucceeds(getDocs(collection(as('admin1', 'admin'), 'serviceRequests')));
+  });
+  it('customer pays a quoted request of their own only', async () => {
+    const pay = (uid: string, sr: string) => newPayment(uid, { kind: 'service', planId: null, serviceRequestId: sr, amountInr: 2999 });
+    await assertSucceeds(setDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/s1'), pay('buyer1', 'sr-quoted')));
+    await assertFails(setDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/s2'), pay('buyer1', 'sr-new'))); // not priced yet
+    await assertFails(setDoc(doc(as('buyer2', 'buyer'), 'paymentRequests/s3'), pay('buyer2', 'sr-quoted')));
+  });
+  it('yearly plan payments; billing only on plans', async () => {
+    await assertSucceeds(setDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/y1'), newPayment('buyer1', { billing: 'year', amountInr: 4999 })));
+    await assertFails(setDoc(doc(as('buyer1', 'buyer'), 'paymentRequests/y2'), newPayment('buyer1', { billing: 'week' })));
+    await assertFails(setDoc(doc(as('owner1', 'owner'), 'paymentRequests/y3'), newPayment('owner1', { kind: 'featured', planId: null, propertyId: 'p-approved', amountInr: 199, billing: 'year' })));
   });
 });
 

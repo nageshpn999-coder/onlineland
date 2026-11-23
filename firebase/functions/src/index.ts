@@ -8,6 +8,7 @@
  *  - reviewProperty  admin approves or rejects a pending listing (+ audit log, property code,
  *                    listing limits of the owner's plan, push notification to the owner)
  *  - revenue.ts      payments, plans, verified badge, featured slots, stats, dealer leads, daily jobs (Phase 7)
+ *  - services.ts     paid services, quotes, launch offer (Phase 9)
  *
  * This package is deployed on its own, so it does not import @onlineland/shared;
  * tests check that ROLES and the plan defaults match the shared lists.
@@ -21,6 +22,7 @@ import { loadConfig } from './config';
 
 export { REGION, ROLES } from './common';
 export * from './revenue';
+export * from './services';
 
 // ---------- triggers ----------
 

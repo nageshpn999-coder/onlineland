@@ -105,3 +105,20 @@ export function newPayment(userId: string, overrides: Record<string, unknown> = 
     ...overrides,
   };
 }
+
+export function newServiceRequest(overrides: Record<string, unknown> = {}) {
+  return {
+    serviceId: 'documents',
+    propertyId: 'p-approved',
+    name: 'Ravi',
+    phone: '9876543210',
+    note: null,
+    locale: 'te',
+    userId: null,
+    status: 'new',
+    quotedInr: null,
+    adminNote: null,
+    createdAt: serverTimestamp(),
+    ...overrides,
+  };
+}

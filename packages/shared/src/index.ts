@@ -10,3 +10,4 @@ export * from './pricing';
 export * from './plans';
 export * from './geo';
 export * from './media';
+export * from './services';

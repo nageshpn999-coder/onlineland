@@ -12,6 +12,7 @@ export interface PlanConfig {
   name: LocalizedText;
   priceInr: number; // per period
   durationDays: number;
+  yearlyPriceInr: number; // pay once for a year (365 days); 0 = no yearly option
   listingLimit: number; // active (approved) listings at one time; 0 = unlimited
   featuredSlots: number; // featured listings included per period
   ownContact: boolean; // shared links show the dealer's own name + number
@@ -26,6 +27,7 @@ export const DEFAULT_PLANS: Record<PlanId, PlanConfig> = {
     name: { te: 'ఉచితం', en: 'Free' },
     priceInr: 0,
     durationDays: 0,
+    yearlyPriceInr: 0,
     listingLimit: 2,
     featuredSlots: 0,
     ownContact: false,
@@ -38,6 +40,7 @@ export const DEFAULT_PLANS: Record<PlanId, PlanConfig> = {
     name: { te: 'బేసిక్', en: 'Basic' },
     priceInr: 499,
     durationDays: 30,
+    yearlyPriceInr: 4999,
     listingLimit: 15,
     featuredSlots: 0,
     ownContact: true,
@@ -50,6 +53,7 @@ export const DEFAULT_PLANS: Record<PlanId, PlanConfig> = {
     name: { te: 'ప్రో', en: 'Pro' },
     priceInr: 1499,
     durationDays: 30,
+    yearlyPriceInr: 14999,
     listingLimit: 0,
     featuredSlots: 2,
     ownContact: true,
@@ -70,6 +74,11 @@ export interface PricingSettings {
   renewalReminderDays: number;
   upiId: string; // shown to customers; not a secret
   upiName: string;
+  dealCommissionPct: number; // fee when OnlineLand sells an owner's property ("assisted" sale), Phase 9
+  launchOfferActive: boolean; // new dealers may take a free plan once
+  launchOfferPlan: 'basic' | 'pro';
+  launchOfferDays: number;
+  launchOfferDistricts: string[]; // district slugs; empty = everywhere
 }
 
 export const DEFAULT_PRICING: PricingSettings = {
@@ -81,10 +90,40 @@ export const DEFAULT_PRICING: PricingSettings = {
   renewalReminderDays: 3,
   upiId: '',
   upiName: 'OnlineLand Infra Private Limited',
+  dealCommissionPct: 1,
+  launchOfferActive: false,
+  launchOfferPlan: 'basic',
+  launchOfferDays: 90,
+  launchOfferDistricts: ['narayanpet'],
 };
 
+/** A plan is paid monthly (its durationDays) or yearly (365 days). */
+export const BILLING_PERIODS = ['month', 'year'] as const;
+export type BillingPeriod = (typeof BILLING_PERIODS)[number];
+export const YEAR_DAYS = 365;
+
+export function planPrice(plan: Pick<PlanConfig, 'priceInr' | 'yearlyPriceInr'>, billing: BillingPeriod): number {
+  return billing === 'year' ? plan.yearlyPriceInr : plan.priceInr;
+}
+
+export function planDays(plan: Pick<PlanConfig, 'durationDays'>, billing: BillingPeriod): number {
+  return billing === 'year' ? YEAR_DAYS : plan.durationDays;
+}
+
+/** Months a yearly plan gives free compared with paying monthly (rounded down; 0 if none). */
+export function yearlySavingMonths(plan: Pick<PlanConfig, 'priceInr' | 'yearlyPriceInr'>): number {
+  if (!plan.priceInr || !plan.yearlyPriceInr) return 0;
+  return Math.max(0, Math.floor((plan.priceInr * 12 - plan.yearlyPriceInr) / plan.priceInr));
+}
+
+/** OnlineLand's fee on an assisted sale, in rupees. */
+export function commissionInr(dealPriceInr: number, pct: number): number {
+  if (!(dealPriceInr > 0) || !(pct > 0)) return 0;
+  return Math.round((dealPriceInr * pct) / 100);
+}
+
 /** What a payment is for. */
-export const PAYMENT_KINDS = ['plan', 'featured', 'listing'] as const;
+export const PAYMENT_KINDS = ['plan', 'featured', 'listing', 'service'] as const;
 export type PaymentKind = (typeof PAYMENT_KINDS)[number];
 
 export const PAYMENT_STATUSES = ['pending', 'approved', 'rejected'] as const;
@@ -93,15 +132,17 @@ export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 /** UPI transaction reference (UTR / RRN): 12 digits. */
 export const UTR_RE = /^\d{12}$/;
 
-/** Amount the customer must pay, from the live config. */
+/** Amount the customer must pay, from the live config (a service is paid at the price admin quoted). */
 export function paymentAmount(
   kind: PaymentKind,
   planId: PlanId | null,
   plans: Record<PlanId, PlanConfig>,
   pricing: PricingSettings,
+  opts: { billing?: BillingPeriod; quotedInr?: number | null } = {},
 ): number {
-  if (kind === 'plan') return planId ? plans[planId].priceInr : 0;
+  if (kind === 'plan') return planId ? planPrice(plans[planId], opts.billing ?? 'month') : 0;
   if (kind === 'featured') return pricing.featuredWeekInr;
+  if (kind === 'service') return opts.quotedInr ?? 0;
   return pricing.ownerListingInr;
 }
 

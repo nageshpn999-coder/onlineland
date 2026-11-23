@@ -14,6 +14,7 @@ const NAV: { href: string; key: Key; adminOnly: boolean }[] = [
   { href: '/leads/', key: 'leads', adminOnly: false },
   { href: '/visits/', key: 'visits', adminOnly: false },
   { href: '/payments/', key: 'payments', adminOnly: true },
+  { href: '/services/', key: 'services', adminOnly: true },
   { href: '/users/', key: 'users', adminOnly: true },
   { href: '/settings/', key: 'settings', adminOnly: true },
   { href: '/audit/', key: 'audit', adminOnly: true },
