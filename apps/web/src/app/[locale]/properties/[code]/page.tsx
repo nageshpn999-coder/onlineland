@@ -13,6 +13,7 @@ import { FavoriteButton } from '@/components/FavoriteButton';
 import { areaText } from '@/components/PropertyCard';
 import { PropertyGallery } from '@/components/PropertyGallery';
 import { PropertyVideo } from '@/components/PropertyVideo';
+import { ServiceAsk } from '@/components/ServiceAsk';
 import { SiteVisitForm } from '@/components/SiteVisitForm';
 import { Link } from '@/i18n/navigation';
 import { formatPrice } from '@/lib/format';
@@ -49,6 +50,7 @@ export default async function PropertyPage({ params }: { params: Params }) {
   const t = await getTranslations('property');
   const tf = await getTranslations('featured');
   const tv = await getTranslations('visit');
+  const ts = await getTranslations('services');
   const [photoList, videos, dealer] = await Promise.all([
     getPropertyPhotos(p.id),
     getPropertyVideos(p.id),
@@ -213,6 +215,14 @@ export default async function PropertyPage({ params }: { params: Params }) {
                 <p className="mb-5 mt-1 text-ink-soft">{tv('lead')}</p>
                 <SiteVisitForm propertyId={p.id} />
               </section>
+
+              {p.purpose === 'sale' && (
+                <section aria-labelledby="docs-check" data-testid="docs-check" className="rounded-[var(--radius-plot)] border border-field/30 bg-field-soft/50 p-5 sm:p-6">
+                  <h2 id="docs-check" className="text-xl font-semibold text-ink">{ts('docsTitle')}</h2>
+                  <p className="mt-1 text-ink-soft">{ts('docsBody')}</p>
+                  <ServiceAsk serviceId="documents" propertyId={p.id} label={ts('docsAsk')} />
+                </section>
+              )}
             </div>
 
             <aside className="lg:sticky lg:top-24 lg:self-start">

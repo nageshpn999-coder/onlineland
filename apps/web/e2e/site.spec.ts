@@ -369,3 +369,42 @@ test.describe('listing videos', () => {
     await expect(page.getByRole('heading', { name: /వీడియో/ })).toHaveCount(0);
   });
 });
+
+test.describe('paid services (Phase 9)', () => {
+  test('home: ask for a survey → request saved for the team to call back', async ({ page }) => {
+    await page.goto('/te');
+    const survey = page.getByTestId('service-survey');
+    await expect(survey).toContainText('సర్వే & హద్దులు');
+    await survey.getByTestId('service-ask-survey').click();
+    const form = survey.getByTestId('service-form-survey');
+    await form.getByLabel('మీ పేరు').fill('Service Tester');
+    await form.getByLabel('మొబైల్ నంబర్').fill('123');
+    await form.getByRole('button', { name: 'Request పంపండి' }).click();
+    await expect(form.getByText('సరైన 10 అంకెల మొబైల్ నంబర్', { exact: false })).toBeVisible();
+    await form.getByLabel('మొబైల్ నంబర్').fill('98765 12121');
+    await form.getByLabel(/వివరాలు/).fill('Makthal 2 acres');
+    await form.getByRole('button', { name: 'Request పంపండి' }).click();
+    await expect(survey.getByTestId('service-sent')).toBeVisible();
+    await page.screenshot({ path: `${SHOTS}/services-home.png`, fullPage: false });
+    const saved = await waitFor(async () => {
+      const q = await db.collection('serviceRequests').where('phone', '==', '9876512121').get();
+      return q.empty ? null : q.docs[0]!.data();
+    });
+    expect(saved).toMatchObject({ serviceId: 'survey', name: 'Service Tester', note: 'Makthal 2 acres', propertyId: null, userId: null });
+  });
+
+  test('property page: buyer asks for a document check of that listing', async ({ page }) => {
+    await page.goto('/en/properties/OL-1003');
+    const box = page.getByTestId('docs-check');
+    await box.getByRole('button', { name: 'Get documents checked' }).click();
+    await box.getByLabel('Mobile number').fill('9876513131');
+    await box.getByRole('button', { name: 'Send request' }).click();
+    await expect(box.getByTestId('service-sent')).toBeVisible();
+    const saved = await waitFor(async () => {
+      const q = await db.collection('serviceRequests').where('phone', '==', '9876513131').get();
+      return q.empty ? null : q.docs[0]!.data();
+    });
+    expect(saved).toMatchObject({ serviceId: 'documents', locale: 'en' });
+    expect(saved.propertyId).toBeTruthy();
+  });
+});

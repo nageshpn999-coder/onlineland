@@ -72,23 +72,15 @@
   },
   "services": {
     "title": "From first visit to registration",
-    "lead": "OnlineLand is a property consultancy. We don't just show a listing and leave.",
-    "consult": {
-      "title": "Property consultancy",
-      "body": "Tell us your budget and needs. We find and shortlist properties that fit."
-    },
-    "docs": {
-      "title": "Document check",
-      "body": "We check pahani, EC and link documents before you buy."
-    },
-    "visit": {
-      "title": "Site visit",
-      "body": "Our team walks the land with you and shows boundaries, road access and water."
-    },
-    "sell": {
-      "title": "Sell your property",
-      "body": "We bring genuine buyers for your land or home."
-    }
+    "lead": "Tap \"Ask\" on the service you need. Our team will call with the price and timing.",
+    "ask": "Ask",
+    "send": "Send request",
+    "cancel": "Cancel",
+    "note": "Details (optional): village, acres, survey number",
+    "sent": "Request received. Our team will call you soon with the price and timing.",
+    "docsTitle": "Get the documents checked before you buy",
+    "docsBody": "A lawyer checks the title, EC and link documents, so you don't get cheated.",
+    "docsAsk": "Get documents checked"
   },
   "sell": {
     "title": "Want to sell your land or home?",
