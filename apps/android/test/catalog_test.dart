@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:onlineland/data/catalog.dart';
 import 'package:onlineland/data/geo.dart';
+import 'package:onlineland/data/media.dart';
 import 'package:onlineland/data/models.dart';
 
 /// The app's lists must match packages/shared (used by the website and Cloud Functions).
@@ -72,5 +73,18 @@ void main() {
     expect(km, inInclusiveRange(25, 30));
     expect(formatKm(3.24, true, 'km'), '3.2 km');
     expect(formatKm(12.6, false, 'km'), '~13 km');
+  });
+
+  test('video limits and YouTube parsing match packages/shared/src/media.ts', () {
+    final ts = File('../../packages/shared/src/media.ts').readAsStringSync();
+    expect(RegExp(r'maxSeconds: (\d+)').firstMatch(ts)![1], '$videoMaxSeconds');
+    expect(RegExp(r'maxBytes: (\d+) \* 1024 \* 1024').firstMatch(ts)![1], '${videoMaxBytes ~/ (1024 * 1024)}');
+    for (final ok in ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'youtu.be/dQw4w9WgXcQ', 'https://youtube.com/shorts/dQw4w9WgXcQ', 'dQw4w9WgXcQ']) {
+      expect(parseYouTubeId(ok), 'dQw4w9WgXcQ', reason: ok);
+    }
+    for (final bad in ['', 'https://vimeo.com/1', 'https://evil.com/watch?v=dQw4w9WgXcQ']) {
+      expect(parseYouTubeId(bad), isNull, reason: bad);
+    }
+    expect(mmss(75), '1:15');
   });
 }

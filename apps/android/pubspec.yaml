@@ -38,6 +38,8 @@ dependencies:
   firebase_core: ^5.2.0
   firebase_auth: ^7.1.0
   firebase_app_check: ^0.5.2
+  video_compress: any # pinned after the first CI resolve
+  video_player: any # pinned after the first CI resolve
   cloud_firestore: ^7.2.0
   firebase_storage: ^14.1.0
   cloud_functions: ^7.1.0

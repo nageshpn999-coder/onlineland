@@ -33,7 +33,7 @@ jobs:
       - name: Packages
         run: |
           flutter pub get
-          grep -A3 '^  firebase_app_check:' pubspec.lock || true
+          grep -A3 -E '^  (firebase_app_check|video_compress|video_player):' pubspec.lock || true
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos

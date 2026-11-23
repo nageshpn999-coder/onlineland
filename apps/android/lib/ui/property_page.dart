@@ -7,6 +7,7 @@ import '../data/models.dart';
 import '../state.dart';
 import '../theme.dart';
 import 'forms.dart';
+import 'video.dart';
 import 'widgets.dart';
 
 class PropertyPage extends ConsumerWidget {
@@ -87,6 +88,8 @@ class _PropertyView extends ConsumerWidget {
       body: ListView(padding: const EdgeInsets.only(bottom: 24), children: [
         _TrackView(propertyId: p.id),
         _Gallery(property: p),
+        for (final v in p.videos)
+          Padding(padding: const EdgeInsets.fromLTRB(16, 12, 16, 0), child: ListingVideoTile(video: v, title: title)),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

@@ -1,4 +1,5 @@
 import 'catalog.dart';
+import 'media.dart';
 
 class Place {
   final String district;
@@ -42,6 +43,7 @@ class Property {
   final String? waterSource;
   final String? coverPath;
   final List<String> photos;
+  final List<ListingVideo> videos;
   final String status;
   final bool isFeatured;
   final bool docsVerified;
@@ -68,6 +70,7 @@ class Property {
     this.waterSource,
     this.coverPath,
     this.photos = const [],
+    this.videos = const [],
     required this.status,
     this.isFeatured = false,
     this.docsVerified = false,

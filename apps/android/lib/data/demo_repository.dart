@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'media.dart';
 import 'models.dart';
 import 'repository.dart';
 
@@ -93,14 +94,19 @@ class DemoRepository implements Repository {
     return 'owner';
   }
 
+  /// The video attached to the last submitted listing (for tests).
+  VideoAttachment? lastVideo;
+
   @override
-  Future<String> submitListing(ListingDraft d, List<Uint8List> photos, {void Function(int done, int total)? onProgress}) async {
+  Future<String> submitListing(ListingDraft d, List<Uint8List> photos,
+      {VideoAttachment? video, void Function(int done, int total)? onProgress}) async {
     final u = _user;
     if (u == null || !u.canPost) throw RepoException('permission-denied', 'Owners only');
     for (var i = 0; i < photos.length; i++) {
       onProgress?.call(i + 1, photos.length);
     }
     final id = 'demo-new-${++_seq}';
+    lastVideo = video;
     _items.add(Property(
       id: id,
       code: null,
@@ -114,6 +120,11 @@ class DemoRepository implements Repository {
       area: d.area ?? 0,
       areaUnit: d.areaUnit,
       place: Place(district: d.district, mandal: d.mandal, village: d.village, lat: d.lat, lng: d.lng),
+      videos: switch (video) {
+        PreparedVideo v => [FileVideo(v.filePath, durationSec: v.durationSec)],
+        YouTubeAttachment y => [YouTubeVideo(y.id)],
+        null => const [],
+      },
       status: 'pending',
       ownerId: u.uid,
       createdAt: DateTime.now(),
@@ -200,7 +211,14 @@ class DemoRepository implements Repository {
   static List<Property> _seed(DateTime now) {
     DateTime ago(int d) => now.subtract(Duration(days: d));
     Property p(String n, String cat, String purpose, String te, String en, num price, String basis, num area, String unit, Place place, int age,
-            {bool featured = false, bool verified = false, String? facing, bool? road, String? water, String dte = '', String den = ''}) =>
+            {bool featured = false,
+            bool verified = false,
+            String? facing,
+            bool? road,
+            String? water,
+            String dte = '',
+            String den = '',
+            List<ListingVideo> videos = const []}) =>
         Property(
           id: 'seed-$n',
           code: 'OL-$n',
@@ -222,12 +240,13 @@ class DemoRepository implements Repository {
           isFeatured: featured,
           docsVerified: verified,
           ownerId: 'seed-owner',
+          videos: videos,
           createdAt: ago(age),
         );
     return [
       p('1001', 'agricultural', 'sale', 'బోర్‌వెల్ ఉన్న వ్యవసాయ భూమి', 'Farmland with borewell', 1400000, 'per-unit', 5, 'acre',
           const Place(district: 'narayanpet', mandal: 'makthal', village: 'Makthal', lat: 16.5007, lng: 77.5126), 1,
-          featured: true, verified: true, facing: 'east', road: true, water: 'Borewell',
+          featured: true, verified: true, facing: 'east', road: true, water: 'Borewell', videos: const [YouTubeVideo('dQw4w9WgXcQ')],
           dte: 'మక్తల్ నుంచి 4 కి.మీ. దూరంలో ఎర్ర నేల. రెండు బోర్‌వెల్స్, మట్టి రోడ్డు సౌకర్యం. పత్రాలు సిద్ధంగా ఉన్నాయి.',
           den: 'Red soil, 4 km from Makthal. Two borewells and a mud road to the field. Documents ready.'),
       p('1002', 'open-plot', 'sale', 'తూర్పు ముఖ ఓపెన్ ప్లాట్', 'East-facing open plot', 1600000, 'total', 200, 'sq-yd',

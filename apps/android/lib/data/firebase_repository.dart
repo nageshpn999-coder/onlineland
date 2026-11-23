@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../config.dart';
+import 'media.dart';
 import 'models.dart';
 import 'repository.dart';
 
@@ -29,7 +31,7 @@ class FirebaseRepository implements Repository {
 
   // ---------- listings ----------
 
-  static Property fromDoc(DocumentSnapshot<Map<String, dynamic>> doc, {List<String> photos = const []}) {
+  static Property fromDoc(DocumentSnapshot<Map<String, dynamic>> doc, {List<String> photos = const [], List<ListingVideo> videos = const []}) {
     final d = doc.data() ?? const {};
     Map<String, dynamic> map(Object? v) => v is Map ? Map<String, dynamic>.from(v) : <String, dynamic>{};
     final title = map(d['title']);
@@ -61,6 +63,7 @@ class FirebaseRepository implements Repository {
       waterSource: d['waterSource'] as String?,
       coverPath: d['coverPath'] as String?,
       photos: photos,
+      videos: videos,
       status: (d['status'] ?? '') as String,
       isFeatured: d['isFeatured'] == true,
       docsVerified: d['docsVerified'] == true,
@@ -86,9 +89,22 @@ class FirebaseRepository implements Repository {
     final snap = await _db.collection('properties').where('status', isEqualTo: 'approved').where('code', isEqualTo: code).limit(1).get();
     if (snap.docs.isEmpty) return null;
     final doc = snap.docs.first;
-    final media = await doc.reference.collection('media').orderBy('order').limit(20).get();
-    final photos = media.docs.map((m) => m.data()['storagePath']).whereType<String>().toList();
-    return fromDoc(doc, photos: photos);
+    final media = await doc.reference.collection('media').orderBy('order').limit(25).get();
+    final photos = <String>[];
+    final videos = <ListingVideo>[];
+    for (final m in media.docs) {
+      final d = m.data();
+      final type = (d['type'] as String?) ?? 'photo';
+      final path = d['storagePath'] as String?;
+      if (type == 'photo' && path != null) {
+        photos.add(path);
+      } else if (type == 'video' && path != null) {
+        videos.add(FileVideo(path, posterPath: d['posterPath'] as String?, durationSec: (d['durationSec'] as num?)?.toInt()));
+      } else if (type == 'youtube' && d['youtubeId'] is String) {
+        videos.add(YouTubeVideo(d['youtubeId'] as String));
+      }
+    }
+    return fromDoc(doc, photos: photos, videos: videos);
   }
 
   @override
@@ -210,7 +226,8 @@ class FirebaseRepository implements Repository {
   // ---------- owner listings ----------
 
   @override
-  Future<String> submitListing(ListingDraft d, List<Uint8List> photos, {void Function(int done, int total)? onProgress}) async {
+  Future<String> submitListing(ListingDraft d, List<Uint8List> photos,
+      {VideoAttachment? video, void Function(int done, int total)? onProgress}) async {
     final user = _auth.currentUser;
     if (user == null) throw RepoException('unauthenticated', 'Sign in first');
     final role = currentUser?.role ?? 'buyer';
@@ -263,7 +280,29 @@ class FirebaseRepository implements Repository {
       paths.add(path);
       onProgress?.call(i + 1, photos.length);
     }
-    // 4) Submit for review.
+    // 4) Video: compressed MP4 + poster frame, or a YouTube link.
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    switch (video) {
+      case PreparedVideo v:
+        final vpath = 'properties/${ref.id}/videos/video-$stamp.mp4';
+        String? ppath;
+        if (v.poster != null) {
+          ppath = 'properties/${ref.id}/videos/video-$stamp.jpg';
+          await _storage.ref(ppath).putData(v.poster!, SettableMetadata(contentType: 'image/jpeg'));
+        }
+        await _storage.ref(vpath).putFile(File(v.filePath), SettableMetadata(contentType: 'video/mp4'));
+        await ref.collection('media').add({
+          'type': 'video', 'storagePath': vpath, 'posterPath': ppath, 'durationSec': v.durationSec.clamp(1, 120),
+          'order': 100, 'isCover': false, 'createdAt': FieldValue.serverTimestamp(),
+        });
+      case YouTubeAttachment y:
+        await ref.collection('media').add({
+          'type': 'youtube', 'storagePath': null, 'youtubeId': y.id, 'order': 100, 'isCover': false, 'createdAt': FieldValue.serverTimestamp(),
+        });
+      case null:
+        break;
+    }
+    // 5) Submit for review.
     await ref.update({
       'coverPath': paths.isEmpty ? null : paths.first,
       'photoCount': paths.length,

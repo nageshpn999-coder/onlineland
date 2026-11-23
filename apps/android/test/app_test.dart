@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/data/filters.dart';
 import 'package:onlineland/state.dart';
+import 'package:onlineland/data/demo_repository.dart';
 import 'package:onlineland/ui/profile.dart';
 import 'package:onlineland/ui/sell.dart';
 
@@ -247,5 +248,55 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('లొకేషన్ అనుమతి లేదు. జిల్లా/మండలం ఎంచుకోండి.'), findsOneWidget);
     expect(find.byKey(const Key('near-active')), findsNothing);
+  });
+
+  Future<void> openSellForm(WidgetTester tester, DemoRepository repo) async {
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await repo.becomeOwner();
+    await tester.pumpAndSettle();
+    await tapTab(tester, 3);
+  }
+
+  testWidgets('video: pick → compressed on the phone → ready; can remove', (tester) async {
+    final repo = await pumpApp(tester);
+    await openSellForm(tester, repo);
+    await scrollTo(tester, find.byKey(const Key('video-pick')), within: find.byType(SellTab));
+    await tester.tap(find.byKey(const Key('video-pick')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('video-ready')), findsOneWidget);
+    expect(find.text('వీడియో సిద్ధం: 1:15 · 12.0 MB'), findsOneWidget);
+    expect(find.byKey(const Key('youtube-link')), findsNothing); // one video per listing
+    await tester.tap(find.byKey(const Key('video-remove')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('video-pick')), findsOneWidget);
+  });
+
+  testWidgets('video: longer than 2 minutes is refused before compressing', (tester) async {
+    final repo = await pumpApp(tester, videoTools: FakeVideoTools(seconds: 200));
+    await openSellForm(tester, repo);
+    await scrollTo(tester, find.byKey(const Key('video-record')), within: find.byType(SellTab));
+    await tester.tap(find.byKey(const Key('video-record')));
+    await tester.pumpAndSettle();
+    expect(find.text('వీడియో 3:20 ఉంది. 2 నిమిషాల లోపు ఉండాలి.'), findsOneWidget);
+    expect(find.byKey(const Key('video-ready')), findsNothing);
+  });
+
+  testWidgets('video: a wrong YouTube link is pointed out', (tester) async {
+    final repo = await pumpApp(tester);
+    await openSellForm(tester, repo);
+    await scrollTo(tester, find.byKey(const Key('youtube-link')), within: find.byType(SellTab));
+    await tester.enterText(find.byKey(const Key('youtube-link')), 'https://vimeo.com/123');
+    await scrollTo(tester, find.byKey(const Key('sell-submit')), within: find.byType(SellTab));
+    await tester.tap(find.byKey(const Key('sell-submit')));
+    await tester.pumpAndSettle();
+    await scrollTo(tester, find.byKey(const Key('youtube-link')), within: find.byType(SellTab));
+    expect(find.text('సరైన YouTube లింక్ ఇవ్వండి.'), findsWidgets);
+  });
+
+  testWidgets('property page shows the listing video', (tester) async {
+    await pumpApp(tester);
+    await openFirstListing(tester);
+    await scrollTo(tester, find.byKey(const Key('listing-video')));
+    expect(find.text('YouTube లో చూడండి'), findsOneWidget);
   });
 }

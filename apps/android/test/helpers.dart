@@ -4,12 +4,33 @@ import 'package:material_ui/material_ui.dart';
 import 'package:onlineland/app.dart';
 import 'package:onlineland/data/demo_repository.dart';
 import 'package:onlineland/data/geo.dart';
+import 'package:onlineland/data/media.dart';
 import 'package:onlineland/state.dart';
 import 'package:onlineland/ui/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Starts the app with demo data. Phone size 412×915 (common Android).
-Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, String locale = 'te', LatLng? location}) async {
+/// Pretends to pick and compress a video (no camera or codecs in widget tests).
+class FakeVideoTools implements VideoTools {
+  FakeVideoTools({this.seconds = 75});
+  final int seconds;
+  @override
+  Future<String?> pick({required bool camera}) async => '/tmp/walkthrough.mp4';
+  @override
+  Future<int> durationSec(String path) async => seconds;
+  @override
+  Future<PreparedVideo> compress(String path, {void Function(double percent)? onProgress}) async {
+    if (seconds > videoMaxSeconds) throw VideoTooLong(seconds);
+    onProgress?.call(50);
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    onProgress?.call(100);
+    return PreparedVideo(filePath: '/tmp/walkthrough-720p.mp4', durationSec: seconds, bytes: 12 * 1024 * 1024);
+  }
+  @override
+  Future<void> cancel() async {}
+}
+
+Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, String locale = 'te', LatLng? location, VideoTools? videoTools}) async {
   tester.view.physicalSize = const Size(412 * 3, 915 * 3);
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
@@ -22,6 +43,7 @@ Future<DemoRepository> pumpApp(WidgetTester tester, {bool onboarded = true, Stri
       repositoryProvider.overrideWithValue(repo),
       // Never touch the real GPS in tests.
       locatorProvider.overrideWithValue(() async => location),
+      videoToolsProvider.overrideWithValue(videoTools ?? FakeVideoTools()),
     ],
     child: const OnlineLandApp(),
   ));

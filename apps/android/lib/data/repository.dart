@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'media.dart';
 import 'models.dart';
 
 /// Everything the app reads or writes. Two implementations:
@@ -32,7 +33,9 @@ abstract class Repository {
 
   // ---- owners ----
   /// Creates the listing, uploads photos, then submits it for review (status "pending").
-  Future<String> submitListing(ListingDraft draft, List<Uint8List> photos, {void Function(int done, int total)? onProgress});
+  /// [video]: a compressed MP4 to upload or a YouTube link (optional, one per listing).
+  Future<String> submitListing(ListingDraft draft, List<Uint8List> photos,
+      {VideoAttachment? video, void Function(int done, int total)? onProgress});
   Future<List<Property>> myListings();
 
   /// Deletes the signed-in user's account and data (Play Store / DPDP requirement), then signs out.

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/filters.dart';
 import 'data/geo.dart';
+import 'data/media.dart';
 import 'data/models.dart';
 import 'data/repository.dart';
 import 'l10n.dart';
@@ -164,3 +165,6 @@ void refreshRevenue(WidgetRef ref) {
   ref.invalidate(myLeadsProvider);
   ref.invalidate(myListingsProvider);
 }
+
+/// Video compression on the phone (overridden with a fake in tests).
+final videoToolsProvider = Provider<VideoTools>((ref) => DeviceVideoTools());

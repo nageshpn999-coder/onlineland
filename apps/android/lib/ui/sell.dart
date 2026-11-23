@@ -8,6 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../data/catalog.dart';
 import '../data/format.dart';
+import '../data/media.dart';
 import '../data/models.dart';
 import '../state.dart';
 import '../theme.dart';
@@ -81,15 +82,20 @@ class _ListingFormState extends ConsumerState<ListingForm> {
   final _ownerName = TextEditingController();
   final _ownerPhone = TextEditingController();
   final _picker = ImagePicker();
+  final _youtube = TextEditingController();
+  PreparedVideo? _video;
+  String? _videoStatus; // compressing… %
+  String? _youtubeError;
   String? _error;
   String? _progress;
   bool _busy = false;
 
   @override
   void dispose() {
-    for (final c in [_title, _desc, _price, _area, _village, _mandalText, _ownerName, _ownerPhone]) {
+    for (final c in [_title, _desc, _price, _area, _village, _mandalText, _ownerName, _ownerPhone, _youtube]) {
       c.dispose();
     }
+    if (_videoStatus != null) ref.read(videoToolsProvider).cancel();
     super.dispose();
   }
 
@@ -105,6 +111,32 @@ class _ListingFormState extends ConsumerState<ListingForm> {
       if (bytes.lengthInBytes < 5 * 1024 * 1024) _photos.add(bytes);
     }
     setState(() {});
+  }
+
+  /// Record or choose a video, then compress it on the phone (720p) before anything is uploaded.
+  Future<void> _addVideo({required bool camera}) async {
+    final s = ref.read(stringsProvider);
+    final tools = ref.read(videoToolsProvider);
+    final path = await tools.pick(camera: camera);
+    if (path == null || !mounted) return;
+    setState(() => _videoStatus = s.compressing(0));
+    try {
+      final v = await tools.compress(path, onProgress: (p) {
+        if (mounted) setState(() => _videoStatus = s.compressing(p.clamp(0, 100).round()));
+      });
+      if (v.bytes > videoMaxBytes) throw StateError('too big');
+      setState(() {
+        _video = v;
+        _youtube.clear();
+        _youtubeError = null;
+      });
+    } on VideoTooLong catch (e) {
+      if (mounted) showSnack(context, s.videoTooLong(e.seconds));
+    } catch (_) {
+      if (mounted) showSnack(context, s.videoFailed);
+    } finally {
+      if (mounted) setState(() => _videoStatus = null);
+    }
   }
 
   Future<void> _useGps() async {
@@ -140,6 +172,11 @@ class _ListingFormState extends ConsumerState<ListingForm> {
     } else if (_ownerPhone.text.isNotEmpty && !isMobile(normalizeMobile(_ownerPhone.text))) {
       err = s.invalidPhone;
     }
+    final ytText = _youtube.text.trim();
+    final ytId = ytText.isEmpty ? null : parseYouTubeId(ytText);
+    _youtubeError = ytText.isNotEmpty && ytId == null ? s.youtubeInvalid : null;
+    err ??= _youtubeError;
+    if (err == null && _videoStatus != null) return; // still compressing
     setState(() => _error = err);
     if (err != null) return;
 
@@ -155,15 +192,17 @@ class _ListingFormState extends ConsumerState<ListingForm> {
 
     setState(() => _busy = true);
     try {
-      await ref.read(repositoryProvider).submitListing(_draft, List.of(_photos), onProgress: (d, t) {
-        if (mounted) setState(() => _progress = s.uploading(d, t));
+      final VideoAttachment? video = _video ?? (ytId != null ? YouTubeAttachment(ytId) : null);
+      await ref.read(repositoryProvider).submitListing(_draft, List.of(_photos), video: video, onProgress: (d, t) {
+        if (mounted) setState(() => _progress = d == t && _video != null ? s.uploadingVideo : s.uploading(d, t));
       });
       ref.invalidate(myListingsProvider);
       if (!mounted) return;
       showSnack(context, s.submitted);
       setState(() {
         _photos.clear();
-        for (final c in [_title, _desc, _price, _area, _village, _mandalText, _ownerName, _ownerPhone]) {
+        _video = null;
+        for (final c in [_title, _desc, _price, _area, _village, _mandalText, _ownerName, _ownerPhone, _youtube]) {
           c.clear();
         }
         _progress = null;
@@ -220,6 +259,51 @@ class _ListingFormState extends ConsumerState<ListingForm> {
         const SizedBox(width: 10),
         Expanded(child: OutlinedButton.icon(onPressed: () => _addPhotos(ImageSource.gallery), icon: const Icon(Icons.photo_library), label: Text(s.gallery))),
       ]),
+      const SizedBox(height: 20),
+
+      // Video (optional): compressed on the phone, or a YouTube link
+      Text(s.videoOptional, style: Theme.of(context).textTheme.titleMedium),
+      Text(s.videoHint, style: const TextStyle(color: Brand.inkSoft, fontSize: 13)),
+      const SizedBox(height: 8),
+      if (_videoStatus != null)
+        Row(key: const Key('video-compressing'), children: [
+          const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+          const SizedBox(width: 10),
+          Expanded(child: Text(_videoStatus!)),
+        ])
+      else if (_video != null)
+        Card(
+          key: const Key('video-ready'),
+          child: ListTile(
+            leading: _video!.poster != null
+                ? ClipRRect(borderRadius: BorderRadius.circular(4), child: Image.memory(_video!.poster!, width: 64, height: 48, fit: BoxFit.cover))
+                : const Icon(Icons.movie, color: Brand.blue),
+            title: Text(s.videoReady(mmss(_video!.durationSec), (_video!.bytes / (1024 * 1024)).toStringAsFixed(1))),
+            trailing: IconButton(
+              key: const Key('video-remove'),
+              tooltip: s.removeVideo,
+              icon: const Icon(Icons.close),
+              onPressed: () => setState(() => _video = null),
+            ),
+          ),
+        )
+      else ...[
+        Row(children: [
+          Expanded(child: OutlinedButton.icon(key: const Key('video-record'), onPressed: () => _addVideo(camera: true), icon: const Icon(Icons.videocam), label: Text(s.recordVideo))),
+          const SizedBox(width: 10),
+          Expanded(child: OutlinedButton.icon(key: const Key('video-pick'), onPressed: () => _addVideo(camera: false), icon: const Icon(Icons.video_library), label: Text(s.pickVideo))),
+        ]),
+        const SizedBox(height: 10),
+        TextField(
+          key: const Key('youtube-link'),
+          controller: _youtube,
+          keyboardType: TextInputType.url,
+          decoration: InputDecoration(labelText: s.youtubeLink, hintText: 'https://youtu.be/…', errorText: _youtubeError, prefixIcon: const Icon(Icons.smart_display)),
+          onChanged: (_) {
+            if (_youtubeError != null) setState(() => _youtubeError = null);
+          },
+        ),
+      ],
       const SizedBox(height: 20),
 
       SegmentedButton<String>(

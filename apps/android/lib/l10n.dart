@@ -281,4 +281,21 @@ class S {
   String get km => _('కి.మీ', 'km');
   String get locationDenied => _('లొకేషన్ అనుమతి లేదు. జిల్లా/మండలం ఎంచుకోండి.', 'Location not allowed. Choose a district/mandal instead.');
   String get locationOutside => _('మీరు తెలంగాణ బయట ఉన్నారు. జిల్లా/మండలం ఎంచుకోండి.', 'You seem to be outside Telangana. Choose a district/mandal.');
+
+  // listing videos
+  String get video => _('వీడియో', 'Video');
+  String get videoOptional => _('వీడియో (ఐచ్ఛికం)', 'Video (optional)');
+  String get videoHint => _('2 నిమిషాల లోపు ఒక వీడియో. Upload కి ముందు ఫోన్‌లోనే చిన్నదిగా (720p) మారుస్తాం.', 'One video up to 2 minutes. It is made smaller (720p) on your phone before upload.');
+  String get recordVideo => _('రికార్డ్ చేయండి', 'Record');
+  String get pickVideo => _('గ్యాలరీ నుంచి', 'From gallery');
+  String get youtubeLink => _('లేదా YouTube లింక్', 'Or a YouTube link');
+  String get youtubeInvalid => _('సరైన YouTube లింక్ ఇవ్వండి.', 'Enter a valid YouTube link.');
+  String videoTooLong(int sec) => _('వీడియో ${sec ~/ 60}:${(sec % 60).toString().padLeft(2, '0')} ఉంది. 2 నిమిషాల లోపు ఉండాలి.', 'The video is ${sec ~/ 60}:${(sec % 60).toString().padLeft(2, '0')}. It must be under 2 minutes.');
+  String compressing(int pct) => _('వీడియో చిన్నదిగా మారుస్తున్నాం… $pct%', 'Making the video smaller… $pct%');
+  String videoReady(String dur, String mb) => _('వీడియో సిద్ధం: $dur · $mb MB', 'Video ready: $dur · $mb MB');
+  String get uploadingVideo => _('వీడియో upload అవుతోంది…', 'Uploading the video…');
+  String get videoFailed => _('వీడియో సిద్ధం కాలేదు. మళ్లీ ప్రయత్నించండి లేదా YouTube లింక్ ఇవ్వండి.', 'Could not prepare the video. Try again or give a YouTube link.');
+  String get removeVideo => _('వీడియో తీసేయండి', 'Remove video');
+  String get playVideo => _('వీడియో ప్లే చేయండి', 'Play video');
+  String get openYouTube => _('YouTube లో చూడండి', 'Watch on YouTube');
 }
