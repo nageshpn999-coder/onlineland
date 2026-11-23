@@ -167,6 +167,17 @@ for (const { id, photos = 0, age, ...l } of listings) {
 }
 await db.doc('counters/properties').set({ seq: 1010 });
 
+// Videos: OL-1001 has a YouTube link; OL-1002 an uploaded MP4 (placeholder bytes — tests check the player, not playback).
+{
+  const at = Timestamp.fromMillis(now - DAY);
+  await db.doc('properties/seed-1001/media/y1').set({ type: 'youtube', storagePath: null, youtubeId: 'dQw4w9WgXcQ', order: 10, isCover: false, createdAt: at });
+  const vpath = 'properties/seed-1002/videos/walkthrough.mp4';
+  await bucket.file(vpath).save(Buffer.alloc(2048), { contentType: 'video/mp4', resumable: false });
+  const ppath = 'properties/seed-1002/videos/walkthrough.jpg';
+  await bucket.file(ppath).save(landscapePng(640, 360, 2), { contentType: 'image/jpeg', resumable: false });
+  await db.doc('properties/seed-1002/media/v1').set({ type: 'video', storagePath: vpath, posterPath: ppath, durationSec: 75, order: 10, isCover: false, createdAt: at });
+}
+
 // ---------- admin dashboard test data (Phase 7): staff, a dealer, payments, leads, visits ----------
 const seededUsers = [];
 if (process.env.FIREBASE_AUTH_EMULATOR_HOST) {

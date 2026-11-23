@@ -192,3 +192,13 @@ test('no serious accessibility problems (login, overview, leads)', async ({ page
   await expect(page.getByRole('heading', { name: 'Leads (CRM)' })).toBeVisible();
   await check('leads');
 });
+
+test('admin can watch a listing video and open its YouTube link before approving', async ({ page }) => {
+  await login(page);
+  await page.goto('/listings/?status=approved');
+  await page.getByRole('button', { name: /^OL-1002 / }).click();
+  await expect(page.getByTestId('admin-video')).toHaveAttribute('src', /walkthrough\.mp4/);
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: /^OL-1001 / }).click();
+  await expect(page.getByTestId('admin-youtube')).toHaveAttribute('href', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+});

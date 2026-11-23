@@ -7,7 +7,7 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { totalPrice, type LocalizedText } from '@onlineland/shared';
 import { firebaseAdmin } from './firebase/admin';
-import type { PropertyPhoto, PublicProperty } from './property-types';
+import type { PropertyPhoto, PropertyVideo, PublicProperty } from './property-types';
 
 export const PROPERTIES_TAG = 'properties';
 const MAX_LISTINGS = 2000;
@@ -98,26 +98,43 @@ export async function getHomepageProperties(limit = 6): Promise<PublicProperty[]
   return [...featured, ...rest].slice(0, limit);
 }
 
-const loadPhotos = unstable_cache(
-  async (propertyId: string): Promise<PropertyPhoto[]> => {
+const loadMedia = unstable_cache(
+  async (propertyId: string): Promise<{ photos: PropertyPhoto[]; videos: PropertyVideo[] }> => {
     const { db } = firebaseAdmin();
-    const snap = await db.collection(`properties/${propertyId}/media`).orderBy('order', 'asc').limit(20).get();
-    return snap.docs
-      .map((d) => d.data())
-      .filter((m) => typeof m.storagePath === 'string')
-      .map((m) => ({ path: m.storagePath as string, isCover: m.isCover === true }));
+    const snap = await db.collection(`properties/${propertyId}/media`).orderBy('order', 'asc').limit(25).get();
+    const photos: PropertyPhoto[] = [];
+    const videos: PropertyVideo[] = [];
+    for (const d of snap.docs) {
+      const m = d.data();
+      const type = m.type ?? 'photo';
+      if (type === 'photo' && typeof m.storagePath === 'string') photos.push({ path: m.storagePath, isCover: m.isCover === true });
+      else if (type === 'video' && typeof m.storagePath === 'string')
+        videos.push({ kind: 'file', path: m.storagePath, posterPath: typeof m.posterPath === 'string' ? m.posterPath : null, durationSec: Number(m.durationSec) || null });
+      else if (type === 'youtube' && typeof m.youtubeId === 'string' && /^[A-Za-z0-9_-]{11}$/.test(m.youtubeId))
+        videos.push({ kind: 'youtube', youtubeId: m.youtubeId });
+    }
+    return { photos: photos.slice(0, 20), videos: videos.slice(0, 2) };
   },
-  ['property-photos-v1'],
+  ['property-media-v2'],
   { revalidate: 300, tags: [PROPERTIES_TAG] },
 );
 
-export async function getPropertyPhotos(propertyId: string): Promise<PropertyPhoto[]> {
+async function media(propertyId: string) {
   try {
-    return await loadPhotos(propertyId);
+    return await loadMedia(propertyId);
   } catch (err) {
-    console.error('[properties] could not load photos:', (err as Error).message);
-    return [];
+    console.error('[properties] could not load media:', (err as Error).message);
+    return { photos: [], videos: [] };
   }
+}
+
+export async function getPropertyPhotos(propertyId: string): Promise<PropertyPhoto[]> {
+  return (await media(propertyId)).photos;
+}
+
+/** The listing's video: an uploaded MP4 (compressed on the phone) or a YouTube link. */
+export async function getPropertyVideos(propertyId: string): Promise<PropertyVideo[]> {
+  return (await media(propertyId)).videos;
 }
 
 /** Approved listings of one owner/dealer (dealer page). */

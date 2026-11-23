@@ -43,3 +43,8 @@ export interface PropertyPhoto {
   path: string;
   isCover: boolean;
 }
+
+/** A listing video: uploaded MP4 (Storage path) or a YouTube video id. */
+export type PropertyVideo =
+  | { kind: 'file'; path: string; posterPath: string | null; durationSec: number | null }
+  | { kind: 'youtube'; youtubeId: string };

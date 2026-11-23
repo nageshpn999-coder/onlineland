@@ -131,15 +131,32 @@ service cloud.firestore {
       allow delete: if isAdmin()
         || (signedIn() && resource.data.ownerId == uid() && resource.data.status in ['draft', 'pending', 'rejected']);
 
+      // Photo (default), uploaded video (compressed mp4, ≤ 2 min) or YouTube link.
+      function validMedia(pid, d) {
+        let t = d.get('type', 'photo');
+        return (t == 'photo'
+            && d.storagePath is string && d.storagePath.matches('properties/' + pid + '/[^/]+')
+            && d.get('youtubeId', null) == null)
+          || (t == 'video'
+            && d.storagePath is string && d.storagePath.matches('properties/' + pid + '/videos/[^/]+[.]mp4')
+            && (d.get('posterPath', null) == null
+                || (d.posterPath is string && d.posterPath.matches('properties/' + pid + '/videos/[^/]+[.]jpg')))
+            && d.get('durationSec', null) is int && d.durationSec > 0 && d.durationSec <= 125
+            && d.isCover == false && d.get('youtubeId', null) == null)
+          || (t == 'youtube'
+            && d.get('storagePath', null) == null
+            && d.get('youtubeId', null) is string && d.youtubeId.matches('[A-Za-z0-9_-]{11}')
+            && d.isCover == false);
+      }
+
       match /media/{mediaId} {
         allow read: if get(/databases/$(database)/documents/properties/$(propertyId)).data.status == 'approved'
           || ownsProperty(propertyId) || isStaff();
         allow create, update: if (ownsProperty(propertyId) || isAdmin())
-          && request.resource.data.keys().hasOnly(['storagePath', 'order', 'isCover', 'createdAt'])
-          && request.resource.data.storagePath is string
-          && request.resource.data.storagePath.matches('properties/' + propertyId + '/[^/]+')
+          && request.resource.data.keys().hasOnly(['type', 'storagePath', 'order', 'isCover', 'posterPath', 'durationSec', 'youtubeId', 'createdAt'])
           && request.resource.data.order is int
-          && request.resource.data.isCover is bool;
+          && request.resource.data.isCover is bool
+          && validMedia(propertyId, request.resource.data);
         allow delete: if ownsProperty(propertyId) || isAdmin();
       }
 

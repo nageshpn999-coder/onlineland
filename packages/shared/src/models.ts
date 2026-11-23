@@ -7,6 +7,7 @@ import type { Locale, LocalizedText } from './i18n';
 import type { Role } from './roles';
 import type { AreaUnit, PriceBasis, PropertyCategory, PropertyPurpose, PropertySource, PropertyStatus } from './property';
 import type { LeadChannel, LeadStage, PaymentMethod, SiteVisitStatus } from './leads';
+import type { MediaType } from './media';
 import type { PaymentKind, PaymentStatus, PlanConfig, PlanId } from './plans';
 
 export interface TimestampLike {
@@ -93,9 +94,16 @@ export interface Property<T = TimestampLike> {
 
 /** properties/{id}/media/{mediaId} */
 export interface PropertyMedia<T = TimestampLike> {
-  storagePath: string;
+  /** Missing on photos saved before videos existed — treat as 'photo'. */
+  type?: MediaType;
+  storagePath: string | null; // null for YouTube
   order: number;
   isCover: boolean;
+  /** video: still frame shown before play; duration in seconds */
+  posterPath?: string | null;
+  durationSec?: number | null;
+  /** youtube */
+  youtubeId?: string | null;
   createdAt: T;
 }
 

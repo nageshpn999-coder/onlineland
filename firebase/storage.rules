@@ -1,11 +1,12 @@
 rules_version = '2';
 
-// OnlineLand — Cloud Storage rules (Phase 4). Tested in firebase/tests/storage.rules.test.ts.
+// OnlineLand — Cloud Storage rules (Phase 4; videos added Nov 2026). Tested in firebase/tests/storage.rules.test.ts.
 service firebase.storage {
   match /b/{bucket}/o {
 
     function role() { return request.auth != null ? request.auth.token.get('role', '') : ''; }
     function isImage() { return request.resource.contentType.matches('image/(jpeg|png|webp)'); }
+    function isVideo() { return request.resource.contentType == 'video/mp4'; }
     function canManageProperty(propertyId) {
       return request.auth != null && (
         role() == 'admin'
@@ -20,6 +21,14 @@ service firebase.storage {
         && isImage()
         && request.resource.size < 5 * 1024 * 1024;
       allow delete: if canManageProperty(propertyId);
+    }
+
+    // Listing videos (compressed on the phone to 720p; ≤ 60 MB as a safety limit).
+    match /properties/{propertyId}/videos/{fileName} {
+      allow create, update: if canManageProperty(propertyId)
+        && fileName.matches('[^/]+[.]mp4')
+        && isVideo()
+        && request.resource.size < 60 * 1024 * 1024;
     }
 
     // Profile photo.

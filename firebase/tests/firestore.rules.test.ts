@@ -72,6 +72,29 @@ describe('properties: reading', () => {
   });
 });
 
+describe('listing media: photos, video, YouTube', () => {
+  const owner = () => as('owner1', 'owner');
+  const base = { order: 1, isCover: false, createdAt: serverTimestamp() };
+  it('owner adds a video with poster and duration', () =>
+    assertSucceeds(setDoc(doc(owner(), 'properties/p-pending/media/v1'), {
+      ...base, type: 'video', storagePath: 'properties/p-pending/videos/a.mp4', posterPath: 'properties/p-pending/videos/a.jpg', durationSec: 95,
+    })));
+  it('owner adds a YouTube link', () =>
+    assertSucceeds(setDoc(doc(owner(), 'properties/p-pending/media/y1'), { ...base, type: 'youtube', storagePath: null, youtubeId: 'dQw4w9WgXcQ' })));
+  it('old-style photo docs (no type) still work', () =>
+    assertSucceeds(setDoc(doc(owner(), 'properties/p-pending/media/p2'), { ...base, storagePath: 'properties/p-pending/b.jpg' })));
+  it('rejects bad videos and links', async () => {
+    const o = owner();
+    await assertFails(setDoc(doc(o, 'properties/p-pending/media/b1'), { ...base, type: 'video', storagePath: 'properties/p-pending/videos/a.mp4', durationSec: 600 })); // too long
+    await assertFails(setDoc(doc(o, 'properties/p-pending/media/b2'), { ...base, type: 'video', storagePath: 'properties/p-pending/a.mp4', durationSec: 30 })); // not in videos/
+    await assertFails(setDoc(doc(o, 'properties/p-pending/media/b3'), { ...base, type: 'video', storagePath: 'properties/other/videos/a.mp4', durationSec: 30 })); // other listing
+    await assertFails(setDoc(doc(o, 'properties/p-pending/media/b4'), { ...base, isCover: true, type: 'video', storagePath: 'properties/p-pending/videos/a.mp4', durationSec: 30 }));
+    await assertFails(setDoc(doc(o, 'properties/p-pending/media/b5'), { ...base, type: 'youtube', storagePath: null, youtubeId: 'not-an-id' }));
+    await assertFails(setDoc(doc(o, 'properties/p-pending/media/b6'), { ...base, type: 'gif', storagePath: 'properties/p-pending/a.gif' }));
+    await assertFails(setDoc(doc(as('owner2', 'owner'), 'properties/p-pending/media/b7'), { ...base, type: 'youtube', storagePath: null, youtubeId: 'dQw4w9WgXcQ' }));
+  });
+});
+
 describe('properties: creating', () => {
   it('owner creates a pending listing', () =>
     assertSucceeds(setDoc(doc(as('owner1', 'owner'), 'properties/new1'), newListing('owner1'))));

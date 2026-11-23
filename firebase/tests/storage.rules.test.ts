@@ -54,6 +54,28 @@ describe('listing photos', () => {
     assertSucceeds(getMetadata(ref(env.unauthenticatedContext().storage(BUCKET), 'properties/p1/existing.jpg'))));
 });
 
+describe('listing videos', () => {
+  const mp4 = (bytes: number) => ({ data: new Uint8Array(bytes), meta: { contentType: 'video/mp4' } });
+  it('owner uploads a compressed MP4 and its poster', async () => {
+    const v = mp4(2 * 1024 * 1024);
+    await assertSucceeds(uploadBytes(ref(storageAs('owner1', 'owner'), 'properties/p1/videos/v1.mp4'), v.data, v.meta));
+    const poster = jpeg(50_000);
+    await assertSucceeds(uploadBytes(ref(storageAs('owner1', 'owner'), 'properties/p1/videos/v1.jpg'), poster.data, poster.meta));
+  });
+  it('another owner or a visitor cannot upload a video', async () => {
+    const v = mp4(1024);
+    await assertFails(uploadBytes(ref(storageAs('owner2', 'owner'), 'properties/p1/videos/x.mp4'), v.data, v.meta));
+    await assertFails(uploadBytes(ref(env.unauthenticatedContext().storage(BUCKET), 'properties/p1/videos/x.mp4'), v.data, v.meta));
+  });
+  it('videos over 60 MB, other formats and videos outside videos/ are rejected', async () => {
+    const big = mp4(61 * 1024 * 1024);
+    await assertFails(uploadBytes(ref(storageAs('owner1', 'owner'), 'properties/p1/videos/big.mp4'), big.data, big.meta));
+    await assertFails(uploadBytes(ref(storageAs('owner1', 'owner'), 'properties/p1/videos/x.mov'), new Uint8Array(1024), { contentType: 'video/quicktime' }));
+    const v = mp4(1024);
+    await assertFails(uploadBytes(ref(storageAs('owner1', 'owner'), 'properties/p1/x.mp4'), v.data, v.meta));
+  });
+});
+
 describe('profile photos and other paths', () => {
   it('user uploads their own profile photo only', async () => {
     const f = jpeg(1024);

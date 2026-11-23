@@ -9,3 +9,4 @@ export * from './locations';
 export * from './pricing';
 export * from './plans';
 export * from './geo';
+export * from './media';

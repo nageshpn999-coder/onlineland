@@ -199,7 +199,10 @@
     "verifiedDealer": "Verified dealer",
     "seller": "అమ్మకందారు",
     "whatsappMessageDealer": "నమస్తే {name}, OnlineLand లో {code}: {title} గురించి వివరాలు కావాలి",
-    "contactNoteDealer": "మీ enquiry {name} కు మరియు OnlineLand team కు వెళ్తుంది."
+    "contactNoteDealer": "మీ enquiry {name} కు మరియు OnlineLand team కు వెళ్తుంది.",
+    "video": "వీడియో",
+    "videoOf": "{title} వీడియో",
+    "playVideo": "వీడియో ప్లే చేయండి"
   },
   "enquiry": {
     "title": "వివరాలు అడగండి",

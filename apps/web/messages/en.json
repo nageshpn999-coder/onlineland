@@ -199,7 +199,10 @@
     "verifiedDealer": "Verified dealer",
     "seller": "Seller",
     "whatsappMessageDealer": "Hello {name}, I saw {code} on OnlineLand: {title}. Please share details.",
-    "contactNoteDealer": "Your enquiry goes to {name} and the OnlineLand team."
+    "contactNoteDealer": "Your enquiry goes to {name} and the OnlineLand team.",
+    "video": "Video",
+    "videoOf": "Video of {title}",
+    "playVideo": "Play video"
   },
   "enquiry": {
     "title": "Ask for details",

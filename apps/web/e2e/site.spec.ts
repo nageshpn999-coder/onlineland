@@ -345,3 +345,27 @@ test.describe('near me', () => {
     await expect(page.getByTestId('near-me')).toBeVisible();
   });
 });
+
+test.describe('listing videos', () => {
+  test('YouTube video loads only after pressing play (privacy-enhanced player)', async ({ page }) => {
+    await page.goto('/te/properties/OL-1001');
+    await expect(page.getByRole('heading', { name: /వీడియో/ })).toBeVisible();
+    await expect(page.getByTestId('youtube-player')).toHaveCount(0);
+    await page.getByTestId('youtube-facade').click();
+    await expect(page.getByTestId('youtube-player')).toHaveAttribute('src', /youtube-nocookie\.com\/embed\/dQw4w9WgXcQ/);
+  });
+
+  test('uploaded video plays in the page with its poster and does not preload', async ({ page }) => {
+    await page.goto('/en/properties/OL-1002');
+    const v = page.getByTestId('property-video');
+    await expect(v).toHaveAttribute('preload', 'none');
+    await expect(v).toHaveAttribute('src', /videos%2Fwalkthrough\.mp4/);
+    await expect(v).toHaveAttribute('poster', /walkthrough\.jpg/);
+    await expect(page.getByText('1:15')).toBeVisible();
+  });
+
+  test('listings without a video show no video section', async ({ page }) => {
+    await page.goto('/te/properties/OL-1003');
+    await expect(page.getByRole('heading', { name: /వీడియో/ })).toHaveCount(0);
+  });
+});

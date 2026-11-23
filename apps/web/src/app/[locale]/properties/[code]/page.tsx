@@ -12,11 +12,12 @@ import { EnquiryForm } from '@/components/EnquiryForm';
 import { FavoriteButton } from '@/components/FavoriteButton';
 import { areaText } from '@/components/PropertyCard';
 import { PropertyGallery } from '@/components/PropertyGallery';
+import { PropertyVideo } from '@/components/PropertyVideo';
 import { SiteVisitForm } from '@/components/SiteVisitForm';
 import { Link } from '@/i18n/navigation';
 import { formatPrice } from '@/lib/format';
 import { placeLabel } from '@/lib/place';
-import { getPropertyByCode, getPropertyPhotos } from '@/lib/properties';
+import { getPropertyByCode, getPropertyPhotos, getPropertyVideos } from '@/lib/properties';
 import { photoUrl } from '@/lib/storage-url';
 
 type Params = Promise<{ locale: string; code: string }>;
@@ -48,7 +49,11 @@ export default async function PropertyPage({ params }: { params: Params }) {
   const t = await getTranslations('property');
   const tf = await getTranslations('featured');
   const tv = await getTranslations('visit');
-  const [photoList, dealer] = await Promise.all([getPropertyPhotos(p.id), p.ownerId ? getDealerCard(p.ownerId) : null]);
+  const [photoList, videos, dealer] = await Promise.all([
+    getPropertyPhotos(p.id),
+    getPropertyVideos(p.id),
+    p.ownerId ? getDealerCard(p.ownerId) : null,
+  ]);
   const photos = photoList.map((ph) => ph.path);
   const title = p.title[locale] || p.title.te || p.title.en;
   const description = p.description[locale] || p.description.te || p.description.en;
@@ -140,6 +145,18 @@ export default async function PropertyPage({ params }: { params: Params }) {
           <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-10">
             <div className="min-w-0 space-y-10">
               <PropertyGallery photos={photos} title={title} category={p.category} />
+              {videos.length > 0 && (
+                <section className="mt-6" aria-labelledby="video-heading">
+                  <h2 id="video-heading" className="mb-3 text-xl font-semibold text-ink">
+                    ▶ {t('video')}
+                  </h2>
+                  <div className="space-y-4">
+                    {videos.map((v) => (
+                      <PropertyVideo key={v.kind === 'file' ? v.path : v.youtubeId} video={v} title={title} />
+                    ))}
+                  </div>
+                </section>
+              )}
 
               <section aria-labelledby="facts">
                 <h2 id="facts" className="text-xl font-semibold text-ink">

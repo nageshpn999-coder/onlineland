@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { collection, doc, limit, orderBy, query, serverTimestamp, Timestamp, updateDoc, where } from 'firebase/firestore';
-import type { DealerPublic, Property, PropertyMedia, PropertyPrivateContact, PropertyStats, UserProfile } from '@onlineland/shared';
+import { youTubeThumb, youTubeWatch, type DealerPublic, type Property, type PropertyMedia, type PropertyPrivateContact, type PropertyStats, type UserProfile } from '@onlineland/shared';
 import { Shell } from '@/components/Shell';
 import { Badge, Button, Drawer, ErrorText, Field, KV, PageHeader, RowButton, StateBox, Tabs, TextArea } from '@/components/ui';
 import { callFn, errorText, fb, storageUrl } from '@/lib/firebase';
@@ -116,14 +116,42 @@ function ListingDrawer({ id, onClose }: { id: string; onClose: () => void }) {
             <p className="whitespace-pre-line text-sm text-ink-soft">{tx(p.description, locale)}</p>
           </div>
 
-          {media.rows.length > 0 && (
+          {photosOf(media.rows).length > 0 && (
             <div className="grid grid-cols-3 gap-2" aria-label={t('photos')}>
-              {media.rows.map((m) => (
+              {photosOf(media.rows).map((m) => (
                 // eslint-disable-next-line @next/next/no-img-element -- Storage URLs, static export
                 <img key={m.id} src={storageUrl(m.data.storagePath) ?? ''} alt="" className="aspect-[4/3] w-full rounded object-cover" />
               ))}
             </div>
           )}
+          {media.rows
+            .filter((m) => m.data.type === 'video' || m.data.type === 'youtube')
+            .map((m) =>
+              m.data.type === 'video' ? (
+                <video
+                  key={m.id}
+                  controls
+                  preload="metadata"
+                  poster={storageUrl(m.data.posterPath) ?? undefined}
+                  src={storageUrl(m.data.storagePath) ?? undefined}
+                  className="aspect-video w-full rounded bg-ink"
+                  data-testid="admin-video"
+                />
+              ) : (
+                <a
+                  key={m.id}
+                  href={youTubeWatch(m.data.youtubeId ?? '')}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-3 rounded border border-line p-2 text-sm font-semibold text-brand"
+                  data-testid="admin-youtube"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- YouTube thumbnail */}
+                  <img src={youTubeThumb(m.data.youtubeId ?? '')} alt="" className="h-16 w-28 rounded object-cover" />
+                  ▶ YouTube ↗
+                </a>
+              ),
+            )}
 
           <div>
             <KV label={t('price')}>{inr(p.price)}{p.priceBasis === 'per-unit' ? ` / ${p.areaUnit}` : p.priceBasis === 'per-month' ? ' / month' : ''}</KV>
@@ -195,3 +223,6 @@ function ListingDrawer({ id, onClose }: { id: string; onClose: () => void }) {
     </Drawer>
   );
 }
+
+/** Photos only (media docs saved before videos existed have no type). */
+const photosOf = <T extends { data: PropertyMedia }>(rows: T[]) => rows.filter((m) => (m.data.type ?? 'photo') === 'photo');
