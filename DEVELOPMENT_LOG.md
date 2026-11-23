@@ -214,5 +214,11 @@ Approved for "everything that does not need the laptop".
 - Fixed: card grids could widen the page on phones with long place names.
 - Tests: website 17 unit + 25 browser, app 27, all green.
 
+## Listing videos ✅ (2026-11-23)
+- One video per listing: record or pick on the phone (max 2 min), compressed to 720p on the phone before upload (usually 5–15 MB), or a YouTube link instead.
+- Website: video section on the property page (YouTube loads only when tapped). Admin sees the video in the listing review drawer.
+- Storage rules: only .mp4 under 60 MB in `properties/{id}/videos/`. Firestore rules check video/YouTube media docs.
+- Tests: Firebase rules, website unit + browser, admin, app 32 — all green. Demo APK updated.
+
 ## Phase 8B — Go-live ⏳ (after Firebase projects exist)
 

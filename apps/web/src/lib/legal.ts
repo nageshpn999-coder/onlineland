@@ -19,7 +19,7 @@ export interface LegalPage {
   sections: LegalSection[];
 }
 
-export const LEGAL_UPDATED = '2026-11-21';
+export const LEGAL_UPDATED = '2026-11-23';
 const COMPANY = 'OnlineLand Infra Private Limited';
 
 const te: Record<LegalDoc, LegalPage> = {
@@ -32,7 +32,7 @@ const te: Record<LegalDoc, LegalPage> = {
         body: [
           '• మొబైల్ నంబర్: OTP తో లాగిన్ అవ్వడానికి (Firebase Authentication ద్వారా).',
           '• పేరు, మొబైల్ నంబర్, సందేశం: మీరు enquiry లేదా సైట్ విజిట్ ఫారమ్ పంపినప్పుడు.',
-          '• మీరు పెట్టే ప్రాపర్టీ వివరాలు: ఫోటోలు, ధర, విస్తీర్ణం, లొకేషన్, మరియు ఓనర్ పేరు/నంబర్. ఓనర్ నంబర్ ప్రైవేట్‌గా ఉంటుంది, సైట్‌లో ఎవరికీ కనిపించదు.',
+          '• మీరు పెట్టే ప్రాపర్టీ వివరాలు: ఫోటోలు, వీడియో (ఉంటే; ఫోన్‌లోనే చిన్నగా compress చేసి upload చేస్తాం) లేదా YouTube లింక్, ధర, విస్తీర్ణం, లొకేషన్, మరియు ఓనర్ పేరు/నంబర్. ఓనర్ నంబర్ ప్రైవేట్‌గా ఉంటుంది, సైట్‌లో ఎవరికీ కనిపించదు.',
           '• లొకేషన్: (1) ప్రాపర్టీ పోస్ట్ చేసేటప్పుడు "నా లొకేషన్" నొక్కితే, ఆ ప్రాపర్టీ స్థానం సేవ్ అవుతుంది. (2) "నా దగ్గర" నొక్కితే దగ్గర ఉన్న ప్రాపర్టీలు చూపించడానికి మాత్రమే వాడతాం. యాప్‌లో ఇది మీ ఫోన్‌లోనే లెక్కించబడుతుంది; వెబ్‌సైట్‌లో సుమారు 1 కి.మీ వరకు రౌండ్ చేసి పేజీ చిరునామాలో పెడతాం. దీన్ని మేము సేవ్ చేయము, మీ కదలికలను ట్రాక్ చేయము.',
           '• చెల్లింపు వివరాలు: మొత్తం మరియు UPI UTR నంబర్ మాత్రమే. మీ బ్యాంక్ ఖాతా, కార్డ్, UPI PIN మేము ఎప్పుడూ తీసుకోము.',
           '• Notifications కోసం ఫోన్ token, సేవ్ చేసిన ప్రాపర్టీలు (favourites).',
@@ -94,7 +94,7 @@ const te: Record<LegalDoc, LegalPage> = {
       {
         heading: 'Listings',
         body: [
-          '• మీరు పెట్టే ప్రాపర్టీ మీదే అయి ఉండాలి, లేదా అమ్మడానికి మీకు అనుమతి ఉండాలి. వివరాలు, ఫోటోలు నిజమైనవి అయి ఉండాలి.',
+          '• మీరు పెట్టే ప్రాపర్టీ మీదే అయి ఉండాలి, లేదా అమ్మడానికి మీకు అనుమతి ఉండాలి. వివరాలు, ఫోటోలు, వీడియోలు నిజమైనవి అయి ఉండాలి.',
           '• ప్రతి listing admin చెక్ చేశాకే ప్రచురిస్తాం. తప్పుడు లేదా అనుమానాస్పద listings ను కారణం చెప్పి తిరస్కరిస్తాం లేదా తీసేస్తాం.',
           '• "పత్రాలు పరిశీలించాం" అంటే మేము చూసిన కాపీలు సరిపోయాయి అని మాత్రమే. కొనే ముందు మీ సొంత లాయర్‌తో టైటిల్, EC, సర్వే వివరాలు తప్పక చెక్ చేయించుకోండి.',
         ],
@@ -186,7 +186,7 @@ const en: Record<LegalDoc, LegalPage> = {
         body: [
           '• Mobile number: to sign in with OTP (via Firebase Authentication).',
           '• Name, mobile number and message: when you send an enquiry or book a site visit.',
-          "• Properties you post: photos, price, area, location and the owner's name/number. The owner's number is private and never shown on the site.",
+          "• Properties you post: photos, an optional video (compressed on your phone before upload) or YouTube link, price, area, location and the owner's name/number. The owner's number is private and never shown on the site.",
           '• Location: (1) when you tap "use my location" while posting a property, it is saved as that property\'s map position; (2) when you tap "Near me", it is used only to show nearby properties — in the app this is worked out on your phone, on the website it is rounded to about 1 km and put in the page address. We do not save it or track where you go.',
           '• Payments: the amount and your UPI UTR number only. We never collect bank account, card or UPI PIN details.',
           '• A device token for notifications, and properties you save (favourites).',
@@ -248,7 +248,7 @@ const en: Record<LegalDoc, LegalPage> = {
       {
         heading: 'Listings',
         body: [
-          '• You may only post property you own or are authorised to sell. Details and photos must be true.',
+          '• You may only post property you own or are authorised to sell. Details, photos and videos must be true.',
           '• Every listing is reviewed by our admin before it is published. We reject or remove false or suspicious listings, with a reason.',
           '• "Documents checked" means only that the copies we saw matched. Before buying, have your own lawyer verify title, EC and survey details.',
         ],

@@ -38,7 +38,7 @@ OnlineLand makes it simple to buy, rent or sell land and homes in Telangana.
 • Clear per-acre and total prices
 • Every listing is checked by the OnlineLand team before it goes live
 • Ask on WhatsApp or call, and book a site visit
-• Post your own property with photos — first listing free
+• Post your own property with photos and a walkthrough video — first listing free
 • For dealers: Basic/Pro plans, your own share links, leads and a ✓ Verified badge
 
 From Makthal, Narayanpet District — OnlineLand Infra Private Limited.
@@ -54,6 +54,7 @@ From Makthal, Narayanpet District — OnlineLand Infra Private Limited.
 | **Personal info → Phone number** | Collected, required for sign-in; account management, app functionality |
 | **Location → Approximate/Precise** | Collected, optional (only when posting a property and tapping "use my location"); app functionality. "Near me" uses location on the device only and does not send it. |
 | **Photos** | Collected, optional (property photos); app functionality |
+| **Videos** | Collected, optional (one property walkthrough video, compressed on the phone, max 2 min); app functionality |
 | **Financial info → Purchase history** | Collected (plan/featured payments: amount + UTR); app functionality |
 | **App activity → Other actions** | Collected (listing views/shares as totals); analytics |
 | **Device or other IDs** | Collected (push notification token); app functionality |
