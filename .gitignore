@@ -66,3 +66,4 @@ apps/web/playwright-report/
 
 # Turborepo
 .turbo/
+firebase/admin-site/
