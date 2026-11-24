@@ -1,8 +1,8 @@
 name: Deploy Firebase (rules, indexes, functions)
 
 # Run by hand: Actions → "Deploy Firebase" → Run workflow → dev or prod (needs this file on main).
-# Before launch (main still holds the old site) dev is deployed by pushing a tag: deploy-dev-<anything>.
-# A tag can only deploy to onlineland-dev; prod is only ever by hand.
+# Before launch (main still holds the old site) dev is deployed by pushing develop to the deploy-dev branch.
+# That branch can only deploy to onlineland-dev; prod is only ever by hand.
 # Deploys ONLY to onlineland-dev or onlineland-prod. Any other project is refused, so the existing
 # projects (onlineland-28234, vahan-3e329, ridekart-70332, scraplake) can never be touched from here.
 #
@@ -11,7 +11,7 @@ name: Deploy Firebase (rules, indexes, functions)
 
 on:
   push:
-    tags: ['deploy-dev-*']
+    branches: [deploy-dev]
   workflow_dispatch:
     inputs:
       target:
