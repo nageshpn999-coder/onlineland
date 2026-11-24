@@ -1,4 +1,4 @@
-name: Deploy Firebase (rules, indexes, functions)
+name: Deploy Firebase (rules, indexes, functions, admin dashboard)
 
 # Run by hand: Actions → "Deploy Firebase" → Run workflow → dev or prod (needs this file on main).
 # Before launch (main still holds the old site) dev is deployed by pushing develop to the deploy-dev branch.
@@ -22,8 +22,8 @@ on:
       only:
         description: What to deploy
         type: choice
-        options: ['firestore,storage,functions', 'firestore,storage', 'functions']
-        default: 'firestore,storage,functions'
+        options: ['firestore,storage,functions,hosting', 'firestore,storage', 'functions', 'hosting']
+        default: 'firestore,storage,functions,hosting'
 
 concurrency: deploy-${{ inputs.target || 'dev' }}
 
@@ -58,9 +58,29 @@ jobs:
           fi
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
 
+      - name: Build the admin dashboard with this project's web config
+        if: contains(inputs.only || 'hosting', 'hosting')
+        run: |
+          # The web config is public by design (it ships to every browser); read it from the project, never from chat.
+          npx firebase apps:sdkconfig WEB --project "$PROJECT" > "$RUNNER_TEMP/webconfig.txt"
+          node -e '
+            const t = require("fs").readFileSync(process.argv[1], "utf8");
+            const c = JSON.parse(t.slice(t.indexOf("{"), t.lastIndexOf("}") + 1));
+            const m = { apiKey: "API_KEY", authDomain: "AUTH_DOMAIN", projectId: "PROJECT_ID", storageBucket: "STORAGE_BUCKET", messagingSenderId: "MESSAGING_SENDER_ID", appId: "APP_ID" };
+            for (const [k, n] of Object.entries(m)) if (c[k]) console.log(`NEXT_PUBLIC_FIREBASE_${n}=${c[k]}`);
+          ' "$RUNNER_TEMP/webconfig.txt" >> "$GITHUB_ENV"
+          rm -f "$RUNNER_TEMP/webconfig.txt"
+      - name: Admin build
+        if: contains(inputs.only || 'hosting', 'hosting')
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          [ "$NEXT_PUBLIC_FIREBASE_PROJECT_ID" = "$PROJECT" ] || { echo "::error::Web config is not for $PROJECT"; exit 1; }
+          npm run build -w @onlineland/admin
+
       - name: Deploy to ${{ env.PROJECT }}
         env:
-          ONLY: ${{ inputs.only || 'firestore,storage,functions' }}
+          ONLY: ${{ inputs.only || 'firestore,storage,functions,hosting' }}
         run: npx firebase deploy --config firebase/firebase.json --project "$PROJECT" --only "$ONLY" --non-interactive --force
 
       - name: Remove key file

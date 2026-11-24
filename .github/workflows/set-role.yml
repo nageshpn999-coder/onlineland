@@ -4,7 +4,12 @@ name: Give a role (make an admin / agent)
 # The person must have signed in once on the website or app with that number.
 # Only onlineland-dev / onlineland-prod; uses the same service-account secret as "Deploy Firebase".
 
+# Before launch this file is not on main yet, so "Run workflow" is not offered. Then a push to the
+# set-role-dev branch whose last commit message contains "set-role +91XXXXXXXXXX <role>" does the same
+# for onlineland-dev only.
 on:
+  push:
+    branches: [set-role-dev]
   workflow_dispatch:
     inputs:
       target:
@@ -40,7 +45,13 @@ jobs:
           SA: ${{ inputs.target == 'prod' && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
           PHONE: ${{ inputs.phone }}
           ROLE: ${{ inputs.role }}
+          MSG: ${{ github.event.head_commit.message }}
         run: |
+          if [ -z "$PHONE" ]; then
+            PHONE=$(printf '%s' "$MSG" | grep -oE 'set-role \+91[6-9][0-9]{9} [a-z]+' | head -1 | cut -d' ' -f2)
+            ROLE=$(printf '%s' "$MSG" | grep -oE 'set-role \+91[6-9][0-9]{9} [a-z]+' | head -1 | cut -d' ' -f3)
+          fi
+          case "$ROLE" in admin|agent|dealer|owner|buyer) ;; *) echo "::error::Unknown role"; exit 1;; esac
           echo "$PHONE" | grep -Eq '^\+91[6-9][0-9]{9}$' || { echo "::error::Phone must look like +919959731120"; exit 1; }
           printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
           [ "$(node -e "console.log(require(process.argv[1]).project_id)" "$RUNNER_TEMP/sa.json")" = "$PROJECT" ] || { echo "::error::Service account is not for $PROJECT"; rm -f "$RUNNER_TEMP/sa.json"; exit 1; }
