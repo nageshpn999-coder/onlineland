@@ -2,7 +2,7 @@
   "name": "onlineland-platform",
   "version": "0.1.0",
   "private": true,
-  "description": "OnlineLand \u2014 Find Your Perfect Property. Website, Android app and admin dashboard on one Firebase backend.",
+  "description": "OnlineLand — Find Your Perfect Property. Website, Android app and admin dashboard on one Firebase backend.",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -32,6 +32,8 @@
   },
   "devDependencies": {
     "firebase-tools": "^15.35.0",
+    "turbo": "^2.11.13",
     "typescript": "~6.0.3"
-  }
+  },
+  "packageManager": "npm@10.9.9"
 }

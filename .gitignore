@@ -63,3 +63,6 @@ firebase/functions/lib/
 # Playwright
 apps/web/test-results/
 apps/web/playwright-report/
+
+# Turborepo
+.turbo/
