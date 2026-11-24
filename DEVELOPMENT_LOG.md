@@ -231,5 +231,14 @@ Approved for "everything that does not need the laptop".
 - Legal terms updated (selling through OnlineLand, services, yearly plans, launch offer).
 - Note: check with a CA/lawyer about RERA agent registration before taking commission on plots in RERA projects.
 
-## Phase 8B — Go-live ⏳ (after Firebase projects exist)
+## Phase 8B — Go-live (dev) 🟢 (2026-11-25)
+- onlineland-dev: Blaze, phone login, Firestore (asia-south1), Storage (asia-south1), web + Android apps registered.
+- Backend deployed by the Deploy workflow (push `develop` to the `deploy-dev` branch): rules, indexes, 15 functions, admin dashboard.
+- Website on **Firebase App Hosting** (not Vercel: Vercel Hobby is non-commercial only, Pro is $20/month). Backend `onlineland-web`, region asia-southeast1, live branch `develop`, root `apps/web`, built through Turborepo from the repo root. No keys stored: the web config comes from the linked web app, the server uses its own Google identity.
+  - https://onlineland-web--onlineland-dev.asia-southeast1.hosted.app
+- Admin dashboard on Firebase Hosting: https://onlineland-dev.web.app
+- First admin: +919959731120 (via the `set-role-dev` branch; real SMS OTP login tested).
+- SMS region policy: India only (recommended).
+
+## Phase 8B — Go-live (prod) ⏳
 
