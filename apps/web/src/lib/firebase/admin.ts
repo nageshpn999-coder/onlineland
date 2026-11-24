@@ -19,13 +19,23 @@ function init(): App {
     return initializeApp({ projectId: projectId || 'demo-onlineland' }, APP_NAME);
   }
 
-  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-  // Vercel stores the key on one line; restore its line breaks.
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
-  if (!projectId || !clientEmail || !privateKey) {
-    throw new Error('Firebase Admin credentials are missing. Set FIREBASE_ADMIN_PROJECT_ID, _CLIENT_EMAIL and _PRIVATE_KEY (server only).');
+  // Either the whole service-account JSON in one variable, or its three fields separately.
+  let sa: { project_id?: string; client_email?: string; private_key?: string } = {};
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    try {
+      sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    } catch {
+      throw new Error('FIREBASE_SERVICE_ACCOUNT is not valid JSON (paste the whole key file).');
+    }
   }
-  return initializeApp({ credential: cert({ projectId, clientEmail, privateKey }), projectId }, APP_NAME);
+  const projectIdFinal = projectId || sa.project_id;
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL || sa.client_email;
+  // Vercel stores the key on one line; restore its line breaks.
+  const privateKey = (process.env.FIREBASE_ADMIN_PRIVATE_KEY || sa.private_key)?.replace(/\\n/g, '\n');
+  if (!projectIdFinal || !clientEmail || !privateKey) {
+    throw new Error('Firebase Admin credentials are missing. Set FIREBASE_SERVICE_ACCOUNT (whole JSON) or FIREBASE_ADMIN_PROJECT_ID, _CLIENT_EMAIL and _PRIVATE_KEY (server only).');
+  }
+  return initializeApp({ credential: cert({ projectId: projectIdFinal, clientEmail, privateKey }), projectId: projectIdFinal }, APP_NAME);
 }
 
 export function firebaseAdmin(): { db: Firestore; auth: Auth } {
