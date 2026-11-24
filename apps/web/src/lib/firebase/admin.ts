@@ -32,6 +32,10 @@ function init(): App {
   const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL || sa.client_email;
   // Vercel stores the key on one line; restore its line breaks.
   const privateKey = (process.env.FIREBASE_ADMIN_PRIVATE_KEY || sa.private_key)?.replace(/\\n/g, '\n');
+  // Firebase App Hosting (Cloud Run): Google gives the server its own identity, no key needed.
+  if (!clientEmail && !privateKey && (process.env.K_SERVICE || process.env.FIREBASE_CONFIG)) {
+    return initializeApp({ projectId: projectIdFinal || process.env.GOOGLE_CLOUD_PROJECT }, APP_NAME);
+  }
   if (!projectIdFinal || !clientEmail || !privateKey) {
     throw new Error('Firebase Admin credentials are missing. Set FIREBASE_SERVICE_ACCOUNT (whole JSON) or FIREBASE_ADMIN_PROJECT_ID, _CLIENT_EMAIL and _PRIVATE_KEY (server only).');
   }

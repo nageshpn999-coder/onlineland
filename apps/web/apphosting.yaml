@@ -1,0 +1,17 @@
+# Firebase App Hosting settings for the website (backend root directory: apps/web).
+# The Firebase web config comes from the linked web app automatically (see next.config.ts);
+# the server reads Firestore with the backend's own Google identity, so no keys live here.
+runConfig:
+  minInstances: 0
+  maxInstances: 4
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 1024
+
+env:
+  - variable: NEXT_PUBLIC_SITE_URL
+    value: https://onlineland.in
+    availability: [BUILD, RUNTIME]
+  - variable: NEXT_TELEMETRY_DISABLED
+    value: '1'
+    availability: [BUILD]
