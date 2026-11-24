@@ -1,6 +1,8 @@
 name: Deploy Firebase (rules, indexes, functions)
 
-# Run by hand: Actions → "Deploy Firebase" → Run workflow → dev or prod.
+# Run by hand: Actions → "Deploy Firebase" → Run workflow → dev or prod (needs this file on main).
+# Before launch (main still holds the old site) dev is deployed by pushing a tag: deploy-dev-<anything>.
+# A tag can only deploy to onlineland-dev; prod is only ever by hand.
 # Deploys ONLY to onlineland-dev or onlineland-prod. Any other project is refused, so the existing
 # projects (onlineland-28234, vahan-3e329, ridekart-70332, scraplake) can never be touched from here.
 #
@@ -8,6 +10,8 @@ name: Deploy Firebase (rules, indexes, functions)
 # service account created inside that one project (see docs/LAUNCH.md). Values are never printed.
 
 on:
+  push:
+    tags: ['deploy-dev-*']
   workflow_dispatch:
     inputs:
       target:
@@ -21,7 +25,7 @@ on:
         options: ['firestore,storage,functions', 'firestore,storage', 'functions']
         default: 'firestore,storage,functions'
 
-concurrency: deploy-${{ inputs.target }}
+concurrency: deploy-${{ inputs.target || 'dev' }}
 
 jobs:
   deploy:
@@ -54,8 +58,10 @@ jobs:
           fi
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
 
-      - name: Deploy ${{ inputs.only }} to ${{ env.PROJECT }}
-        run: npx firebase deploy --config firebase/firebase.json --project "$PROJECT" --only "${{ inputs.only }}" --non-interactive --force
+      - name: Deploy to ${{ env.PROJECT }}
+        env:
+          ONLY: ${{ inputs.only || 'firestore,storage,functions' }}
+        run: npx firebase deploy --config firebase/firebase.json --project "$PROJECT" --only "$ONLY" --non-interactive --force
 
       - name: Remove key file
         if: always()
