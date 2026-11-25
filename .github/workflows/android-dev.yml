@@ -82,6 +82,8 @@ jobs:
         working-directory: apps/android
         run: |
           flutter pub get
+          # Gradle's download from GitHub sometimes fails for a few minutes; try up to three times.
+          for i in 1 2 3; do
           flutter build apk --release \
             --dart-define=DATA_MODE=firebase \
             --dart-define=FIREBASE_PROJECT_ID=$PROJECT \
@@ -89,7 +91,9 @@ jobs:
             --dart-define=FIREBASE_APP_ID=$FB_APP_ID \
             --dart-define=FIREBASE_SENDER_ID=$FB_SENDER_ID \
             --dart-define=FIREBASE_STORAGE_BUCKET=$FB_BUCKET \
-            --build-name=0.9.${{ github.run_number }} --build-number=$((10 + ${{ github.run_number }}))
+            --build-name=0.9.${{ github.run_number }} --build-number=$((10 + ${{ github.run_number }})) && break
+          [ $i = 3 ] && exit 1; echo "Build failed (try $i), retrying in 60s"; sleep 60
+          done
           cp build/app/outputs/flutter-apk/app-release.apk ../../onlineland-dev.apk
 
       - name: Publish (pre-release "android-dev")
