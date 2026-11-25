@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import '../data/catalog.dart';
 import '../data/format.dart';
 import '../data/media.dart';
 import '../data/models.dart';
+import '../data/repository.dart';
 import '../l10n.dart';
 import '../state.dart';
 import '../theme.dart';
@@ -213,8 +215,14 @@ class _ListingFormState extends ConsumerState<ListingForm> {
         _progress = null;
       });
       await showSubmittedSheet(context, ref, propertyId: id, suggestDrone: !hadVideo);
-    } catch (_) {
-      setState(() => _error = s.submitError);
+    } catch (e) {
+      // Short code (e.g. permission-denied) so support can tell what failed; not sensitive.
+      final code = switch (e) {
+        RepoException(:final code) => code,
+        FirebaseException(:final plugin, :final code) => '$plugin/$code',
+        _ => e.runtimeType.toString(),
+      };
+      setState(() => _error = '${s.submitError} [$code]');
     } finally {
       if (mounted) setState(() => _busy = false);
     }

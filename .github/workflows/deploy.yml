@@ -58,6 +58,16 @@ jobs:
           fi
           echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/sa.json" >> "$GITHUB_ENV"
 
+      - name: Let Storage rules read Firestore (one-time IAM grant, safe to repeat)
+        run: |
+          # storage.rules call firestore.get() to check who owns a listing; Storage's service agent needs this role.
+          gcloud auth activate-service-account --key-file="$GOOGLE_APPLICATION_CREDENTIALS" --quiet
+          NUM=$(gcloud projects describe "$PROJECT" --format='value(projectNumber)')
+          gcloud projects add-iam-policy-binding "$PROJECT" --quiet --condition=None \
+            --member="serviceAccount:service-$NUM@gcp-sa-firebasestorage.iam.gserviceaccount.com" \
+            --role="roles/firebaserules.firestoreServiceAgent" --format=none && echo "Storage → Firestore access granted"
+          gcloud auth revoke --all --quiet || true
+
       - name: Build the admin dashboard with this project's web config
         if: contains(inputs.only || 'hosting', 'hosting')
         run: |
