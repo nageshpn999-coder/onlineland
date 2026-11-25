@@ -449,4 +449,23 @@ void main() {
     expect(find.byKey(Key('delete-listing-$id')), findsNothing);
     expect((await repo.myListings()).where((p) => p.id == id), isEmpty);
   });
+
+  testWidgets('sell form: "price is" offers per acre / per gunta to match the unit', (tester) async {
+    final repo = await pumpApp(tester);
+    await openSellForm(tester, repo);
+    final basis = find.byWidgetPredicate((w) => w.key is ValueKey<String> && (w.key! as ValueKey<String>).value.startsWith('basis-'));
+    await scrollTo(tester, basis, within: find.byType(SellTab));
+    await tester.tap(basis);
+    await tester.pumpAndSettle();
+    expect(find.text('ఎకరానికి').last, findsOneWidget);
+    expect(find.text('నెలకు'), findsNothing); // only for rent
+    await tester.tap(find.text('ఎకరానికి').last);
+    await tester.pumpAndSettle();
+    // Change the unit to guntas: the option follows.
+    await tester.tap(find.text('ఎకరాలు'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('గుంటలు').last);
+    await tester.pumpAndSettle();
+    expect(find.text('గుంటకు'), findsOneWidget);
+  });
 }

@@ -161,7 +161,7 @@ class S {
   String get descriptionLabel => _('వివరాలు (నేల, నీరు, రోడ్డు…)', 'Description (soil, water, road…)');
   String get price => _('ధర (₹)', 'Price (₹)');
   String get priceBasis => _('ధర ఎలా', 'Price is');
-  String get basisTotal => _('మొత్తం', 'Total');
+  String get basisTotal => _('మొత్తం ధర', 'Total price');
   String get basisPerUnit => _('యూనిట్‌కు', 'Per unit');
   String get basisPerMonth => _('నెలకు', 'Per month');
   String get areaValue => _('విస్తీర్ణం', 'Area');

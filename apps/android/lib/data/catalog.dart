@@ -31,7 +31,7 @@ const perUnit = <String, Named>{
   'acre': Named('acre', 'per acre', 'ఎకరానికి'),
   'gunta': Named('gunta', 'per gunta', 'గుంటకు'),
   'sq-yd': Named('sq-yd', 'per sq. yd', 'గజానికి'),
-  'sq-ft': Named('sq-ft', 'per sq. ft', 'చ.అ.కు'),
+  'sq-ft': Named('sq-ft', 'per sq. ft', 'చ. అడుగుకు'),
 };
 
 const districts = <Named>[

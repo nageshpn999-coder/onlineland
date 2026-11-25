@@ -398,7 +398,7 @@ class _ListingFormState extends ConsumerState<ListingForm> {
         selected: {_draft.purpose},
         onSelectionChanged: (v) => setState(() {
           _draft.purpose = v.first;
-          if (_draft.purpose == 'rent') _draft.priceBasis = 'per-month';
+          _draft.priceBasis = _draft.purpose == 'rent' ? 'per-month' : 'total';
         }),
       ),
       gap,
@@ -414,24 +414,6 @@ class _ListingFormState extends ConsumerState<ListingForm> {
       TextField(controller: _desc, decoration: dec(s.descriptionLabel), maxLines: 4, maxLength: 4000),
       gap,
       Row(children: [
-        Expanded(child: TextField(key: const Key('sell-price'), controller: _price, keyboardType: TextInputType.number, decoration: dec(s.price))),
-        const SizedBox(width: 10),
-        Expanded(
-          child: DropdownButtonFormField<String>(
-            initialValue: _draft.priceBasis,
-            isExpanded: true,
-            decoration: dec(s.priceBasis),
-            items: [
-              DropdownMenuItem(value: 'total', child: Text(s.basisTotal)),
-              DropdownMenuItem(value: 'per-unit', child: Text(s.basisPerUnit)),
-              DropdownMenuItem(value: 'per-month', child: Text(s.basisPerMonth)),
-            ],
-            onChanged: (v) => setState(() => _draft.priceBasis = v ?? 'total'),
-          ),
-        ),
-      ]),
-      gap,
-      Row(children: [
         Expanded(child: TextField(key: const Key('sell-area'), controller: _area, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: dec(s.areaValue))),
         const SizedBox(width: 10),
         Expanded(
@@ -441,6 +423,28 @@ class _ListingFormState extends ConsumerState<ListingForm> {
             decoration: dec(s.unit),
             items: [for (final u in areaUnits) DropdownMenuItem(value: u.id, child: Text(u.label(te)))],
             onChanged: (v) => setState(() => _draft.areaUnit = v ?? 'acre'),
+          ),
+        ),
+      ]),
+      gap,
+      Row(children: [
+        Expanded(child: TextField(key: const Key('sell-price'), controller: _price, keyboardType: TextInputType.number, decoration: dec(s.price))),
+        const SizedBox(width: 10),
+        Expanded(
+          // Options follow the purpose and the unit chosen above: sale → total / per acre (gunta, sq. yd…); rent → per month.
+          child: DropdownButtonFormField<String>(
+            key: ValueKey('basis-${_draft.purpose}-${_draft.areaUnit}'),
+            initialValue: _draft.priceBasis,
+            isExpanded: true,
+            decoration: dec(s.priceBasis),
+            items: [
+              if (_draft.purpose == 'sale') ...[
+                DropdownMenuItem(value: 'total', child: Text(s.basisTotal)),
+                DropdownMenuItem(value: 'per-unit', key: const Key('basis-per-unit'), child: Text(perUnit[_draft.areaUnit]?.label(te) ?? s.basisPerUnit)),
+              ] else
+                DropdownMenuItem(value: 'per-month', child: Text(s.basisPerMonth)),
+            ],
+            onChanged: (v) => setState(() => _draft.priceBasis = v ?? 'total'),
           ),
         ),
       ]),
