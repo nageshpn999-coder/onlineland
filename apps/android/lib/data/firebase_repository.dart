@@ -237,6 +237,17 @@ class FirebaseRepository implements Repository {
     if (user == null) throw RepoException('unauthenticated', 'Sign in first');
     final role = currentUser?.role ?? 'buyer';
     final ref = _db.collection('properties').doc();
+    try {
+      return await _submit(ref, user, role, d, photos, video: video, onProgress: onProgress);
+    } catch (_) {
+      // Don't leave a half-made draft behind (it would count toward the free-listing limit).
+      await ref.delete().catchError((Object _) {});
+      rethrow;
+    }
+  }
+
+  Future<String> _submit(DocumentReference<Map<String, dynamic>> ref, User user, String role, ListingDraft d, List<Uint8List> photos,
+      {VideoAttachment? video, void Function(int done, int total)? onProgress}) async {
     // 1) Create as draft (rules: owner may create draft/pending only).
     await ref.set({
       'category': d.category,
@@ -492,6 +503,9 @@ class FirebaseRepository implements Repository {
   @override
   Future<void> cancelServiceRequest(String id) =>
       _db.doc('serviceRequests/$id').update({'status': 'cancelled', 'updatedAt': FieldValue.serverTimestamp()});
+
+  @override
+  Future<void> deleteListing(String propertyId) => _db.doc('properties/$propertyId').delete();
 
   @override
   Future<void> setSaleMode(String propertyId, String mode) => _db.doc('properties/$propertyId').update({

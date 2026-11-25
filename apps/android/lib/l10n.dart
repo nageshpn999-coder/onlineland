@@ -319,6 +319,8 @@ class S {
   String get droneTip => _('డ్రోన్ వీడియో తీయించండి — త్వరగా అమ్ముడవుతుంది.', 'Get a drone video — it sells faster.');
   String get droneYes => _('తీయించండి', 'Book it');
   String get noThanks => _('వద్దు', 'No thanks');
+  String get deleteListing => _('తొలగించండి', 'Delete');
+  String get deleteListingQ => _('ఈ ఆస్తిని తొలగించాలా? ఇది తిరిగి రాదు.', 'Delete this property? This cannot be undone.');
   String get changeSaleMode => _('అమ్మకం విధానం', 'How to sell');
 
   String get services => _('సేవలు', 'Services');

@@ -219,6 +219,27 @@ class _MyListingTile extends ConsumerWidget {
         kind: 'listing', propertyId: property.id, title: s.payKind('listing'), amountInr: config.pricing.ownerListingInr, pricing: config.pricing);
   }
 
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final s = ref.read(stringsProvider);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(s.deleteListingQ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.noThanks)),
+          FilledButton(key: const Key('delete-confirm'), onPressed: () => Navigator.pop(ctx, true), child: Text(s.deleteListing)),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await ref.read(repositoryProvider).deleteListing(property.id);
+      ref.invalidate(myListingsProvider);
+    } catch (_) {
+      if (context.mounted) showSnack(context, s.submitError);
+    }
+  }
+
   Future<void> _chooseSale(BuildContext context, WidgetRef ref) async {
     final s = ref.read(stringsProvider);
     final mode = await showDialog<String>(
@@ -255,6 +276,7 @@ class _MyListingTile extends ConsumerWidget {
     final needsPayment = p.status == 'pending' && user?.role == 'owner' && !planActive && liveCount >= pricing.ownerFreeListings;
     final stats = live ? ref.watch(listingStatsProvider(p.id)).value : null;
     final canChooseSale = user?.role == 'owner' && (p.status == 'approved' || p.status == 'pending');
+    final canDelete = p.status == 'draft' || p.status == 'rejected' || p.status == 'pending';
     final color = switch (p.status) {
       'approved' => Brand.green,
       'rejected' => Colors.red.shade700,
@@ -279,7 +301,7 @@ class _MyListingTile extends ConsumerWidget {
           isThreeLine: true,
           onTap: live ? () => context.push('/property/${p.code}') : null,
         ),
-        if (live || needsPayment || canChooseSale)
+        if (live || needsPayment || canChooseSale || canDelete)
           Padding(
             padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
             child: Wrap(spacing: 8, runSpacing: 4, children: [
@@ -302,6 +324,14 @@ class _MyListingTile extends ConsumerWidget {
                   onPressed: () => _feature(context, ref),
                   icon: const Icon(Icons.star_outline, size: 18),
                   label: Text(planActive && dealer.slotsLeft > 0 ? s.featureFree(dealer.slotsLeft) : '${s.feature} · ₹${pricing.featuredWeekInr}'),
+                ),
+              if (canDelete)
+                TextButton.icon(
+                  key: Key('delete-listing-${p.id}'),
+                  onPressed: () => _delete(context, ref),
+                  icon: const Icon(Icons.delete_outline, size: 18),
+                  label: Text(s.deleteListing),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
                 ),
               if (canChooseSale)
                 TextButton.icon(

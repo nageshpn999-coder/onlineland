@@ -360,6 +360,21 @@ describe('revenue (D7)', () => {
   });
 });
 
+describe('maintenance clears abandoned drafts', () => {
+  it('a draft older than a day is deleted; a fresh one stays', async () => {
+    const base = { ownerId: `drafter-${run}`, status: 'draft', title: { te: 'x', en: '' } };
+    await adminDb().doc(`properties/old-draft-${run}`).set({ ...base, createdAt: Timestamp.fromMillis(Date.now() - 3 * 86_400_000) });
+    await adminDb().doc(`properties/old-draft-${run}/media/m1`).set({ storagePath: 'x', order: 0 });
+    await adminDb().doc(`properties/new-draft-${run}`).set({ ...base, createdAt: Timestamp.now() });
+    await signInAs(`admin-${run}`);
+    const res = (await httpsCallable(functions, 'runMaintenance')({ nowMs: Date.now() })).data as { drafts: number };
+    expect(res.drafts).toBeGreaterThanOrEqual(1);
+    expect((await adminDb().doc(`properties/old-draft-${run}`).get()).exists).toBe(false);
+    expect((await adminDb().doc(`properties/old-draft-${run}/media/m1`).get()).exists).toBe(false);
+    expect((await adminDb().doc(`properties/new-draft-${run}`).get()).exists).toBe(true);
+  });
+});
+
 describe('Phase 9: yearly plans, services, launch offer', () => {
   const DAY = 86_400_000;
   const call = (name: string, data: unknown) => httpsCallable(functions, name)(data);

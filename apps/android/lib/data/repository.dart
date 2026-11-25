@@ -70,6 +70,9 @@ abstract class Repository {
   Future<List<ServiceRequestInfo>> myServiceRequests();
   Future<void> cancelServiceRequest(String id);
 
+  /// Owner removes their own draft, pending or rejected listing.
+  Future<void> deleteListing(String propertyId);
+
   /// Owners: change how they want to sell a listing (self / assisted).
   Future<void> setSaleMode(String propertyId, String mode);
 

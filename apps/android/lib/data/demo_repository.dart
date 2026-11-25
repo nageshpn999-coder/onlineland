@@ -267,6 +267,15 @@ class DemoRepository implements Repository {
   }
 
   @override
+  Future<void> deleteListing(String propertyId) async {
+    final i = _items.indexWhere((p) => p.id == propertyId && p.ownerId == _user?.uid);
+    if (i < 0 || !const ['draft', 'pending', 'rejected'].contains(_items[i].status)) {
+      throw RepoException('permission-denied', 'Cannot delete this listing');
+    }
+    _items.removeAt(i);
+  }
+
+  @override
   Future<void> setSaleMode(String propertyId, String mode) async {
     final i = _items.indexWhere((p) => p.id == propertyId && p.ownerId == _user?.uid);
     if (i < 0) throw RepoException('permission-denied', 'Not your listing');

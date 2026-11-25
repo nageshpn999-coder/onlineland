@@ -433,4 +433,20 @@ void main() {
     expect(find.text('₹4,999 / సంవత్సరం'), findsOneWidget);
     expect(find.text('₹14,999 / సంవత్సరం', skipOffstage: false), findsOneWidget);
   });
+
+  testWidgets('owner deletes a listing that is still in review', (tester) async {
+    final repo = await pumpApp(tester);
+    await repo.verifyOtp('demo:9000000001', '123456');
+    await repo.becomeOwner();
+    final id = await repo.submitListing(ListingDraft()..title = 'Delete me'..price = 100000..area = 1, const []);
+    await tester.pumpAndSettle();
+    await tapTab(tester, 4);
+    await scrollTo(tester, find.byKey(Key('delete-listing-$id')), within: find.byType(ProfileTab));
+    await tester.tap(find.byKey(Key('delete-listing-$id')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('delete-confirm')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(Key('delete-listing-$id')), findsNothing);
+    expect((await repo.myListings()).where((p) => p.id == id), isEmpty);
+  });
 }

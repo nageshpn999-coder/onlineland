@@ -6,9 +6,10 @@
  *  - useFeaturedSlot   a Pro dealer puts one of their live listings on top (featured slots in the plan)
  *  - trackEvent        counts listing views and WhatsApp shares (public)
  *  - onLeadCreated     counts enquiries; tells the dealer when their share link brought one
- *  - dailyMaintenance  09:00 IST: renewal reminders, end featured weeks, expire paid owner listings
+ *  - dailyMaintenance  09:00 IST: renewal reminders, end featured weeks, expire paid owner listings, clear stale drafts
  *  - runMaintenance    admin can run the same job now (and tests use it)
  */
+import { getStorage } from 'firebase-admin/storage';
 import { FieldValue, Timestamp, type DocumentReference } from 'firebase-admin/firestore';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
@@ -309,8 +310,23 @@ export async function maintenance(nowMs = Date.now()) {
     });
   }
 
-  logger.info('maintenance', { reminded, unfeatured, expired });
-  return { reminded, unfeatured, expired };
+  // 4. Drafts left behind by an upload that never finished (bad network, app closed). A listing is a draft
+  //    only for the seconds its photos upload, so one older than a day is abandoned. They count toward
+  //    the free-listing limit, so clear them (with their photos).
+  const stale = await db.collection('properties').where('status', '==', 'draft')
+    .where('createdAt', '<=', Timestamp.fromMillis(nowMs - DAY_MS)).limit(200).get();
+  for (const d of stale.docs) {
+    await db.recursiveDelete(d.ref);
+    try {
+      await getStorage().bucket().deleteFiles({ prefix: `properties/${d.id}/` });
+    } catch (e) {
+      logger.warn('draft photos not removed', { id: d.id, e: String(e) });
+    }
+  }
+  const drafts = stale.size;
+
+  logger.info('maintenance', { reminded, unfeatured, expired, drafts });
+  return { reminded, unfeatured, expired, drafts };
 }
 
 async function commitInBatches(refs: DocumentReference[], data: Record<string, unknown>) {
