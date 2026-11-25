@@ -1,0 +1,83 @@
+name: Android test APK (onlineland-dev)
+
+# A test APK connected to the real onlineland-dev Firebase (real OTP, real listings), for checking on a phone
+# before Play Store. Signed with the CI debug key — not for Play. Runs when develop is pushed to the
+# android-dev branch (or by hand once this file is on main).
+# Needs only FIREBASE_SERVICE_ACCOUNT_DEV: the app's public Firebase config is read from the project itself.
+
+on:
+  push:
+    branches: [android-dev]
+  workflow_dispatch:
+
+concurrency: android-dev
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: development
+    permissions:
+      contents: write
+    env:
+      PROJECT: onlineland-dev
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Read the Android app's Firebase config from onlineland-dev
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+        run: |
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          [ "$(node -e "console.log(require(process.argv[1]).project_id)" "$RUNNER_TEMP/sa.json")" = "$PROJECT" ] || { echo "::error::Service account is not for $PROJECT"; exit 1; }
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx -y firebase-tools@15 apps:sdkconfig ANDROID --project "$PROJECT" > "$RUNNER_TEMP/gs.txt"
+          rm -f "$RUNNER_TEMP/sa.json"
+          node -e '
+            const t = require("fs").readFileSync(process.argv[1], "utf8");
+            const g = JSON.parse(t.slice(t.indexOf("{"), t.lastIndexOf("}") + 1));
+            const c = g.client.find((x) => x.client_info.android_client_info.package_name === "in.onlineland.onlineland");
+            if (!c) throw new Error("Android app in.onlineland.onlineland is not registered in " + process.env.PROJECT);
+            const out = {
+              FB_API_KEY: c.api_key[0].current_key,
+              FB_APP_ID: c.client_info.mobilesdk_app_id,
+              FB_SENDER_ID: g.project_info.project_number,
+              FB_BUCKET: g.project_info.storage_bucket,
+            };
+            for (const [k, v] of Object.entries(out)) { if (!v) throw new Error(k + " missing"); console.log(`${k}=${v}`); }
+          ' "$RUNNER_TEMP/gs.txt" >> "$GITHUB_ENV"
+          rm -f "$RUNNER_TEMP/gs.txt"
+
+      - name: Build test APK
+        working-directory: apps/android
+        run: |
+          flutter pub get
+          flutter build apk --release \
+            --dart-define=DATA_MODE=firebase \
+            --dart-define=FIREBASE_PROJECT_ID=$PROJECT \
+            --dart-define=FIREBASE_API_KEY=$FB_API_KEY \
+            --dart-define=FIREBASE_APP_ID=$FB_APP_ID \
+            --dart-define=FIREBASE_SENDER_ID=$FB_SENDER_ID \
+            --dart-define=FIREBASE_STORAGE_BUCKET=$FB_BUCKET \
+            --build-name=0.9.${{ github.run_number }} --build-number=$((10 + ${{ github.run_number }}))
+          cp build/app/outputs/flutter-apk/app-release.apk ../../onlineland-dev.apk
+          keytool -list -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey 2>/dev/null | grep -E 'SHA1|SHA256' || true
+
+      - name: Publish (pre-release "android-dev")
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="Test app on the real onlineland-dev Firebase (real OTP). Built $(date -u +%F) from ${GITHUB_SHA::7}. Not for Play Store."
+          gh release view android-dev >/dev/null 2>&1 || gh release create android-dev --prerelease --target develop --title "OnlineLand app — dev test" --notes "$NOTES"
+          gh release edit android-dev --notes "$NOTES" --prerelease
+          gh release upload android-dev onlineland-dev.apk --clobber
