@@ -453,7 +453,7 @@ void main() {
   testWidgets('sell form: "price is" offers per acre / per gunta to match the unit', (tester) async {
     final repo = await pumpApp(tester);
     await openSellForm(tester, repo);
-    final basis = find.byWidgetPredicate((w) => w.key is ValueKey<String> && (w.key! as ValueKey<String>).value.startsWith('basis-'));
+    final basis = find.byKey(const ValueKey('basis-sale-acre'));
     await scrollTo(tester, basis, within: find.byType(SellTab));
     await tester.tap(basis);
     await tester.pumpAndSettle();
