@@ -52,8 +52,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _verificationId = id;
         _phone10 = phone;
       });
-    } catch (_) {
-      setState(() => _error = s.otpError);
+    } catch (e) {
+      // The short code (e.g. too-many-requests) tells support what went wrong; it is not sensitive.
+      final code = e is RepoException ? e.code : e.runtimeType.toString();
+      setState(() => _error = e is RepoException && e.code == 'too-many-requests' ? s.otpTooMany : '${s.otpError} [$code]');
     } finally {
       if (mounted) setState(() => _busy = false);
     }

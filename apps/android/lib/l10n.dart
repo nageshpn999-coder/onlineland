@@ -140,6 +140,7 @@ class S {
   String get enterOtp => _('6 అంకెల OTP', '6-digit OTP');
   String get verify => _('లాగిన్ అవ్వండి', 'Log in');
   String get wrongOtp => _('OTP తప్పు. మళ్ళీ చూసి ఇవ్వండి.', 'Wrong OTP. Check and try again.');
+  String get otpTooMany => _('ఎక్కువ సార్లు ప్రయత్నించారు. కొంత సేపు (సుమారు 1 గంట) ఆగి మళ్ళీ ప్రయత్నించండి.', 'Too many tries. Please wait a while (about an hour) and try again.');
   String get otpError => _('OTP పంపడం కుదరలేదు. కొంత సేపు తర్వాత మళ్ళీ ప్రయత్నించండి.', "Couldn't send the OTP. Try again in a while.");
   String get demoOtpHint => _('డెమో: ఏ నంబర్ అయినా, OTP 123456', 'Demo: any number, OTP 123456');
   String get logout => _('లాగ్ అవుట్', 'Log out');

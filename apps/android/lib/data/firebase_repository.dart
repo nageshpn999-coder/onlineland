@@ -188,7 +188,11 @@ class FirebaseRepository implements Repository {
         if (!result.isCompleted) result.complete(verificationId);
       },
       codeAutoRetrievalTimeout: (_) {},
-    );
+    ).catchError((Object e) {
+      if (!result.isCompleted) {
+        result.completeError(e is FirebaseAuthException ? RepoException(e.code, e.message ?? e.code) : RepoException('unknown', '$e'));
+      }
+    });
     return result.future;
   }
 
