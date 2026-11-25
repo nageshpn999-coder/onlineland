@@ -242,3 +242,7 @@ Approved for "everything that does not need the laptop".
 
 ## Phase 8B — Go-live (prod) ⏳
 
+
+## App — 3D category icons ✅ (25 Nov 2026)
+- Home "What are you looking for?" grid now shows 9 3D icons (`apps/android/assets/categories/*.webp`, 256 px, ~25–31 KB each). Originals in `design/category-icons/`; farmhouse masked to a circle.
+- New `TileLabel` shrinks the font so a word is never split ("Commercia/l" fixed). Tests: `test/category_tiles_test.dart`.
