@@ -25,6 +25,75 @@ IconData categoryIcon(String id) => switch (id) {
       _ => Icons.home_outlined,
     };
 
+/// 3D artwork for each category (assets/categories/<id>.webp).
+const categoryArtIds = {
+  'agricultural', 'open-plot', 'flat', 'apartment', 'villa',
+  'luxury-home', 'commercial', 'farmhouse', 'rental',
+};
+
+class CategoryImage extends StatelessWidget {
+  const CategoryImage({super.key, required this.id, this.size = 56});
+  final String id;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final fallback = Icon(categoryIcon(id), size: size * 0.6, color: id == 'agricultural' ? Brand.green : Brand.blue);
+    if (!categoryArtIds.contains(id)) return SizedBox.square(dimension: size, child: Center(child: fallback));
+    return Image.asset(
+      'assets/categories/$id.webp',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      cacheWidth: (size * 3).round(),
+      errorBuilder: (_, _, _) => SizedBox.square(dimension: size, child: Center(child: fallback)),
+    );
+  }
+}
+
+/// A label that wraps only between words: if the longest word does not fit
+/// the width, the font shrinks until it does (never "Commercia/l").
+class TileLabel extends StatelessWidget {
+  const TileLabel(this.text, {super.key, this.fontSize = 13, this.minFontSize = 9});
+  final String text;
+  final double fontSize;
+  final double minFontSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, box) {
+      final scaler = MediaQuery.textScalerOf(context);
+      var size = fontSize;
+      if (box.maxWidth.isFinite) {
+        final words = text.split(RegExp(r'\s+'));
+        double widest(double fs) {
+          var w = 0.0;
+          for (final word in words) {
+            final tp = TextPainter(
+              text: TextSpan(text: word, style: TextStyle(fontSize: fs, fontWeight: FontWeight.w600)),
+              textDirection: TextDirection.ltr,
+              textScaler: scaler,
+              maxLines: 1,
+            )..layout();
+            if (tp.width > w) w = tp.width;
+          }
+          return w;
+        }
+        while (size > minFontSize && widest(size) > box.maxWidth) {
+          size -= 0.5;
+        }
+      }
+      return Text(
+        text,
+        textAlign: TextAlign.center,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: size, fontWeight: FontWeight.w600, height: 1.25),
+      );
+    });
+  }
+}
+
 /// Shown instead of a photo until the owner uploads one.
 class CategoryArt extends StatelessWidget {
   const CategoryArt({super.key, required this.category, this.iconSize = 48});

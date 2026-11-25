@@ -130,7 +130,7 @@ class HomeTab extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
-            childAspectRatio: 0.95,
+            childAspectRatio: 0.8,
             children: [
               for (final c in categories)
                 Material(
@@ -140,11 +140,11 @@ class HomeTab extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(8),
                     onTap: () => browse(Filters(purpose: c.id == 'rental' ? 'rent' : 'sale', type: c.id)),
                     child: Padding(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.fromLTRB(6, 8, 6, 6),
                       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                        Icon(categoryIcon(c.id), color: c.id == 'agricultural' ? Brand.green : Brand.blue, size: 30),
-                        const SizedBox(height: 8),
-                        Text(c.label(s.te), textAlign: TextAlign.center, maxLines: 2, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, height: 1.35)),
+                        Expanded(child: FittedBox(fit: BoxFit.scaleDown, child: CategoryImage(id: c.id, size: 72))),
+                        const SizedBox(height: 4),
+                        SizedBox(height: 34, child: Center(child: TileLabel(c.label(s.te)))),
                       ]),
                     ),
                   ),
