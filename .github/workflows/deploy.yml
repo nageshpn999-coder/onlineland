@@ -2,7 +2,7 @@ name: Deploy Firebase (rules, indexes, functions, admin dashboard)
 
 # Run by hand: Actions → "Deploy Firebase" → Run workflow → dev or prod (needs this file on main).
 # Before launch (main still holds the old site) dev is deployed by pushing develop to the deploy-dev branch.
-# That branch can only deploy to onlineland-dev; prod is only ever by hand.
+# Pushing develop to the deploy-prod branch deploys onlineland-prod (only the owner pushes there).
 # Deploys ONLY to onlineland-dev or onlineland-prod. Any other project is refused, so the existing
 # projects (onlineland-28234, vahan-3e329, ridekart-70332, scraplake) can never be touched from here.
 #
@@ -11,7 +11,7 @@ name: Deploy Firebase (rules, indexes, functions, admin dashboard)
 
 on:
   push:
-    branches: [deploy-dev]
+    branches: [deploy-dev, deploy-prod]
   workflow_dispatch:
     inputs:
       target:
@@ -25,15 +25,15 @@ on:
         options: ['firestore,storage,functions,hosting', 'firestore,storage', 'functions', 'hosting']
         default: 'firestore,storage,functions,hosting'
 
-concurrency: deploy-${{ inputs.target || 'dev' }}
+concurrency: deploy-${{ inputs.target || github.ref_name }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment: ${{ inputs.target == 'prod' && 'production' || 'development' }}
+    environment: ${{ (inputs.target == 'prod' || github.ref_name == 'deploy-prod') && 'production' || 'development' }}
     env:
-      PROJECT: ${{ inputs.target == 'prod' && 'onlineland-prod' || 'onlineland-dev' }}
+      PROJECT: ${{ (inputs.target == 'prod' || github.ref_name == 'deploy-prod') && 'onlineland-prod' || 'onlineland-dev' }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -47,7 +47,7 @@ jobs:
 
       - name: Service account (must belong to the chosen project)
         env:
-          SA: ${{ inputs.target == 'prod' && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+          SA: ${{ (inputs.target == 'prod' || github.ref_name == 'deploy-prod') && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
         run: |
           case "$PROJECT" in onlineland-dev|onlineland-prod) ;; *) echo "::error::Refusing project $PROJECT"; exit 1;; esac
           [ -n "$SA" ] || { echo "::error::Service account secret for $PROJECT is not set"; exit 1; }

@@ -6,10 +6,10 @@ name: Give a role (make an admin / agent)
 
 # Before launch this file is not on main yet, so "Run workflow" is not offered. Then a push to the
 # set-role-dev branch whose last commit message contains "set-role +91XXXXXXXXXX <role>" does the same
-# for onlineland-dev only.
+# for onlineland-dev; the set-role-prod branch does it for onlineland-prod.
 on:
   push:
-    branches: [set-role-dev]
+    branches: [set-role-dev, set-role-prod]
   workflow_dispatch:
     inputs:
       target:
@@ -30,9 +30,9 @@ jobs:
   role:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    environment: ${{ inputs.target == 'prod' && 'production' || 'development' }}
+    environment: ${{ (inputs.target == 'prod' || github.ref_name == 'set-role-prod') && 'production' || 'development' }}
     env:
-      PROJECT: ${{ inputs.target == 'prod' && 'onlineland-prod' || 'onlineland-dev' }}
+      PROJECT: ${{ (inputs.target == 'prod' || github.ref_name == 'set-role-prod') && 'onlineland-prod' || 'onlineland-dev' }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -42,7 +42,7 @@ jobs:
       - run: npm ci
       - name: Set role
         env:
-          SA: ${{ inputs.target == 'prod' && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
+          SA: ${{ (inputs.target == 'prod' || github.ref_name == 'set-role-prod') && secrets.FIREBASE_SERVICE_ACCOUNT_PROD || secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
           PHONE: ${{ inputs.phone }}
           ROLE: ${{ inputs.role }}
           MSG: ${{ github.event.head_commit.message }}
