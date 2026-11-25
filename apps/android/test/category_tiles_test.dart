@@ -23,7 +23,8 @@ void main() {
     for (final id in categoryArtIds) {
       await tester.pumpWidget(host(80, CategoryImage(id: id)));
       final img = tester.widget<Image>(find.byType(Image));
-      expect((img.image as dynamic).keyName, 'assets/categories/$id.webp');
+      final provider = img.image is ResizeImage ? (img.image as ResizeImage).imageProvider : img.image;
+      expect((provider as AssetImage).assetName, 'assets/categories/$id.webp');
     }
   });
 }
