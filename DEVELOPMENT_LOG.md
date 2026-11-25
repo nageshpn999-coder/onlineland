@@ -246,3 +246,10 @@ Approved for "everything that does not need the laptop".
 ## App — 3D category icons ✅ (25 Nov 2026)
 - Home "What are you looking for?" grid now shows 9 3D icons (`apps/android/assets/categories/*.webp`, 256 px, ~25–31 KB each). Originals in `design/category-icons/`; farmhouse masked to a circle.
 - New `TileLabel` shrinks the font so a word is never split ("Commercia/l" fixed). Tests: `test/category_tiles_test.dart`.
+
+## Prod setup — part 1 ✅ (25 Nov 2026)
+- onlineland-prod created (Blaze, billing on the Google Cloud trial credit until 21 Feb 2027 → upgrade/e-mandate before then), ₹2,000 budget.
+- Phone auth (SMS India only), Firestore (default) asia-south1 with daily backups, Storage asia-south1, web + Android apps registered.
+- Secret FIREBASE_SERVICE_ACCOUNT_PROD added; service account has Owner. Push develop → `deploy-prod` deploys prod; `set-role-prod` sets roles on prod.
+- First prod deploy done (rules, indexes, functions, admin at onlineland-prod.web.app).
+- Next: first prod admin, App Hosting backend for the website, spend caps. onlineland.in domain only on launch day.
