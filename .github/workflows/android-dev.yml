@@ -35,6 +35,19 @@ jobs:
           channel: stable
           cache: true
 
+      # Keep the same signing key between builds (so updates install over each other) and register its
+      # fingerprints in Firebase — phone-number login on Android needs them.
+      - name: Stable test signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: onlineland-dev-signing-key-v1
+      - name: Create the key if this is the first build
+        run: |
+          mkdir -p ~/.android
+          [ -f ~/.android/debug.keystore ] || keytool -genkeypair -keystore ~/.android/debug.keystore -storepass android -keypass android \
+            -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
       - name: Read the Android app's Firebase config from onlineland-dev
         env:
           SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
@@ -42,6 +55,13 @@ jobs:
           printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
           [ "$(node -e "console.log(require(process.argv[1]).project_id)" "$RUNNER_TEMP/sa.json")" = "$PROJECT" ] || { echo "::error::Service account is not for $PROJECT"; exit 1; }
           GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx -y firebase-tools@15 apps:sdkconfig ANDROID --project "$PROJECT" > "$RUNNER_TEMP/gs.txt"
+          SHA1=$(keytool -list -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey | sed -n 's/.*SHA1: //p' | tr -d ' ')
+          SHA256=$(keytool -list -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey | sed -n 's/.*SHA256: //p' | tr -d ' ')
+          APP_ID=$(sed -n 's/.*"mobilesdk_app_id": *"\([^"]*\)".*/\1/p' "$RUNNER_TEMP/gs.txt" | head -1)
+          for SHA in "$SHA1" "$SHA256"; do
+            GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx -y firebase-tools@15 apps:android:sha:create "$APP_ID" "$SHA" --project "$PROJECT" \
+              && echo "registered fingerprint" || echo "fingerprint already registered"
+          done
           rm -f "$RUNNER_TEMP/sa.json"
           node -e '
             const t = require("fs").readFileSync(process.argv[1], "utf8");
@@ -71,7 +91,6 @@ jobs:
             --dart-define=FIREBASE_STORAGE_BUCKET=$FB_BUCKET \
             --build-name=0.9.${{ github.run_number }} --build-number=$((10 + ${{ github.run_number }}))
           cp build/app/outputs/flutter-apk/app-release.apk ../../onlineland-dev.apk
-          keytool -list -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey 2>/dev/null | grep -E 'SHA1|SHA256' || true
 
       - name: Publish (pre-release "android-dev")
         env:
