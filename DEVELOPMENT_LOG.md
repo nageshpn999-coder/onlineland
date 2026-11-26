@@ -276,3 +276,5 @@ Approved for "everything that does not need the laptop".
 - Email is GoDaddy (secureserver.net CNAMEs/MX) — untouched. NS untouched.
 - Auth authorized domains: onlineland.in and www.onlineland.in added on prod.
 - Next: wait for "Connected" + certificate; then add www.onlineland.in as a custom domain and replace the www CNAME.
+- Fixed: the first TXT @ held the CNAME value by mistake; corrected to fah-claim=… (22:48).
+- admin.onlineland.in: Firebase Hosting custom domain on prod, GoDaddy CNAME admin → onlineland-prod.web.app. Added to Auth authorized domains.
