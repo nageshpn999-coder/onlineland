@@ -253,3 +253,11 @@ Approved for "everything that does not need the laptop".
 - Secret FIREBASE_SERVICE_ACCOUNT_PROD added; service account has Owner. Push develop → `deploy-prod` deploys prod; `set-role-prod` sets roles on prod.
 - First prod deploy done (rules, indexes, functions, admin at onlineland-prod.web.app).
 - Next: first prod admin, App Hosting backend for the website, spend caps. onlineland.in domain only on launch day.
+
+## Prod setup — part 2 ✅ (26 Nov 2026)
+- First prod admin: +919959731120 (via `set-role-prod`). UPI ID set in prod Settings; launch offer left OFF.
+- Website on prod: App Hosting backend `onlineland-web` (asia-southeast1), live branch `release`, auto rollouts → https://onlineland-web--onlineland-prod.asia-southeast1.hosted.app (added to Auth authorized domains).
+- To ship website changes to prod: push develop → `release`. Firebase side: push develop → `deploy-prod`.
+- Spend caps on prod: Gemini ₹100, Agent Platform ₹100, Cloud Run ₹1,000, Functions ₹1,000.
+- Website home categories now use the 3D artwork too.
+- Left for launch day: connect onlineland.in, Play Store release build.
