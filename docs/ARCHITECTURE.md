@@ -1,5 +1,7 @@
 # OnlineLand — System Architecture (Phase 1, approved 12 Nov 2026)
 
+> Original design. For the current state (Firebase App Hosting instead of Vercel, Phase 9 services, deploy flow) see [HANDOVER.md](HANDOVER.md).
+
 Full document with diagram: https://claude.ai/artifact/Lgt3U9iqripwCjgxcK27v2
 
 **OnlineLand — Find Your Perfect Property.** Real estate consultancy + property marketplace for Telangana. One shared Firebase backend serves three clients: the website, the Android app and the admin dashboard.

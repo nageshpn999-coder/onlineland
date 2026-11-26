@@ -278,3 +278,6 @@ Approved for "everything that does not need the laptop".
 - Next: wait for "Connected" + certificate; then add www.onlineland.in as a custom domain and replace the www CNAME.
 - Fixed: the first TXT @ held the CNAME value by mistake; corrected to fah-claim=… (22:48).
 - admin.onlineland.in: Firebase Hosting custom domain on prod, GoDaddy CNAME admin → onlineland-prod.web.app. Added to Auth authorized domains.
+
+## Developer handover guide ✅ (26 Nov 2026)
+- New `docs/HANDOVER.md`: product, repo map, dev/prod environments, local commands, branch-push deploy flow, where secrets live, data model, known pitfalls, open items. Linked from README; ARCHITECTURE.md marked as the original Phase 1 design.

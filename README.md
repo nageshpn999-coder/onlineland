@@ -2,6 +2,8 @@
 
 Real estate consultancy + property marketplace for Telangana: website, Android app and admin dashboard on one Firebase backend.
 
+> **New developer? Start with [docs/HANDOVER.md](docs/HANDOVER.md).**
+
 > **Branches:** `main` = the live onlineland.in site (GitHub Pages, untouched until launch). `develop` = new platform work.
 
 ## Structure
@@ -64,4 +66,4 @@ Update `firebase/.firebaserc` if the console gave different project IDs.
 
 ## Secrets
 
-Never commit `.env.local`, service-account JSON, `google-services.json` or keystores (all git-ignored). Copy each app's `.env.example` to `.env.local`. Production secrets live in Vercel and Firebase settings only.
+Never commit `.env.local`, service-account JSON, `google-services.json` or keystores (all git-ignored). Copy each app's `.env.example` to `.env.local`. Production secrets live in GitHub secrets, Google Secret Manager and Firebase settings only (see docs/HANDOVER.md §6).
