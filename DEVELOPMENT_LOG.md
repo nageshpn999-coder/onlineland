@@ -269,3 +269,10 @@ Approved for "everything that does not need the laptop".
 - The prod APK and the dev APK share the package name: uninstall one to install the other.
 - Old `android-release.yml` (manual, needs many secrets) is superseded.
 - 26 Nov: prod end-to-end checked by Nagesh on the prod APK — real OTP, listing → admin approve → visible on the prod website, drone service request auto-quoted ₹1,999. ✅
+
+## onlineland.in → new website (26 Nov 2026, in progress)
+- Old site was GitHub Pages (A @ 185.199.108–111.153, CNAME www → nageshpn999-coder.github.io). Nagesh: old data not needed.
+- GoDaddy DNS: removed the 4 GitHub A records; added A @ 35.219.201.37, TXT @ fah-claim=…, CNAME _acme-challenge_6wgdltk4kjypq6sh → …authorize.certificatemanager.goog (values from App Hosting → onlineland-web → Settings → Domains).
+- Email is GoDaddy (secureserver.net CNAMEs/MX) — untouched. NS untouched.
+- Auth authorized domains: onlineland.in and www.onlineland.in added on prod.
+- Next: wait for "Connected" + certificate; then add www.onlineland.in as a custom domain and replace the www CNAME.
