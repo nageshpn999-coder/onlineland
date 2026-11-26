@@ -268,3 +268,4 @@ Approved for "everything that does not need the laptop".
 - Launch-day step: after the first Play upload, copy the **App signing key** SHA-1 and SHA-256 from Play Console (Setup → App signing) into Firebase (prod → Project settings → Android app → Add fingerprint), or OTP fails in the Play-installed app.
 - The prod APK and the dev APK share the package name: uninstall one to install the other.
 - Old `android-release.yml` (manual, needs many secrets) is superseded.
+- 26 Nov: prod end-to-end checked by Nagesh on the prod APK — real OTP, listing → admin approve → visible on the prod website, drone service request auto-quoted ₹1,999. ✅
