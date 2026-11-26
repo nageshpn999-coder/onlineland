@@ -261,3 +261,10 @@ Approved for "everything that does not need the laptop".
 - Spend caps on prod: Gemini ₹100, Agent Platform ₹100, Cloud Run ₹1,000, Functions ₹1,000.
 - Website home categories now use the 3D artwork too.
 - Left for launch day: connect onlineland.in, Play Store release build.
+
+## Prod Android build ✅ (26 Nov 2026)
+- New workflow `android-prod.yml`: push develop → `android-prod` builds the real app on onlineland-prod — `onlineland.aab` (Play Console) and `onlineland.apk` (phone check) in pre-release `android-prod`.
+- Play upload key: created once by the workflow, stored only in Google Secret Manager in onlineland-prod (`android-upload-keystore`, `android-upload-keystore-password`). Never in the repo (it is public), chat, caches or artifacts. No extra GitHub secrets needed. Its SHA-1/256 are registered on the prod Android app.
+- Launch-day step: after the first Play upload, copy the **App signing key** SHA-1 and SHA-256 from Play Console (Setup → App signing) into Firebase (prod → Project settings → Android app → Add fingerprint), or OTP fails in the Play-installed app.
+- The prod APK and the dev APK share the package name: uninstall one to install the other.
+- Old `android-release.yml` (manual, needs many secrets) is superseded.
