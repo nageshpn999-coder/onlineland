@@ -1,9 +1,9 @@
 import { useLocale, useTranslations } from 'next-intl';
 import { PROPERTY_CATEGORIES, type Locale } from '@onlineland/shared';
 import { Link } from '@/i18n/navigation';
-import { CATEGORY_ICONS } from './icons';
+import Image from 'next/image';
 
-/** Categories laid out like parcels on a survey sheet; agricultural land, the core business, takes the largest parcel. */
+/** Categories laid out like parcels on a survey sheet, each with its 3D artwork; agricultural land, the core business, takes the largest parcel. */
 export function Categories() {
   const t = useTranslations('categories');
   const locale = useLocale() as Locale;
@@ -19,7 +19,6 @@ export function Categories() {
 
       <ul className="mt-10 grid grid-cols-2 border-l border-t border-line lg:grid-cols-4">
         {PROPERTY_CATEGORIES.map((c) => {
-          const Icon = CATEGORY_ICONS[c.id]!;
           const isLead = c.id === 'agricultural';
           return (
             <li
@@ -32,27 +31,19 @@ export function Categories() {
                   isLead ? 'min-h-44 overflow-hidden bg-field-soft hover:bg-[#d8ebdf] lg:min-h-full' : 'min-h-28 sm:min-h-36'
                 }`}
               >
-                {isLead && (
-                  <svg
-                    aria-hidden
-                    className="pointer-events-none absolute -bottom-4 -right-6 h-[70%] w-[75%] text-field opacity-[0.16]"
-                    viewBox="0 0 300 200"
-                    preserveAspectRatio="none"
-                  >
-                    {Array.from({ length: 11 }, (_, i) => (
-                      <path
-                        key={i}
-                        d={`M0 ${200 - i * 16} Q 150 ${150 - i * 20}, 300 ${120 - i * 12}`}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="5"
-                      />
-                    ))}
-                  </svg>
-                )}
-                <Icon className={`${isLead ? 'size-10 text-field' : 'size-8 text-brand'}`} />
+                <Image
+                  src={`/categories/${c.id}.webp`}
+                  alt=""
+                  aria-hidden
+                  width={256}
+                  height={256}
+                  sizes={isLead ? '(min-width: 1024px) 224px, 160px' : '96px'}
+                  className={`relative object-contain transition-transform duration-200 group-hover:scale-105 motion-reduce:transition-none ${
+                    isLead ? 'size-40 lg:size-56' : 'size-20 sm:size-24'
+                  }`}
+                />
                 <span
-                  className={`relative font-display font-semibold leading-snug text-ink ${
+                  className={`relative font-display font-semibold leading-snug text-ink [overflow-wrap:normal] [word-break:keep-all] hyphens-none ${
                     isLead ? 'text-[1.7rem] sm:text-[2rem]' : 'text-[1.15rem]'
                   }`}
                 >

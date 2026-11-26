@@ -408,3 +408,14 @@ test.describe('paid services (Phase 9)', () => {
     expect(saved.propertyId).toBeTruthy();
   });
 });
+
+test('home categories show the 3D artwork', async ({ page }) => {
+  await page.goto('/te');
+  const imgs = page.locator('#categories img');
+  await expect(imgs).toHaveCount(9);
+  for (let i = 0; i < 9; i++) {
+    await imgs.nth(i).scrollIntoViewIfNeeded();
+    await expect.poll(() => imgs.nth(i).evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth > 0)).toBe(true);
+  }
+  await page.locator('#categories').screenshot({ path: `${SHOTS}/home-categories-te.png` });
+});
