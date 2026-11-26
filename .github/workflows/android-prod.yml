@@ -1,0 +1,143 @@
+name: Android prod build (onlineland-prod, Play Store)
+
+# The real app, connected to onlineland-prod. Runs when develop is pushed to the android-prod branch.
+# Produces:
+#   onlineland.aab  — signed App Bundle to upload to Play Console
+#   onlineland.apk  — the same app as an APK, for checking on a phone before Play
+# Both are attached to the pre-release "android-prod".
+#
+# Play upload key: generated once by this workflow and kept in Google Secret Manager in onlineland-prod
+# (secrets "android-upload-keystore" and "android-upload-keystore-password"). It never leaves Google
+# Cloud, is never printed, never committed and never shared in chat. This repo is public, so the key
+# must not live in artifacts, caches or releases. Only FIREBASE_SERVICE_ACCOUNT_PROD is needed.
+
+on:
+  push:
+    branches: [android-prod]
+
+concurrency: android-prod
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    environment: production
+    permissions:
+      contents: write
+    env:
+      PROJECT: onlineland-prod
+      KS_SECRET: android-upload-keystore
+      PW_SECRET: android-upload-keystore-password
+      KEY_ALIAS: upload
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Sign in to onlineland-prod
+        env:
+          SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_PROD }}
+        run: |
+          [ -n "$SA" ] || { echo "::error::FIREBASE_SERVICE_ACCOUNT_PROD is not set"; exit 1; }
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          [ "$(node -e "console.log(require(process.argv[1]).project_id)" "$RUNNER_TEMP/sa.json")" = "$PROJECT" ] || { echo "::error::Service account is not for $PROJECT"; exit 1; }
+          gcloud auth activate-service-account --key-file="$RUNNER_TEMP/sa.json" --quiet
+          gcloud config set project "$PROJECT" --quiet
+          gcloud services enable secretmanager.googleapis.com playintegrity.googleapis.com --quiet
+
+      - name: Upload key (create once in Secret Manager, then reuse)
+        run: |
+          KS="$RUNNER_TEMP/upload.jks"
+          if ! gcloud secrets describe "$KS_SECRET" >/dev/null 2>&1; then
+            echo "No upload key yet: creating one (this happens only once)."
+            PW=$(openssl rand -base64 36 | tr -dc 'A-Za-z0-9' | head -c 32)
+            echo "::add-mask::$PW"
+            keytool -genkeypair -keystore "$KS" -storetype PKCS12 -storepass "$PW" -keypass "$PW" \
+              -alias "$KEY_ALIAS" -keyalg RSA -keysize 4096 -validity 10000 \
+              -dname "CN=OnlineLand Infra Private Limited, O=OnlineLand Infra Private Limited, L=Makthal, ST=Telangana, C=IN" >/dev/null
+            printf '%s' "$PW" | gcloud secrets create "$PW_SECRET" --replication-policy=automatic --data-file=- --quiet
+            gcloud secrets create "$KS_SECRET" --replication-policy=automatic --data-file="$KS" --quiet
+            echo "Upload key created and stored in Secret Manager."
+          fi
+          PW=$(gcloud secrets versions access latest --secret="$PW_SECRET")
+          echo "::add-mask::$PW"
+          gcloud secrets versions access latest --secret="$KS_SECRET" --out-file="$KS"
+          keytool -list -keystore "$KS" -storepass "$PW" -alias "$KEY_ALIAS" >/dev/null || { echo "::error::Upload key could not be opened"; exit 1; }
+          {
+            echo "ANDROID_KEYSTORE_PATH=$KS"
+            echo "ANDROID_KEYSTORE_PASSWORD=$PW"
+            echo "ANDROID_KEY_ALIAS=$KEY_ALIAS"
+            echo "ANDROID_KEY_PASSWORD=$PW"
+          } >> "$GITHUB_ENV"
+          echo "Upload key SHA-1 / SHA-256 (public fingerprints):"
+          keytool -list -v -keystore "$KS" -storepass "$PW" -alias "$KEY_ALIAS" | grep -E "SHA1:|SHA256:"
+
+      - name: Read the Android app's Firebase config and register the key's fingerprints
+        run: |
+          GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx -y firebase-tools@15 apps:sdkconfig ANDROID --project "$PROJECT" > "$RUNNER_TEMP/gs.txt"
+          APP_ID=$(sed -n 's/.*"mobilesdk_app_id": *"\([^"]*\)".*/\1/p' "$RUNNER_TEMP/gs.txt" | head -1)
+          for KIND in SHA1 SHA256; do
+            SHA=$(keytool -list -v -keystore "$ANDROID_KEYSTORE_PATH" -storepass "$ANDROID_KEYSTORE_PASSWORD" -alias "$ANDROID_KEY_ALIAS" | sed -n "s/.*$KIND: //p" | tr -d ' ')
+            GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json" npx -y firebase-tools@15 apps:android:sha:create "$APP_ID" "$SHA" --project "$PROJECT" \
+              && echo "registered $KIND" || echo "$KIND already registered"
+          done
+          node -e '
+            const t = require("fs").readFileSync(process.argv[1], "utf8");
+            const g = JSON.parse(t.slice(t.indexOf("{"), t.lastIndexOf("}") + 1));
+            const c = g.client.find((x) => x.client_info.android_client_info.package_name === "in.onlineland.onlineland");
+            if (!c) throw new Error("Android app in.onlineland.onlineland is not registered in " + process.env.PROJECT);
+            const out = {
+              FB_API_KEY: c.api_key[0].current_key,
+              FB_APP_ID: c.client_info.mobilesdk_app_id,
+              FB_SENDER_ID: g.project_info.project_number,
+              FB_BUCKET: g.project_info.storage_bucket,
+            };
+            for (const [k, v] of Object.entries(out)) { if (!v) throw new Error(k + " missing"); console.log(`${k}=${v}`); }
+          ' "$RUNNER_TEMP/gs.txt" >> "$GITHUB_ENV"
+          rm -f "$RUNNER_TEMP/gs.txt"
+
+      - name: Sign out of Google Cloud
+        if: always()
+        run: |
+          gcloud auth revoke --all --quiet || true
+          rm -f "$RUNNER_TEMP/sa.json"
+
+      - name: Tests
+        working-directory: apps/android
+        run: flutter pub get && flutter test
+
+      - name: Build signed App Bundle and APK
+        working-directory: apps/android
+        run: |
+          VERSION="--build-name=1.0.${{ github.run_number }} --build-number=$((100 + ${{ github.run_number }}))"
+          DEFINES="--dart-define=DATA_MODE=firebase --dart-define=FIREBASE_PROJECT_ID=$PROJECT \
+            --dart-define=FIREBASE_API_KEY=$FB_API_KEY --dart-define=FIREBASE_APP_ID=$FB_APP_ID \
+            --dart-define=FIREBASE_SENDER_ID=$FB_SENDER_ID --dart-define=FIREBASE_STORAGE_BUCKET=$FB_BUCKET"
+          # Gradle's download from GitHub sometimes fails for a few minutes; try up to three times.
+          for i in 1 2 3; do
+            flutter build appbundle --release $DEFINES $VERSION && flutter build apk --release $DEFINES $VERSION && break
+            [ $i = 3 ] && exit 1; echo "Build failed (try $i), retrying in 60s"; sleep 60
+          done
+          cp build/app/outputs/bundle/release/app-release.aab ../../onlineland.aab
+          cp build/app/outputs/flutter-apk/app-release.apk ../../onlineland.apk
+          # Fail if the bundle is not signed with the upload key (Play would reject it).
+          jarsigner -verify ../../onlineland.aab >/dev/null || { echo "::error::App Bundle is not signed"; exit 1; }
+          rm -f "$ANDROID_KEYSTORE_PATH"
+
+      - name: Publish (pre-release "android-prod")
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NOTES="OnlineLand app 1.0.${{ github.run_number }} on onlineland-prod. Built $(date -u +%F) from ${GITHUB_SHA::7}. onlineland.aab is for Play Console; onlineland.apk is for checking on a phone."
+          gh release view android-prod >/dev/null 2>&1 || gh release create android-prod --prerelease --target develop --title "OnlineLand app — prod" --notes "$NOTES"
+          gh release edit android-prod --notes "$NOTES" --prerelease
+          gh release upload android-prod onlineland.aab onlineland.apk --clobber
