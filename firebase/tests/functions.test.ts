@@ -419,7 +419,8 @@ describe('Phase 9: yearly plans, services, launch offer', () => {
       return d?.status === 'quoted' ? d : null;
     });
     expect(quoted.quotedInr).toBe(1999);
-    expect(await notesFor(uid, 'service.quoted')).toBe(1);
+    // The trigger writes the quote and the notice separately; wait for the notice too.
+    expect(await waitFor(async () => (await notesFor(uid, 'service.quoted')) || null)).toBe(1);
 
     await payment(`pay-svc-low-${run}`, { userId: uid, kind: 'service', serviceRequestId: `sr-drone-${run}`, amountInr: 999 });
     await payment(`pay-svc-${run}`, { userId: uid, kind: 'service', serviceRequestId: `sr-drone-${run}`, amountInr: 1999 });
