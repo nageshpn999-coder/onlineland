@@ -10,7 +10,7 @@ import { connectFunctionsEmulator, getFunctions, httpsCallable, type Functions }
 import { DEFAULT_PLANS as SHARED_PLANS, DEFAULT_PRICING as SHARED_PRICING, DEFAULT_SERVICES as SHARED_SERVICES, ROLES as SHARED_ROLES } from '@onlineland/shared';
 import { DEFAULT_PLANS as FN_PLANS, DEFAULT_PRICING as FN_PRICING, DEFAULT_SERVICES as FN_SERVICES } from '../functions/src/plans';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { PROJECT_ID, storedListing } from './helpers';
+import { newLead, PROJECT_ID, storedListing } from './helpers';
 
 // emulators:exec sets FIREBASE_AUTH_EMULATOR_HOST and FIRESTORE_EMULATOR_HOST for this process.
 let admin: App;
@@ -463,6 +463,36 @@ describe('Phase 9: yearly plans, services, launch offer', () => {
     } finally {
       await adminDb().doc('settings/pricing').set({ launchOfferActive: false }, { merge: true });
     }
+  });
+});
+
+describe('deleteProperty', () => {
+  it('admin deletes a listing with its media, private contact and stats; keeps leads', async () => {
+    const id = `del-prop-${run}`;
+    await adminDb().doc(`properties/${id}`).set(storedListing('owner-del', { status: 'approved', code: 'OL-9999', createdAt: Timestamp.now(), updatedAt: Timestamp.now() }));
+    await adminDb().doc(`properties/${id}/media/m1`).set({ url: 'x' });
+    await adminDb().doc(`properties/${id}/private/contact`).set({ phone: '9000000000' });
+    await adminDb().doc(`propertyStats/${id}`).set({ views: 3 });
+    await adminDb().doc(`leads/del-lead-${run}`).set(newLead({ propertyId: id, createdAt: Timestamp.now() }));
+    await signInAs(`admin-${run}`);
+    const res = await httpsCallable(functions, 'deleteProperty')({ propertyId: id });
+    expect(res.data).toEqual({ propertyId: id, deleted: true });
+    expect((await adminDb().doc(`properties/${id}`).get()).exists).toBe(false);
+    expect((await adminDb().collection(`properties/${id}/media`).get()).size).toBe(0);
+    expect((await adminDb().doc(`properties/${id}/private/contact`).get()).exists).toBe(false);
+    expect((await adminDb().doc(`propertyStats/${id}`).get()).exists).toBe(false);
+    expect((await adminDb().doc(`leads/del-lead-${run}`).get()).exists).toBe(true);
+    const logs = await adminDb().collection('auditLogs').where('target', '==', `properties/${id}`).get();
+    expect(logs.docs.map((d) => d.data().action)).toEqual(['property.delete']);
+  });
+  it('only admins can delete; a missing listing is not-found', async () => {
+    const id = `del-prop2-${run}`;
+    await adminDb().doc(`properties/${id}`).set(storedListing('owner-del2', { status: 'approved', createdAt: Timestamp.now(), updatedAt: Timestamp.now() }));
+    await signInAs('owner-del2');
+    expect(await callError('deleteProperty', { propertyId: id })).toBe('functions/permission-denied');
+    expect((await adminDb().doc(`properties/${id}`).get()).exists).toBe(true);
+    await signInAs(`admin-${run}`);
+    expect(await callError('deleteProperty', { propertyId: `nope-${run}` })).toBe('functions/not-found');
   });
 });
 

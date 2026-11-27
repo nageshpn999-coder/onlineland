@@ -79,6 +79,7 @@ function ListingDrawer({ id, onClose }: { id: string; onClose: () => void }) {
   const [rejecting, setRejecting] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   async function run(fn: () => Promise<unknown>) {
     setBusy(true);
@@ -96,6 +97,11 @@ function ListingDrawer({ id, onClose }: { id: string; onClose: () => void }) {
     run(async () => {
       await callFn('reviewProperty', { propertyId: id, decision, ...(decision === 'reject' ? { reason } : {}) });
       setRejecting(false);
+    });
+  const remove = () =>
+    run(async () => {
+      await callFn('deleteProperty', { propertyId: id });
+      onClose();
     });
   const update = (data: Record<string, unknown>) => run(() => updateDoc(doc(fb().db, 'properties', id), { ...data, updatedAt: serverTimestamp() }));
 
@@ -218,6 +224,20 @@ function ListingDrawer({ id, onClose }: { id: string; onClose: () => void }) {
               )}
             </div>
           )}
+
+          <div className="border-t border-line pt-4">
+            {confirmDelete ? (
+              <div className="space-y-2 rounded-md bg-red-50 p-3">
+                <p className="text-sm text-red-800">{t('deleteListingWarn')}</p>
+                <div className="flex gap-2">
+                  <Button tone="danger" disabled={busy} onClick={remove}>{t('deleteListingYes')}</Button>
+                  <Button tone="quiet" disabled={busy} onClick={() => setConfirmDelete(false)}>{t('cancel')}</Button>
+                </div>
+              </div>
+            ) : (
+              <Button tone="quiet" disabled={busy} onClick={() => setConfirmDelete(true)}>🗑 {t('deleteListing')}</Button>
+            )}
+          </div>
         </>
       )}
     </Drawer>

@@ -281,3 +281,7 @@ Approved for "everything that does not need the laptop".
 
 ## Developer handover guide ✅ (26 Nov 2026)
 - New `docs/HANDOVER.md`: product, repo map, dev/prod environments, local commands, branch-push deploy flow, where secrets live, data model, known pitfalls, open items. Linked from README; ARCHITECTURE.md marked as the original Phase 1 design.
+
+## Admin: delete a listing ✅ (28 Nov 2026)
+- New callable `deleteProperty` (admin only): removes the listing, media, private contact, stats and its Storage files; keeps leads/payments; writes an audit log. Tests in functions.test.ts.
+- Admin listing drawer: "🗑 ప్రాపర్టీ తొలగించండి" with a confirm step. Needed to remove test listings from prod.

@@ -14,10 +14,11 @@
  * tests check that ROLES and the plan defaults match the shared lists.
  */
 import { FieldValue, type Transaction } from 'firebase-admin/firestore';
+import { getStorage } from 'firebase-admin/storage';
 import { HttpsError, onCall } from 'firebase-functions/v2/https';
 import * as functionsV1 from 'firebase-functions/v1';
 import { logger } from 'firebase-functions';
-import { applyRole, audit, auth, CALLABLE, db, isRole, ms, REGION, requireAdmin, requireSignedIn, ROLES, safeNotify, type Role } from './common';
+import { applyRole, audit, auth, CALLABLE, db, isRole, ms, REGION, requireAdmin, requireId, requireSignedIn, ROLES, safeNotify, type Role } from './common';
 import { loadConfig } from './config';
 
 export { REGION, ROLES } from './common';
@@ -201,3 +202,30 @@ async function checkListingLimit(
 function planActiveOrPaid(paidUntil: unknown, now: number, dealerPlan: boolean): boolean {
   return !dealerPlan && (ms(paidUntil) ?? 0) > now;
 }
+
+
+/**
+ * Admin removes a listing for good (test listings, spam, duplicates): the listing, its media and private
+ * contact, its stats and its photos/video in Storage. Enquiries and payments that mention it are kept as history.
+ */
+export const deleteProperty = onCall(CALLABLE, async (req) => {
+  const a = requireAdmin(req);
+  const { propertyId } = (req.data ?? {}) as { propertyId?: unknown };
+  const id = requireId(propertyId, 'propertyId');
+  const ref = db.doc(`properties/${id}`);
+  const snap = await ref.get();
+  if (!snap.exists) throw new HttpsError('not-found', 'Property not found.');
+  const p = snap.data()!;
+  await db.recursiveDelete(ref);
+  await db.doc(`propertyStats/${id}`).delete();
+  try {
+    await getStorage().bucket().deleteFiles({ prefix: `properties/${id}/` });
+  } catch (e) {
+    logger.warn('property files not removed', { id, e: String(e) });
+  }
+  await audit(null, {
+    actorId: a.uid, action: 'property.delete', target: `properties/${id}`,
+    before: { code: p.code ?? null, status: p.status ?? null, ownerId: p.ownerId ?? null }, after: null,
+  });
+  return { propertyId: id, deleted: true };
+});
